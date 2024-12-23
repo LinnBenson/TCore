@@ -82,6 +82,33 @@ use application\server\serviceServer;
             );
         }
         /**
+         * 服务维持器
+         */
+        public function run( $name ) {
+            $names = explode( ',', $name );
+            $all = serviceServer::getAllService();
+            foreach( $names as $name ) {
+                $item = $all[$name];
+                if ( !empty( $item ) ) {
+                    if ( !$item['state'] ) {
+                        ob_start();
+                            serviceServer::start( $name );
+                        ob_get_clean();
+                        echo  getTime()." [ {$name} ] The service has been started.\n";
+                    }
+                    if ( $item['state'] > 86400 ) {
+                        ob_start();
+                            serviceServer::restart( $name );
+                        ob_get_clean();
+                        echo  getTime()." [ {$name} ] The service has been restarted.\n";
+                    }
+                }else {
+                    echo getTime()." [ {$name} ] Service does not exist!\n";
+                }
+            }
+            echo getTime()." Finish.\n";
+        }
+        /**
          * 检查服务是否存在
          */
         private function hasService( $name ) {
