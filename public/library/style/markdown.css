@@ -1,0 +1,162 @@
+
+/* 编辑器 */
+div.editor-toolbar, div.editor-toolbar.fullscreen {
+    background: rgb( var( --r3 ), 0.25 );
+    border-color: rgb( var( --r3 ), 0.5 );
+}
+div.editor-toolbar *, div.editor-toolbar.fullscreen * {
+    color: rgb( var( --r1 ) ) !important;
+}
+div.editor-toolbar i, div.editor-toolbar.fullscreen i {
+    display: none !important;
+}
+div.CodeMirror {
+    height: 420px;
+    background: rgb( var( --r6 ) );
+    border-color: rgb( var( --r3 ), 0.5 );
+}
+div.editor-preview, div.editor-preview-side {
+    padding: 14px;
+    background: rgb( var( --r0 ) );
+    border-color: rgb( var( --r3 ), 0.5 );
+}
+.CodeMirror pre {
+    color: rgb( var( --r1 ) );
+}
+.CodeMirror .CodeMirror-code .cm-link,
+.CodeMirror .CodeMirror-code .cm-url,
+.CodeMirror .CodeMirror-code .cm-tag {
+    color: rgb( var( --r2 ) );
+}
+.CodeMirror .CodeMirror-code .cm-url,
+.CodeMirror pre span.cm-hr,
+.CodeMirror .cm-formatting.cm-formatting-strong.cm-strong,
+.CodeMirror .cm-formatting.cm-formatting-em.cm-em,
+.CodeMirror .cm-formatting.cm-formatting-header,
+.CodeMirror .cm-formatting.cm-formatting-quote,
+.CodeMirror .cm-formatting.cm-formatting-code-block,
+.CodeMirror .cm-formatting.cm-formatting-code {
+    color: rgb( var( --r1 ), 0.5 );
+}
+.CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word), .CodeMirror .CodeMirror-code .cm-comment {
+    background: none;
+}
+.editor-toolbar a.active, .editor-toolbar a:hover {
+    background: rgb( var( --r3 ) );
+    color: rgb( var( --r3c ) ) !important;
+}
+.editor-toolbar.disabled-for-preview a:not(.no-disable) {
+    background: none;
+    opacity: 0.5;
+}
+div.editor-statusbar span.autosave { display: none; }
+/* 预览器 */
+div.markdown h1,
+div.markdown h2,
+div.markdown h3,
+div.markdown h4,
+div.markdown h5,
+div.markdown h6 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+div.markdown p {
+    margin-bottom: 8px;
+}
+
+div.markdown blockquote {
+    margin-bottom: 8px;
+    padding: 16px;
+    background: rgb( var( --r3 ), 0.15 );
+    border-left: 8px solid rgb( var( --r3 ) );
+    box-sizing: border-box;
+}
+div.markdown ul, div.markdown ol {
+    margin-bottom: 8px;
+    padding-left: 34px;
+}
+div.markdown code.span {
+    background: rgb( 40, 44, 52 ) !important;
+    padding: 3px 8px;
+    font-size: 14px;
+    line-height: 14px;
+    vertical-align: middle;
+    font-family: 'code', Arial, sans-serif;
+    color: rgb( 169, 176, 189 ) !important;
+    word-break: break-all;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+div.markdown a {
+    color: rgb( var( --r2 ) ) !important;
+    text-decoration: underline;
+}
+div.markdown div.showCode {
+    border-radius: 8px;
+    overflow: hidden;
+}
+div.markdown div.showCode div.showCodeHeader {
+    height: 24px;
+    padding: 0px 16px;
+    background: rgb( 169, 176, 189 );
+}
+div.markdown div.showCode div.showCodeHeader div {
+    --size: 12px;
+    display: inline-block;
+    width: var( --size );
+    height: var( --size );
+    margin: 6px 0px;
+    margin-right: 6px;
+    background: red;
+    vertical-align: middle;
+    border-radius: 90px;
+}
+div.markdown div.showCode div.showCodeHeader div:nth-child( 1 ) { background: rgb( 255, 95, 87 ); }
+div.markdown div.showCode div.showCodeHeader div:nth-child( 2 ) { background: rgb( 254, 188, 46 ); }
+div.markdown div.showCode div.showCodeHeader div:nth-child( 3 ) { background: rgb( 40, 200, 64 ); }
+div.markdown div.showCode div.showCodeHeader i {
+    float: right;
+    font-size: 14px;
+    line-height: 24px;
+}
+div.markdown div.showCode {
+    margin-bottom: 8px;
+}
+div.markdown div.showCode div.code {
+    padding: 16px;
+    box-sizing: border-box;
+}
+div.markdown div.showCode div.code pre {
+    width: 100%;
+    height: 100%;
+    max-height: 320px;
+    overflow: scroll;
+}
+div.markdown div.showCode div.code pre::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+div.markdown div.showImg {
+    margin-bottom: 8px;
+    text-align: center;
+    cursor: pointer;
+}
+div.markdown div.showImg img {
+    max-width: 90%;
+    vertical-align: top;
+}
+div.markdown div.showImg span {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    color: rgb( var( --r1 ), 0.5 );
+}
+div.markdown blockquote p:last-of-type,
+div.markdown blockquote ul:last-of-type,
+div.markdown blockquote ol:last-of-type,
+div.markdown blockquote div.showCode:last-of-type,
+div.markdown blockquote div.showImg:last-of-type {
+    margin-bottom: 0;
+}

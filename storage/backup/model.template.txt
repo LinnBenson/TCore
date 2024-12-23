@@ -1,0 +1,15 @@
+<?php
+namespace application\model;
+
+use support\transfer\mysqlBasics;
+
+    class {{name}} extends mysqlBasics {
+        protected $table = '{{name}}';
+        protected $guarded = [];
+        public static $words = [
+            'uid' => [ 'comment' => 'UID', 'type' => [ 'integer' ] ],
+            'time_word' => [ 'comment' => '当前时间', 'type' => [ 'time' ], 'nullable' => true ],
+            'boolean_word' => [ 'comment' => '布尔值', 'type' => [ 'boolean' ], 'nullable' => true, 'default' => 0 ]
+        ];
+        public static function setData() {}
+    }

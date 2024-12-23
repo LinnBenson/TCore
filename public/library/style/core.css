@@ -1,0 +1,124 @@
+@font-face {
+    font-family: 'Manrope';
+    src: url( '/library/font/Manrope-Medium.ttf' );
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Manrope';
+    src: url( '/library/font/Manrope-bold.ttf' );
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'code';
+    src: url( '/library/font/Consolas-Regular.ttf' );
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+    --fontSize: 16px;
+    font-family: 'Manrope', Arial, sans-serif;
+    margin: 0;
+    outline: none;
+    box-shadow: none;
+}
+*::selection {
+    background: rgb( var( --r2 ) );
+    color: rgb( var( --r2c ) );
+}
+a, a i {
+    color: rgb( var( --r2 ) );
+    text-decoration: none;
+}
+h1 { font-size: calc( var( --fontSize ) + 16px ); } h1 * { font-size: calc( var( --fontSize ) + 16px ); font-weight: bold; }
+h2 { font-size: calc( var( --fontSize ) + 12px ); } h2 * { font-size: calc( var( --fontSize ) + 12px ); font-weight: bold; }
+h3 { font-size: calc( var( --fontSize ) + 8px ); } h3 * { font-size: calc( var( --fontSize ) + 8px ); font-weight: bold; }
+h4 { font-size: calc( var( --fontSize ) + 2px ); } h4 * { font-size: calc( var( --fontSize ) + 2px ); font-weight: bold; }
+h5 { font-size: calc( var( --fontSize ) + 0px ); } h5 * { font-size: calc( var( --fontSize ) + 0px ); font-weight: bold; }
+h6 { font-size: calc( var( --fontSize ) - 2px ); } h6 * { font-size: calc( var( --fontSize ) - 2px ); font-weight: bold; }
+h1, h2, h3, h4, h5, h6 { font-weight: bold; }
+.h1 { font-size: calc( var( --fontSize ) + 16px ); } .h1 * { font-size: calc( var( --fontSize ) + 16px ); }
+.h2 { font-size: calc( var( --fontSize ) + 12px ); } .h2 * { font-size: calc( var( --fontSize ) + 12px ); }
+.h3 { font-size: calc( var( --fontSize ) + 8px ); } .h3 * { font-size: calc( var( --fontSize ) + 8px ); }
+.h4 { font-size: calc( var( --fontSize ) + 2px ); } .h4 * { font-size: calc( var( --fontSize ) + 2px ); }
+.h5 { font-size: calc( var( --fontSize ) + 0px ); } .h5 * { font-size: calc( var( --fontSize ) + 0px ); }
+.h6 { font-size: calc( var( --fontSize ) - 2px ); } .h6 * { font-size: calc( var( --fontSize ) - 2px ); }
+.h7 { font-size: calc( var( --fontSize ) - 4px ); } .h7 * { font-size: calc( var( --fontSize ) - 4px ); }
+hr {
+    --size: 1px;
+    --margin: 16px;
+    display: block;
+    width: 100%;
+    margin: var( --margin ) 0px;
+    border: none;
+    border-bottom: var( --size ) dashed rgb( var( --r1 ), 0.75 );
+}
+input:focus, textarea:focus, select:focus { outline: none; }
+body {
+    background: rgb( var( --r0 ) );
+    color: rgb( var( --r1 ) );
+    font-size: 16px;
+}
+i.block {
+    display: inline-block;
+    width: var( --size );
+    height: var( --size );
+    text-align: center;
+    line-height: var( --size );
+}
+i.block::before {
+    line-height: var( --size );
+}
+.spin {
+    display: inline-block;
+    animation: spin 1.5s linear infinite;
+} @keyframes spin {
+    0% { transform: rotate( 0deg ); }
+    100% { transform: rotate( 360deg ); }
+}
+.scroll {
+    overflow-y: scroll;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}
+.scroll::-webkit-scrollbar { width: 0 !important; }
+.more {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-display: flex;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
+}
+.grid {
+    --minWidth: 240px;
+    --gap: 8px;
+    display: grid;
+    grid-template-columns: repeat( auto-fill, minmax( var( --minWidth ), 1fr ) );
+    grid-gap: var( --gap );
+}
+.copy { cursor: pointer; }
+.code {
+    background: rgb( 40, 44, 52 ) !important;
+    font-size: 14px;
+    line-height: 18px;
+    font-family: 'code', Arial, sans-serif;
+    color: rgb( 169, 176, 189 ) !important;
+}
+.hidden { display: none !important; }
+.r1 { background: rgb( var( --r1 ) ) !important; }
+.r1, .r1 * { color: rgb( var( --r0 ) ) !important; }
+.r2 { background: rgb( var( --r2 ) ) !important; }
+.r2, .r2 * { color: rgb( var( --r2c ) ) !important; }
+.r3 { background: rgb( var( --r3 ) ) !important; }
+.r3, .r3 * { color: rgb( var( --r3c ) ) !important; }
+.r4 { background: rgb( var( --r4 ) ) !important; }
+.r4, .r4 * { color: rgb( var( --r4c ) ) !important; }
+.r5 { background: rgb( var( --r5 ) ) !important; }
+.r5, .r5 * { color: rgb( var( --r5c ) ) !important; }

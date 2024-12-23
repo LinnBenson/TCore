@@ -1,0 +1,31 @@
+div#user div.avatar div.box {
+    --leftWidth: 50px;
+    position: relative;
+}
+div#user div.avatar div.box div.left {
+    float: left;
+    width: var( --leftWidth );
+}
+div#user div.avatar div.box div.right {
+    width: calc( 100% - var( --leftWidth ) - 16px - 40px );
+    padding: 3px 0px;
+    margin-left: calc( var( --leftWidth ) + 16px );
+    box-sizing: border-box;
+    position: relative;
+}
+div#user div.avatar div.box img.avatar {
+    display: block;
+    width: var( --leftWidth );
+    height: var( --leftWidth );
+    border-radius: 90px;
+    object-fit: cover;
+    cursor: pointer;
+}
+div#user div.avatar div.box i.logout {
+    --size: 40px;
+    color: rgb( var( --r5 ) );
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    top: 5px;
+}

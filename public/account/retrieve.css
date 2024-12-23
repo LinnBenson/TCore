@@ -1,0 +1,30 @@
+div#retrieve div.step {
+    opacity: 0.25;
+    text-align: center;
+    pointer-events: none;
+}
+div#retrieve div.step.action {
+    opacity: 1;
+    pointer-events: all;
+}
+div#retrieve div.step i.stepIcon {
+    margin-right: 16px;
+    font-size: 28px;
+}
+div#retrieve div.step span.stepTitle {
+    display: inline-block;
+    margin-bottom: 16px;
+}
+div#retrieve div.step div.formInput {
+    text-align: left;
+}
+div#retrieve div.other {
+    padding: 8px;
+    border-top: 1px solid rgb( var( --r3 ) );
+    box-sizing: border-box;
+}
+@media ( min-width: 700px ) {
+    div#retrieve div.other {
+        padding: 8px 32px;
+    }
+}

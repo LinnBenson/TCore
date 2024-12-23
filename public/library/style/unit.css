@@ -1,0 +1,663 @@
+/* 加载组件 */
+div#load {
+    width: var( --vw );
+    height: var( --vh );
+    opacity: 0 !important;
+    transform: scale( 0 );
+    pointer-events: none;
+    transition: 240ms;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+div#load.action {
+    opacity: 1 !important;
+    transform: scale( 1 );
+}
+div#load div.content {
+    width: 100%;
+    height: 100%;
+    background: rgb( var( --r0 ), 0.85 );
+}
+div#load div.content div.icon, div.viewLoad div.icon {
+    display: grid;
+    width: 50px;
+    margin: 0px auto;
+    border: 4px solid #0000;
+    border-radius: 50%;
+    border-right-color: rgb( var( --r1 ) );
+    aspect-ratio: 1;
+    animation: loadAction 1s infinite linear;
+}
+div#load div.content div.icon::before,
+div#load div.content div.icon::after,
+div.viewLoad div.icon::before,
+div.viewLoad div.icon::after {
+    content: "";
+    grid-area: 1/1;
+    margin: 2px;
+    border: inherit;
+    border-radius: 50%;
+    animation: loadAction 2s infinite;
+}
+div#load div.content div.icon::after,
+div.viewLoad div.icon::after {
+    animation-duration: 3s;
+}
+@keyframes loadAction{
+    100%{transform: rotate(1turn)}
+}
+div#load div.content div.text {
+    margin-top: 32px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+div.viewLoad {
+    width: 100%;
+    height: 100%;
+    background: rgb( var( --r1 ), 0.5 );
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99;
+}
+div.viewLoad div.icon {
+    width: 24px;
+    border-right-color: rgb( var( --r0 ) );
+}
+div.viewLoad div.text {
+    margin-top: 16px;
+    font-size: 14px;
+    color: rgb( var( --r0 ) );
+    font-weight: bold;
+    text-align: center;
+}
+/* 错误通知 */
+div#toast {
+    --height: 34px;
+    width: var( --vw );
+    height: auto;
+    text-align: center;
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: 240ms;
+    position: fixed;
+    top: calc( -1 * ( var( --height ) + 100px ) );
+    left: 0;
+    z-index: 999;
+}
+div#toast.action {
+    top: 0;
+    opacity: 1 !important;
+}
+div#toast.toastOpenAction {
+    animation: toastOpenAction 180ms 1 linear;
+}@keyframes toastOpenAction{
+    0%{ top: calc( -1 * ( var( --height ) + 100px ) ); }
+    90%{ top: 15px; }
+    100%{ top: 0px; }
+}
+div#toast div.content {
+    display: inline-block;
+    height: var( --height );
+    margin-top: 90px;
+    padding: 0px;
+    background: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --r4 ) );
+    border-radius: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+div#toast.error div.content {
+    border: 1px solid rgb( var( --r5 ) );
+}
+div#toast div.content i {
+    display: inline-block;
+    width: var( --height );
+    height: var( --height );
+    background: rgb( var( --r4 ) );
+    font-size: 18px;
+    text-align: center;
+    line-height: var( --height );
+    color: rgb( var( --r4c ) );
+    vertical-align: middle;
+}
+div#toast.error div.content i {
+    background: rgb( var( --r5 ) );
+    color: rgb( var( --r5c ) );
+}
+div#toast div.content i::before {
+    line-height: var( --height );
+}
+div#toast div.content span {
+    display: inline-block;
+    max-width: calc( 90vw - var( --height ) - 24px );
+    padding-left: 8px;
+    padding-right: 16px;
+    line-height: var( --height );
+    vertical-align: middle;
+}
+/* 弹窗组件 */
+div#popup {
+    --width: 420px;
+    --height: 300px;
+    --padding: 25px;
+    --marginBottom: 50px;
+    --titleHeight: 28px;
+    --buttonHeight: 40px;
+    width: 100%;
+    height: 100%;
+    background: rgb( var( --r0 ), 0.85 );
+    pointer-events: none;
+    opacity: 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+div#popup, div#popup * { transition: 240ms; }
+div#popup.action { pointer-events: all; opacity: 1 !important; }
+div#popup div.content {
+    width: var( --width );
+    height: auto;
+    max-width: 92vw;
+    padding-top: calc( var( --titleHeight ) + 12px );
+    padding-bottom: calc( var( --buttonHeight ) + 16px + 32px );
+    margin-bottom: var( --marginBottom );
+    background: rgb( var( --r6 ) );
+    box-shadow: 0px 0px 5px rgb( var( --r1 ), 0.15 );
+    border-radius: 8px;
+    transform: scale( 0 );
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+div#popup.action div.content { transform: scale( 1 ); }
+div#popup div.content div.popupTitle {
+    width: 100%;
+    height: var( --titleHeight );
+    padding: 0px 16px;
+    text-align: right;
+    box-sizing: border-box;
+    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+div#popup div.content div.popupTitle * {
+    font-size: 14px;
+    line-height: var( --titleHeight );
+}
+div#popup div.content div.popupTitle div {
+    --titleIconSize: 12px;
+    float: left;
+    width: var( --titleIconSize );
+    height: var( --titleIconSize );
+    margin: calc( ( var( --titleHeight ) - var( --titleIconSize ) ) / 2 ) 0px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border-radius: 90px;
+}
+div#popup div.content div.popupTitle div:nth-of-type( 1 ) { background: rgb( 255, 95, 87 ); }
+div#popup div.content div.popupTitle div:nth-of-type( 2 ) { background: rgb( 254, 188, 46 ); }
+div#popup div.content div.popupTitle div:nth-of-type( 3 ) { background: rgb( 40, 200, 64 ); }
+div#popup div.content div.popupTitle i {
+    margin-left: 8px;
+}
+div#popup div.content div.contentBody {
+    max-height: calc(
+        var( --vh ) -
+        ( var( --titleHeight ) + 12px ) -
+        ( var( --buttonHeight ) + 16px + 32px ) -
+        var( --marginBottom ) - ( var( --vh ) * 0.05 )
+    );
+    padding: 0px var( --padding );
+    box-sizing: border-box;
+}
+div#popup div.content div.button {
+    width: 100%;
+    height: var( --buttonHeight );
+    text-align: right;
+    border-top: 1px solid rgb( var( --r3 ), 0.25 );
+    position: absolute;
+    left: 0;
+    bottom: 0px;
+}
+div#popup div.content div.button button {
+    width: 100%;
+    height: var( --buttonHeight );
+    padding: 0;
+    margin: 0;
+    background: none;
+    line-height: var( --buttonHeight );
+    border-radius: 0px;
+}
+div#popup div.content div.button.action button {
+    width: 50%;
+}
+div#popup div.content div.button button.set {
+    float: left;
+    display: none;
+}
+div#popup div.content div.button.action button.set {
+    display: block;
+    border-right: 1px solid rgb( var( --r3 ), 0.25 );
+}
+@media ( max-width: 600px ) {
+    div#popup {
+        --marginBottom: 0px;
+    }
+}
+/* 查看大图 */
+div#checkBig {
+    width: 100%;
+    height: var( --vh );
+    background: rgb( 0, 0, 0, 0.85 );
+    opacity: 0;
+    pointer-events: none;
+    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 997;
+}
+div#checkBig.action { pointer-events: all; opacity: 1 !important; }
+div#checkBig img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+div#checkBig i.close {
+    --size: 42px;
+    font-size: 18px;
+    border-radius: 90px;
+    cursor: pointer;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+/* 按钮 */
+a.button, button.button {
+    display: inline-block;
+    padding: 6px 16px;
+    margin: 0px 4px 4px 0px;
+    font-size: 14px;
+    background: rgb( var( --r0 ) );
+    color: rgb( var( --r1 ) );
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+a.button i, button.button i {
+    margin-right: 8px;
+    font-size: 14px;
+    vertical-align: inherit;
+}
+a.button.stop, button.button.stop {
+    opacity: 0.75;
+    pointer-events: none;
+}
+/* 卡片 */
+div.card {
+    width: 100%;
+    height: auto;
+    padding: 20px 25px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: rgb( var( --r6 ) );
+    color: rgb( var( --r1 ) );
+    box-shadow: 0px 0px 4px rgb( var( --r1 ), 0.1 );
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+div.card.hasTitle {
+    --titleHeight: 45px;
+    padding-top: calc( var( --titleHeight ) + 16px );
+}
+div.card.r0 {
+    background: rgb( var( --r0 ) );
+}
+div.card div.title {
+    width: 100%;
+    height: var( --titleHeight );
+    padding: 0px 25px;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgb(var( --r3 ), 0.35 );
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+div.card div.title i {
+    margin-right: 12px;
+}
+div.card div.title * {
+    line-height: var( --titleHeight );
+}
+div.card div.title button.button {
+    margin: 0;
+    padding: 5px 16px;
+    position: absolute;
+    right: 25px;
+    top: calc( ( var( --titleHeight ) - 28px ) / 2 );
+}
+div.card div.title button.button, div.card div.title button.button * {
+    line-height: 18px;
+}
+div.card div.title button.button i {
+    margin-right: 6px;
+}
+/* 分栏显示 */
+div.words {
+    --leftWidth: 120px;
+}
+div.words * {
+    font-size: 15px;
+}
+div.words div {
+    margin-bottom: 5px;
+}
+div.words div p {
+    display: inline-block;
+    width: calc( 100% - var( --leftWidth ) );
+    margin: 0;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+div.words div p:first-of-type {
+    width: var( --leftWidth );
+    font-weight: bold;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+div.words div p:last-of-type {
+    padding-left: 16px;
+    color: rgb( var( --r1 ), 0.8 );
+    word-wrap: break-word;
+}
+@media ( max-width: 600px ) {
+    div.words {
+        --leftWidth: 90px;
+    }
+}
+/* 表单组件 */
+div.formInput {
+    --height: 36px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+div.formInput div.formTitle, div.formInput div.input {
+    position: relative;
+}
+div.formInput div.formTitle p {
+    padding: 0px 0px 4px 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+div.formInput div.formTitle p * { font-size: 14px; }
+div.formInput.must div.formTitle p::after {
+    content: " *";
+    color: rgb( var( --r5 ) );
+}
+div.formInput div.input i.formIcon {
+    --size: var( --height );
+    border-radius: 8px 0px 0px 8px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+div.formInput div.input.error i:not( .action ) {
+    background: rgb( var( --r5 ) ) !important;
+    color: rgb( var( --r5c ) ) !important;
+}
+div.formInput div.input i.action {
+    border-radius: 0px 8px 8px 0px;
+    cursor: pointer;
+    left: auto;
+    right: 0;
+}
+div.formInput div.input input,
+div.formInput div.input textarea,
+div.formInput div.input select {
+    width: 100%;
+    height: var( --height );
+    padding: 0px 14px;
+    background: rgb( var( --r0 ) );
+    color: rgb(var(--r1));
+    font-size: 16px;
+    border: 1px solid rgb( var( --r3 ), 0.5 );
+    border-radius: 8px;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+}
+div.formInput div.input.error input,
+div.formInput div.input.error textarea,
+div.formInput div.input.error select {
+    border: 1px solid rgb( var( --r5 ), 0.5 );
+}
+div.formInput div.input input::placeholder,
+div.formInput div.input textarea::placeholder {
+    font-size: 14px;
+    color: rgb( var( --r1 ), 0.5 );
+}
+div.formInput div.input input.hasIcon,
+div.formInput div.input select.hasIcon {
+    padding-left: calc( var( --height ) + 8px );
+}
+div.formInput div.input input.hasAction {
+    padding-right: calc( var( --height ) + 8px );
+}
+div.formInput.input_longtext {
+    --height: 100px;
+}
+div.formInput.input_json {
+    --height: 160px;
+}
+div.formInput div.input textarea {
+    width: 100% !important;
+    min-height: 50px;
+    padding: 14px;
+}
+div.formInput.input_json textarea {
+    background: rgb( 40, 44, 52 ) !important;
+    color: rgb( 169, 176, 189 ) !important;
+}
+div.formInput div.input select {
+    cursor: pointer;
+}
+div.formInput.input_boolean label.switch{
+    float: right;
+    display: block;
+    width: 70px;
+    height: calc( var( --height ) - 10px );
+    margin: 5px 0px;
+    margin-right: 16px;
+    box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+}
+div.formInput.input_boolean label.switch, div.formInput.input_boolean label.switch * {
+    transition: 240ms;
+}
+div.formInput.input_boolean label.switch input{ display: none; }
+div.formInput.input_boolean label.switch input:checked+div.switchBox{
+    background-color: rgb( var( --r3 ) );
+}
+div.formInput.input_boolean label.switch div.switchBox{
+    width: 100%;
+    height: 100%;
+    background-color: rgb( var( --r1 ), 0.15 );
+    border-radius: 100px;
+    border: 1px solid rgb( var( --r3 ), 0.5 );
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+div.formInput.input_boolean label.switch div.switchBox div{
+    position: absolute;
+}
+div.formInput.input_boolean label.switch input:checked+div.switchBox div{
+    left: calc(100% - 19px - 3px);
+}
+div.formInput.input_boolean label.switch div.switchBox div{
+    width: calc( ( var( --height ) - 10px ) - 6px );
+    height: calc( ( var( --height ) - 10px ) - 6px );
+    background-color: rgb( var( --r6 ) );
+    border-radius: 50%;
+    left: 3px;
+    top: 3px;
+}
+div.formInput.input_boolean {
+    --left: 140px;
+}
+div.formInput.input_boolean::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+div.formInput.input_boolean div.formTitle {
+    display: flex;
+    float: left;
+    width: var( --left );
+    text-align: left;
+}
+div.formInput.input_boolean div.formTitle p {
+    width: 100%;
+    line-height: 36px;
+    padding-bottom: 0px;
+}
+div.formInput.input_boolean div.input {
+    float: right;
+    width: calc( 100% - var( --left ) - 8px );
+}
+div.formInput div.input.datetime input {
+    margin: 0px 2px;
+}
+div.formInput div.input.datetime input:first-of-type {
+    width: calc( 60% - 8px );
+}
+div.formInput div.input.datetime input:last-of-type {
+    width: calc( 40% - 8px );
+}
+div.formInput div.input.phone select {
+    width: 90px;
+}
+div.formInput div.input.phone input {
+    width: calc( 100% - 4px - 90px );
+}
+div.formInput div.upload div.label {
+    width: 100%;
+    height: 100px;
+    background: rgb( var( --r3 ), 0.15 );
+    border: 1px solid rgb( var( --r3 ), 0.25 );
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+}
+div.formInput div.upload div.label:hover {
+    border: 1px solid rgb( var( --r3 ), 0.5 );
+}
+div.formInput div.upload div.label div.hasFile, div.formInput div.upload div.label div.upload {
+    display: none;
+}
+div.formInput div.upload div.label div.action {
+    display: block;
+}
+div.formInput div.upload div.label div.upload {
+    text-align: center;
+}
+div.formInput div.upload div.label div.hasFile {
+    width: 100%;
+    padding: 0px 30px 0px 110px;
+    word-wrap: break-word;
+    box-sizing: border-box;
+}
+div.formInput div.upload div.label div.hasFile div.previewImg {
+    width: 80px;
+    height: 80px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 4px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+div.formInput div.upload div.label div.hasFile div.previewImg img.preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+div.formInput div.upload div.label div.hasFile i {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    opacity: 0.5;
+    text-align: center;
+    border-radius: 90px;
+    position: absolute;
+    right: 12px;
+    left: auto;
+    top: 12px;
+}
+div.formInput div.upload div.label div.hasFile i::before { line-height: 30px; }
+div.formInput div.upload div.label div.upload i {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-size: 24px;
+    position: static;
+}
+div.formInput ul.text {
+    padding-top: 4px;
+    padding-left: calc( 8px + 10px );
+}
+div.formInput ul.text li {
+    font-size: 12px;
+}
+@media ( min-width: 700px ) {
+    div.formInput.left {
+        --left: 140px;
+    }
+    div.formInput.left::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+    div.formInput.left div.formTitle {
+        display: flex;
+        float: left;
+        width: var( --left );
+        text-align: right;
+    }
+    div.formInput.left div.formTitle p {
+        width: 100%;
+        line-height: 36px;
+        padding-bottom: 0px;
+    }
+    div.formInput.left div.input {
+        float: right;
+        width: calc( 100% - var( --left ) - 8px );
+    }
+    div.formInput.left ul.text {
+        padding-top: calc(  var( --height ) + 4px );
+        padding-left: calc( var( --left ) + 8px + 8px  + 10px);
+    }
+}
+
+/* 移动端优化 */
+@media ( max-width: 600px ) {
+    /* 卡片 */
+    div.card {
+        padding: 10px 15px;
+    }
+    div.card div.title {
+        padding: 0px 15px;
+    }
+    div.card div.title button.button {
+        right: 15px;
+    }
+}

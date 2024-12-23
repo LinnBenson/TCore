@@ -1,0 +1,13 @@
+# File
+.env
+config/cache.config.php
+
+# Composer
+support/vendor
+support/composer.lock
+
+# Log
+*.log
+
+# Media
+storage/media/cache/*

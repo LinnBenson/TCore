@@ -1,0 +1,81 @@
+[
+    "application/controller/admin/article.controller.php",
+    "application/controller/admin/push.controller.php",
+    "application/controller/admin/service.controller.php",
+    "application/controller/admin/setting.controller.php",
+    "application/controller/admin/storage.controller.php",
+    "application/controller/admin/table.controller.php",
+    "application/controller/admin/user.controller.php",
+    "application/controller/admin/view.controller.php",
+
+    "application/controller/api/account.controller.php",
+    "application/controller/api/base.controller.php",
+    "application/controller/api/storage.controller.php",
+
+    "application/controller/cmd/base.controller.php",
+    "application/controller/cmd/manage.controller.php",
+    "application/controller/cmd/service.controller.php",
+
+    "application/controller/service/async/push.controller.php",
+    "application/controller/service/async/task.controller.php",
+    "application/controller/service/base.controller.php",
+    "application/controller/service/print.controller.php",
+
+    "application/model/admin_menu.model.php",
+    "application/model/article_sort.model.php",
+    "application/model/article.model.php",
+    "application/model/media.model.php",
+    "application/model/push_record.model.php",
+    "application/model/router_record.model.php",
+    "application/model/users_login.model.php",
+    "application/model/users.model.php",
+
+    "application/server/article.server.php",
+    "application/server/manage.server.php",
+    "application/server/service.server.php",
+    "application/server/update.server.php",
+    "application/server/user.server.php",
+
+    "loader/cmd.loader.php",
+    "loader/core.loader.php",
+    "loader/router.loader.php",
+    "loader/service.loader.php",
+    "loader/user.loader.php",
+    "loader/web.loader.php",
+
+    "public/index.php",
+    "public/library/javascript/core.js",
+    "public/library/javascript/markdown.js",
+    "public/library/javascript/websocket.js",
+    "public/library/style/core.css",
+    "public/library/style/markdown.css",
+    "public/library/style/unit.css",
+
+    "storage/backup/model.template.txt",
+    "storage/backup/server.template.txt",
+    "storage/backup/service_router.template.txt",
+    "storage/backup/service.template.txt",
+    "storage/backup/update.config.json",
+    "storage/lang/zh-CN.lang.php",
+
+    "support/method/global.method.php",
+    "support/method/push.method.php",
+    "support/method/redis.method.php",
+    "support/method/tool.method.php",
+    "support/method/web.method.php",
+
+    "support/middleware/access.middleware.php",
+    "support/middleware/request.middleware.php",
+    "support/middleware/storage.middleware.php",
+    "support/middleware/view.middleware.php",
+
+    "support/transfer/mysql.transfer.php",
+    "support/transfer/router.transfer.php",
+
+    "support/composer.json",
+
+    ".gitignore",
+    "cmd",
+    "example.env",
+    "Readme.md"
+]

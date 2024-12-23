@@ -1,0 +1,177 @@
+/* 基础框架 */
+div#index {
+    --sidebarWidth: 240px;
+    --headerHeight: 50px;
+    width: var( --vw );
+    height: var( --vh );
+    overflow: hidden;
+    position: relative;
+}
+div#index div#sidebar, div#index div#body {
+    height: 100%;
+    transition: 200ms;
+    position: absolute;
+    top: 0;
+}
+div#index div#sidebar {
+    width: var( --sidebarWidth );
+    box-shadow: none;
+    left: calc( -1 * var( --sidebarWidth ) );
+    z-index: 2;
+}
+div#index.sidebarAction div#sidebar {
+    box-shadow: 0px 0px 5px rgb( var( --r1 ), 0.25 );
+    left: 0;
+}
+div#index div#sidebar div.logo {
+    width: 100%;
+    height: 120px;
+    padding: 16px;
+    background: rgb( var( --r0 ), 0.5 );
+    color: rgb( var( --r1 ) );
+    box-sizing: border-box;
+}
+div#index div#sidebar div.logo * { color: rgb( var( --r1 ) ) !important; }
+div#index div#sidebar div.logo div {
+    text-align: center;
+}
+div#index div#sidebar div.logo img {
+    height: 18px;
+    margin-bottom: 16px;
+}
+div#index div#sidebar ul#menu {
+    max-height: calc(var(--vh) - 120px);
+    padding: 0;
+    list-style: none;
+}
+div#index div#sidebar ul#menu ul {
+    height: auto;
+    max-height: 0px;
+    padding: 0;
+    list-style: none;
+    border-left: 8px solid rgb( var( --r0 ), 0.5 );
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: 200ms;
+}
+div#index div#sidebar ul#menu ul.action {
+    max-height: 400px;
+}
+div#index div#sidebar ul#menu ul li {
+    background: rgb( var( --r0 ), 0.15 );
+}
+div#index div#sidebar ul#menu li {
+    --itemHeight: 40px;
+    display: block;
+    width: 100%;
+    height: var( --itemHeight );
+    background: rgb( var( --r0 ), 0.1 );
+    line-height: var( --itemHeight );
+    box-sizing: border-box;
+    cursor: pointer;
+}
+div#index div#sidebar ul#menu li:hover {
+    background: rgb( var( --r0 ), 0.2 );
+}
+div#index div#sidebar ul#menu li.action {
+    background: rgb( var( --r0 ), 0.35 );
+}
+div#index div#sidebar ul#menu li i {
+    --size: var( --itemHeight );
+}
+div#index div#sidebar ul#menu li i.right {
+    float: right;
+}
+div#index div#body {
+    width: 100%;
+    left: 0;
+    z-index: 1;
+}
+div#index.sidebarAction div#body {
+    width: calc( 100% - var( --sidebarWidth ) );
+    left: var( --sidebarWidth );
+}
+div#index div#body header {
+    width: 100%;
+    height: var( --headerHeight );
+    box-shadow: 0px 0px 5px rgb( var( --r1 ), 0.25 );
+}
+div#index div#body header i {
+    --size: calc( var( --headerHeight ) - 16px );
+    margin: 8px;
+    background: rgb( var( --r0 ), 0.1 );
+    font-size: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+div#index div#body header img {
+    display: inline-block;
+    width: calc( var( --headerHeight ) - 16px );
+    height: calc( var( --headerHeight ) - 16px );
+    margin: 8px;
+    border-radius: 90px;
+    cursor: pointer;
+    vertical-align: bottom;
+}
+div#index div#body header i:hover {
+    background: rgb( var( --r0 ), 0.25 );
+}
+div#index div#body header div.right {
+    float: right;
+}
+div#index div#body main {
+    width: 100%;
+    height: calc( 100% - var( --headerHeight ) );
+    padding: 25px;
+    box-sizing: border-box;
+}
+div#index div#body main div.titleName {
+    padding: 8px 20px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+div#index div#body main i#toUp {
+    --size: 40px;
+    font-size: 20px;
+    border-radius: 90px;
+    opacity: 0.85;
+    box-shadow: 0px 0px 5px rgb( var( --r0 ), 0.8 );
+    cursor: pointer;
+    transition: 200ms;
+    position: fixed;
+    right: 32px;
+    bottom: calc( -1 * ( var( --size ) + 5px ) );
+}
+div#index div#body main i#toUp.action {
+    bottom: 32px;
+}
+div#index div#body main i#toUp:hover {
+    opacity: 1;
+}
+/* 预设页面 */
+div#error {
+    height: 100%;
+}
+div#error div {
+    text-align: center;
+    margin-bottom: 36px;
+    box-sizing: border-box;
+}
+div#error div i {
+    font-size: 48px;
+}
+div#error div p {
+    margin-top: 36px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+@media ( max-width: 600px ) {
+    div#index.sidebarAction div#body {
+        width: 100%;
+    }
+    div#index div#body main {
+        padding: 20px;
+    }
+}

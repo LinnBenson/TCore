@@ -1,0 +1,19 @@
+div#register div.icon {
+    text-align: center;
+}
+div#register div.icon img {
+    width: 210px;
+    height: 140px;
+    opacity: 0.75;
+    object-fit: cover;
+}
+div#register div.other {
+    padding: 8px;
+    border-top: 1px solid rgb( var( --r3 ) );
+    box-sizing: border-box;
+}
+@media ( min-width: 700px ) {
+    div#register div.other {
+        padding: 8px 32px;
+    }
+}

@@ -1,0 +1,56 @@
+div.tc_table {
+    width: 100%;
+    padding: 12px;
+    background: rgb( var( --r6 ) );
+    box-shadow: 0px 0px 4px rgb( var( --r1 ), 0.1 );
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+div.tc_table i.operate {
+    --size: 22px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+div.tc_table div.dt-length select {
+    margin-right: 5px;
+}
+div.tc_table div.dt-info {
+    font-size: 14px;
+}
+div.tc_table select.searchItem {
+    height: 30px;
+    padding: 0px 5px;
+    background-color: transparent;
+    margin-left: 3px;
+    color: inherit;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+div.tc_table select {
+    cursor: pointer;
+}
+div.tc_table i.searchIcon {
+    --size: 30px;
+}
+div.tc_table div.dt-container div.dt-search label {
+    display: none !important;
+}
+div.tc_table td.dt-empty {
+    text-align: left !important;
+}
+
+@media( max-width: 767px ) {
+    div.tc_table div.dt-container div.dt-length {
+        display: none !important;
+    }
+    div.tc_table i.searchIcon {
+        --size: 30px;
+        float: left;
+    }
+    div.tc_table div.dt-container div.dt-search {
+        text-align: right !important;
+    }
+}

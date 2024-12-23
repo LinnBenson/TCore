@@ -1,0 +1,8 @@
+<?php
+namespace application\server;
+
+    class {{name}}Server {
+        public static function index() {
+
+        }
+    }

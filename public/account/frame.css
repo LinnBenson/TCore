@@ -1,0 +1,120 @@
+body {
+    width: 100%;
+    height: var( --vh );
+    overflow: hidden;
+}
+div#body {
+    --bodyWidth: 620px;
+    --bodyMargin: 240px;
+    --bodyPadding: 25px;
+    --mainMargin: 48px;
+    --headerHeight: 300px;
+    --footerHeight: 80px;
+    width: 100%;
+    height: 100%;
+}
+div#body div#bodyBackground {
+    width: 100%;
+    height: 100%;
+    padding: var( --bodyMargin ) 0px;
+    background: rgb( var( --r0 ), 0.8 );
+    backdrop-filter: blur( 16px );
+    -webkit-backdrop-filter: blur( 16px );
+    box-sizing: border-box;
+}
+div#body div#bodyContent {
+    width: var( --bodyWidth );
+    max-width: calc( 100% - 20px );
+    height: auto;
+    padding: var( --bodyPadding );
+    padding-top: calc( var( --headerHeight ) + var( --mainMargin ) );
+    padding-bottom: calc( var( --footerHeight ) + var( --mainMargin ) );
+    margin: 0px auto;
+    background: rgb( var( --r6 ) );
+    box-shadow: 0px 0px 5px rgb( var( --r1 ), 0.1 );
+    border-radius: 16px;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+header {
+    width: 100%;
+    height: var( --headerHeight );
+    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+header img.logo {
+    height: 18px;
+    opacity: 0.75;
+    position: absolute;
+    left: var( --bodyPadding );
+    top: var( --bodyPadding );
+}
+header div.title {
+    width: 100%;
+    padding: 8px var( --bodyPadding );
+    background: rgb( var( --r0 ), 0.65 );
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+header div.title i {
+    margin-right: 8px;
+}
+footer {
+    width: 100%;
+    height: var( --footerHeight );
+    border-top: 1px solid rgb( var( --r3 ), 0.15 );
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+footer div.footerContent {
+    font-size: 14px;
+}
+@media ( max-width: 748px ) {
+    div#body {
+        --bodyMargin: 120px;
+        --bodyPadding: 16px;
+        --headerHeight: 200px;
+        --mainMargin: 32px;
+    }
+}
+
+form.login, form.register, form.retrieve {
+    max-width: 380px;
+    padding: 10px;
+    margin: 0px auto;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+form.login button.button, form.register button.button, form.retrieve button.button {
+    width: 100%;
+    padding: 9px 0px;
+}
+ul.control {
+    --size: 30px;
+    padding: 0;
+    list-style: none;
+}
+ul.control li {
+    display: block;
+    padding: 8px 4px;
+    line-height: 30px;
+    border-bottom: 1px solid rgb( var( --r1 ), 0.08 );
+    box-sizing: border-box;
+    cursor: pointer;
+}
+ul.control li.noBorder { border: none; }
+ul.control li, ul.control li * { color: rgb( var( --r1 ) ); }
+ul.control li i.icon { margin-right: 4px; }
+ul.control li i.right {
+    float: right;
+    color: rgb( var( --r1 ), 0.25 );
+}
+ul.control li:hover i.right {
+    color: rgb( var( --r1 ) );
+}
