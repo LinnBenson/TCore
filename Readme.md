@@ -28,6 +28,8 @@
     }
   ```
 - 创建 .env （ /example.env ）
+- 进入 support 目录下执行 `composer install`
+- 在根目录下执行 `php cmd` 重新构建数据库
 
 ### 程序运行须知
 #### Header 接受参数
