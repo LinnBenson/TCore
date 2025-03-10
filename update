@@ -1,0 +1,88 @@
+#!/usr/bin/env php
+
+<?php
+    /**
+     * 更新配置
+     */
+    $config = [
+        'git' => 'https://github.com/LinnBenson/TCore/archive/refs/heads/main.zip'
+    ];
+    $name = 'TCore';
+    $cacheDir = 'update_cache/';
+    $latest = "{$cacheDir}latest.zip";
+    /**
+     * 全局工具
+     */
+    function line( $text, $process = false ) {
+        if ( is_array( $text ) ) { $text = implode( "\n", $text ); }
+        if ( !is_string( $text ) ) { return false; }
+        if ( $process !== false ) { $text = "{$process} | {$text}"; }
+        echo $text; echo PHP_EOL;
+        return true;
+    };
+    function deleteDir( $dir ) {
+        if ( !is_dir( $dir ) ) { return false; }
+        foreach( scandir( $dir ) as $file ) {
+            if ( $file === '.' || $file === '..' ) { continue; }
+            $path = "{$dir}/{$file}";
+            is_dir( $path ) ? deleteDir( $path ) : unlink( $path );
+        }
+        return rmdir( $dir );
+    }
+    $exitUpdate = function( $text, $process = false )use ( $cacheDir, $name ) {
+        if ( is_dir( $cacheDir ) ) {
+            deleteDir( $cacheDir );
+            line( '缓存目录已删除', 'OK' );
+        }
+        echo PHP_EOL; line( $text, $process );
+        exit();
+    };
+    /**
+     * 工作流程
+     */
+    line( "{$name} 更新开始！" ); echo PHP_EOL;
+    /**
+     * 检查工作
+     */
+    if ( is_dir( $cacheDir ) ) {
+        line( '正在删除原始缓存目录', 'OK' );
+        deleteDir( $cacheDir );
+    }
+    if ( !extension_loaded( 'zip' ) ) { $exitUpdate( 'PHP ZIP 扩展未安装', 'ERROR' ); }
+    if ( !file_exists( 'update' ) ) { $exitUpdate( '请在项目根目录中运行此程序', 'ERROR' ); }
+    // 创建缓存目录
+    mkdir( $cacheDir );
+    line( '缓存目录创建完成', 'OK' );
+    // 下载最新项目文件
+    echo "开始拉取项目最新代码...";
+    file_put_contents( $latest, file_get_contents( $config['git'] ) );
+    echo "\r\033[K";
+    line( '项目代码拉取完成', 'OK' );
+    // 解压文件
+    if ( !file_exists( $latest ) ) { $exitUpdate( '最新项目代码丢失！', 'ERROR' ); }
+    $zip = new ZipArchive;
+    if ( $zip->open( $latest ) === true ) {
+        $zip->extractTo( $cacheDir );
+        $zip->close();
+        line( '项目代码解压成功', 'OK' );
+    }else {
+        $exitUpdate( '项目代码解压失败', 'ERROR' );
+    }
+    // 扫描更新规则
+    $folders = glob( $cacheDir . '/*', GLOB_ONLYDIR );
+    $latestDir = count( $folders ) === 1 ? $cacheDir.basename( $folders[0] ).'/' : null;
+    $old = 'config/update.config.php';
+    if ( !file_exists( $old ) ) { $exitUpdate( '原始更新配置文件丢失', 'ERROR' ); }
+    $new = "{$latestDir}config/update.config.php";
+    if ( !file_exists( $new ) ) { $exitUpdate( '最新更新配置文件丢失', 'ERROR' ); }
+    $old = require_once $old;
+    $new = require_once $new;
+    if ( version_compare( $old['version'], $new['version'], '>=' ) ) {
+        $exitUpdate( "本地版本已是最新版本 Version{$old['version']}", 'ERROR' );
+    }
+    line( "升级 {$old['version']} ===> {$new['version']}", 'OK' );
+    /**
+     * 流程结束
+     */
+    $exitUpdate( "{$name} 更新流程已结束！" );
+?>
