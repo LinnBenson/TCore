@@ -16,6 +16,7 @@
     /**
      * 全局工具
      */
+    require_once 'support/Helper/global.helper.php';
     // 命令行输出
     function line( $text, $process = false ) {
         if ( is_array( $text ) ) { $text = implode( "\n", $text ); }
@@ -24,16 +25,6 @@
         echo $text; echo PHP_EOL;
         return true;
     };
-    // 删除目录
-    function deleteDir( $dir ) {
-        if ( !is_dir( $dir ) ) { return false; }
-        foreach( scandir( $dir ) as $file ) {
-            if ( $file === '.' || $file === '..' ) { continue; }
-            $path = "{$dir}/{$file}";
-            is_dir( $path ) ? deleteDir( $path ) : unlink( $path );
-        }
-        return rmdir( $dir );
-    }
     // 主动退出程序
     $exitUpdate = function( $text, $process = false )use ( $cacheDir, $name ) {
         if ( is_dir( $cacheDir ) ) {
@@ -89,10 +80,10 @@
     // 扫描更新规则
     $folders = glob( $cacheDir . '/*', GLOB_ONLYDIR );
     $latestDir = count( $folders ) === 1 ? $cacheDir.basename( $folders[0] ).'/' : null;
-    $old = 'config/update.config.php';
+    $old = _config( 'update.config.php' );
     if ( !file_exists( $old ) ) { $exitUpdate( '原始更新配置文件丢失', 'ERROR' ); }
     $old = require_once $old;
-    $new = "{$latestDir}config/update.config.php";
+    $new = "{$latestDir}support/System/config/update.config.php";
     if ( !file_exists( $new ) ) { $exitUpdate( '最新更新配置文件丢失', 'ERROR' ); }
     $new = require_once $new;
     if ( version_compare( $old['version'], $new['version'], '>=' ) ) {
@@ -117,9 +108,14 @@
         }
     }
     // 删除文件
-    foreach( $new['delete'] as $file ) {
+    foreach( $new['delete']['file'] as $file ) {
         if ( file_exists( $file ) ) {
             line( "文件删除: {$file}", unlink( $file ) ? 'OK' : 'ERROR' );
+        }
+    }
+    foreach( $new['delete']['dir'] as $dir ) {
+        if ( is_dir( $dir ) ) {
+            line( "目录删除: {$dir}", deleteDir( $dir ) ? 'OK' : 'ERROR' );
         }
     }
     /**
