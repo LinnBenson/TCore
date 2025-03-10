@@ -96,7 +96,7 @@
     $old = require_once $old;
     $new = require_once $new;
     if ( version_compare( $old['version'], $new['version'], '>=' ) ) {
-        if ( !empty( $argv[1] ) && $argv[1] !== 'all' ) {
+        if ( empty( $argv[1] ) || $argv[1] !== 'all' ) {
             $exitUpdate( "本地版本已是最新版本 Version{$old['version']}", 'ERROR' );
         }
     }
