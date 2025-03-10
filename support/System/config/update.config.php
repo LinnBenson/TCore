@@ -2,8 +2,9 @@
     return [
         'version' => '1.0.0',
         'file' => [
-            'config/update.config.php',
             'public/index.php',
+            'support/Helper/global.helper.php',
+            'support/System/config/update.config.php',
             '.gitignore',
             'composer.json',
             'LICENSE',
