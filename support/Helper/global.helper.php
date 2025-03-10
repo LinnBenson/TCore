@@ -6,7 +6,7 @@
      */
     function GetSystemFile( $dir ) {
         if ( !file_exists( $dir ) && file_exists( "support/System/{$dir}" ) ) {
-            $dir = "support/{$dir}";
+            $dir = "support/System/{$dir}";
         }
         return $dir;
     }
