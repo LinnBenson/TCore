@@ -111,8 +111,10 @@
     }
     // 创建目录
     foreach( $new['dir'] as $dir ) {
-        checkDir( $dir, false );
-        line( "目录创建: {$dir}", 'OK' );
+        if ( !is_dir( $dir ) ) {
+            checkDir( $dir, false );
+            line( "目录创建: {$dir}", 'OK' );
+        }
     }
     // 删除文件
     foreach( $new['delete'] as $file ) {
