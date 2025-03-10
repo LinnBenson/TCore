@@ -9,9 +9,6 @@
             'README.md',
             'update'
         ],
-        'dir' => [
-
-        ],
         'delete' => [
 
         ]
