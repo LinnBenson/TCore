@@ -91,13 +91,13 @@
     $latestDir = count( $folders ) === 1 ? $cacheDir.basename( $folders[0] ).'/' : null;
     $old = 'config/update.config.php';
     if ( !file_exists( $old ) ) { $exitUpdate( '原始更新配置文件丢失', 'ERROR' ); }
+    $old = require_once $old;
     $new = "{$latestDir}config/update.config.php";
     if ( !file_exists( $new ) ) { $exitUpdate( '最新更新配置文件丢失', 'ERROR' ); }
-    $old = require_once $old;
     $new = require_once $new;
     if ( version_compare( $old['version'], $new['version'], '>=' ) ) {
         if ( empty( $argv[1] ) || $argv[1] !== 'all' ) {
-            $exitUpdate( "本地版本已是最新版本 Version{$old['version']}", 'ERROR' );
+            $exitUpdate( "本地版本已是最新版本 Version {$old['version']}", 'ERROR' );
         }
     }
     line( "升级 {$old['version']} ===> {$new['version']}", 'OK' );
@@ -108,6 +108,11 @@
         if ( !file_exists( $newFile ) ) { line( "文件更新: {$file}", 'ERROR' ); continue; }
         checkDir( $file, true );
         line( "文件更新: {$file}", copy( $newFile, $oldFile ) ? 'OK' : 'ERROR' );
+    }
+    // 创建目录
+    foreach( $new['dir'] as $dir ) {
+        checkDir( $dir, false );
+        line( "目录创建: {$dir}", 'OK' );
     }
     // 删除文件
     foreach( $new['delete'] as $file ) {

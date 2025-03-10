@@ -5,9 +5,13 @@
             'config/update.config.php',
             'public/index.php',
             '.gitignore',
+            'composer.json',
             'LICENSE',
             'README.md',
             'update'
+        ],
+        'dir' => [
+
         ],
         'delete' => [
 
