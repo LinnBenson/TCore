@@ -78,9 +78,16 @@
     $old = require_once $old;
     $new = require_once $new;
     if ( version_compare( $old['version'], $new['version'], '>=' ) ) {
-        $exitUpdate( "本地版本已是最新版本 Version{$old['version']}", 'ERROR' );
+        // $exitUpdate( "本地版本已是最新版本 Version{$old['version']}", 'ERROR' );
     }
     line( "升级 {$old['version']} ===> {$new['version']}", 'OK' );
+    // 更新文件
+    foreach( $new['file'] as $file ) {
+        $oldFile = $file;
+        $newFile = "{$latestDir}{$file}";
+        if ( !file_exists( $newFile ) ) { continue; }
+        line( "文件更新: {$file}", copy( $newFile, $oldFile ) ? 'OK' : 'ERROR' );
+    }
     /**
      * 流程结束
      */
