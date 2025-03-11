@@ -106,10 +106,6 @@
                 line( "文件更新: {$fileDir}", copy( $file->getPathname(), $fileDir ) ? 'OK' : 'ERROR' );
             }
         }
-        if ( !is_dir( $dir ) ) {
-            checkDir( $dir, false );
-            line( "目录创建: {$dir}", 'OK' );
-        }
     }
     // 删除文件
     foreach( $config['delete']['file'] as $file ) {
