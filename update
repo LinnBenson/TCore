@@ -83,6 +83,14 @@
     $newConfig = require_once $newConfig;
     if ( version_compare( $config['version'], $newConfig['version'], '>=' ) ) {
         if ( empty( $argv[1] ) || $argv[1] !== 'all' ) {
+            // 检查 composer
+            $composer = json_decode( file_get_contents( 'composer.json' ), true );
+            $updateComposer = json_decode( file_get_contents( "{$latestDir}composer.json" ), true );
+            foreach( $updateComposer['require'] as $key => $value ) {
+                if ( empty( $composer['require'][$key] ) ) {
+                    line( "请安装 Composer: {$key} {$value}", 'WARNING' );
+                }
+            }
             $exitUpdate( "当前已为最新版本，无需操作升级！", 'Complete' );
         }
     }
