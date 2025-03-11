@@ -2,21 +2,10 @@
 
 <?php
     /**
-     * 更新配置
-     */
-    $config = [
-        'name' => 'TCore',
-        'cacheDir' => 'update_cache/',
-        'cacheFile' => 'latest.zip',
-        'git' => 'https://github.com/LinnBenson/TCore/archive/refs/heads/main.zip'
-    ];
-    $name = $config['name'];
-    $cacheDir = $config['cacheDir'];
-    $latest = "{$cacheDir}{$config['cacheFile']}";
-    /**
-     * 全局工具
+     * 依赖导入
      */
     require_once 'support/Helper/global.helper.php';
+    $config = require_once __file( 'config/update.config.php' );
     // 命令行输出
     function line( $text, $process = false ) {
         if ( is_array( $text ) ) { $text = implode( "\n", $text ); }
@@ -26,13 +15,12 @@
         return true;
     };
     // 主动退出程序
-    $exitUpdate = function( $text, $process = false )use ( $cacheDir, $name ) {
-        if ( is_dir( $cacheDir ) ) {
-            deleteDir( $cacheDir );
+    $exitUpdate = function( $text, $process = false )use ( $config ) {
+        if ( is_dir( $config['cache']['dir'] ) ) {
+            deleteDir( $config['cache']['dir'] );
             line( '缓存目录已删除', 'OK' );
         }
-        echo PHP_EOL; line( $text, $process );
-        exit();
+        echo PHP_EOL; line( $text, $process ); exit();
     };
     // 检查文件夹是否存在
     function checkDir( $dir, $file = true ) {
@@ -49,26 +37,33 @@
     /**
      * 工作流程
      */
-    line( "{$name} 更新开始！" ); echo PHP_EOL;
+    line( "{$config['name']} 更新开始！" );
+    line( "当前版本号：Version {$config['version']}" );
+    echo PHP_EOL;
     /**
      * 检查工作
      */
+    $cacheDir = $config['cache']['dir'];
     if ( is_dir( $cacheDir ) ) {
-        line( '正在删除原始缓存目录', 'OK' );
         deleteDir( $cacheDir );
+        line( '原始缓存目录已删除', 'OK' );
     }
     if ( !extension_loaded( 'zip' ) ) { $exitUpdate( 'PHP ZIP 扩展未安装', 'ERROR' ); }
     if ( !file_exists( 'update' ) ) { $exitUpdate( '请在项目根目录中运行此程序', 'ERROR' ); }
+    /**
+     * 拉取代码
+     */
     // 创建缓存目录
     mkdir( $cacheDir );
     line( '缓存目录创建完成', 'OK' );
     // 下载最新项目文件
-    echo "开始拉取项目最新代码...";
+    $latest = "{$config['cache']['dir']}{$config['cache']['file']}";
+    echo "开始拉取项目代码...";
     file_put_contents( $latest, file_get_contents( $config['git'] ) );
     echo "\r\033[K";
     line( '项目代码拉取完成', 'OK' );
     // 解压文件
-    if ( !file_exists( $latest ) ) { $exitUpdate( '最新项目代码丢失！', 'ERROR' ); }
+    if ( !file_exists( $latest ) ) { $exitUpdate( '拉取的项目代码丢失！', 'ERROR' ); }
     $zip = new ZipArchive;
     if ( $zip->open( $latest ) === true ) {
         $zip->extractTo( $cacheDir );
@@ -80,20 +75,18 @@
     // 扫描更新规则
     $folders = glob( $cacheDir . '/*', GLOB_ONLYDIR );
     $latestDir = count( $folders ) === 1 ? $cacheDir.basename( $folders[0] ).'/' : null;
-    $old = _config( 'update.config.php' );
-    if ( !file_exists( $old ) ) { $exitUpdate( '原始更新配置文件丢失', 'ERROR' ); }
-    $old = require_once $old;
-    $new = "{$latestDir}support/System/config/update.config.php";
-    if ( !file_exists( $new ) ) { $exitUpdate( '最新更新配置文件丢失', 'ERROR' ); }
-    $new = require_once $new;
-    if ( version_compare( $old['version'], $new['version'], '>=' ) ) {
+    $newConfig = "{$latestDir}support/System/config/update.config.php";
+    if ( !file_exists( $newConfig ) ) { $exitUpdate( '拉取的配置文件丢失', 'ERROR' ); }
+    $newConfig = require_once $newConfig;
+    if ( version_compare( $config['version'], $newConfig['version'], '>=' ) ) {
         if ( empty( $argv[1] ) || $argv[1] !== 'all' ) {
-            $exitUpdate( "本地版本已是最新版本 Version {$old['version']}", 'ERROR' );
+            $exitUpdate( "当前已为最新版本，无需操作升级！", 'Complete' );
         }
     }
-    line( "升级 {$old['version']} ===> {$new['version']}", 'OK' );
+    line( "准备升级 {$old['version']} ===> {$newConfig['version']}", 'OK' );
+    $config = $newConfig;
     // 更新文件
-    foreach( $new['file'] as $file ) {
+    foreach( $config['file'] as $file ) {
         $oldFile = $file;
         $newFile = "{$latestDir}{$file}";
         if ( !file_exists( $newFile ) ) { line( "文件更新: {$file}", 'ERROR' ); continue; }
@@ -101,19 +94,19 @@
         line( "文件更新: {$file}", copy( $newFile, $oldFile ) ? 'OK' : 'ERROR' );
     }
     // 创建目录
-    foreach( $new['dir'] as $dir ) {
+    foreach( $config['dir'] as $dir ) {
         if ( !is_dir( $dir ) ) {
             checkDir( $dir, false );
             line( "目录创建: {$dir}", 'OK' );
         }
     }
     // 删除文件
-    foreach( $new['delete']['file'] as $file ) {
+    foreach( $config['delete']['file'] as $file ) {
         if ( file_exists( $file ) ) {
             line( "文件删除: {$file}", unlink( $file ) ? 'OK' : 'ERROR' );
         }
     }
-    foreach( $new['delete']['dir'] as $dir ) {
+    foreach( $config['delete']['dir'] as $dir ) {
         if ( is_dir( $dir ) ) {
             line( "目录删除: {$dir}", deleteDir( $dir ) ? 'OK' : 'ERROR' );
         }
@@ -121,6 +114,6 @@
     /**
      * 流程结束
      */
-    line( "升级 {$old['version']} ===> {$new['version']}", 'OK' );
-    $exitUpdate( "{$name} 更新流程已结束！" );
+    line( "当前版本号：Version {$config['version']}" );
+    $exitUpdate( "{$config['name']} 更新完成！" );
 ?>
