@@ -10,7 +10,10 @@
     function line( $text, $process = false ) {
         if ( is_array( $text ) ) { $text = implode( "\n", $text ); }
         if ( !is_string( $text ) ) { return false; }
-        if ( $process !== false ) { $text = "{$process} | {$text}"; }
+        if ( $process !== false ) {
+            $process = $process === 'ERROR' ? "\033[31m\033[1m{$process}\033[0m" : "\033[32m\033[1m{$process}\033[0m";
+            $text = "{$process} | {$text}";
+        }
         echo $text; echo PHP_EOL;
         return true;
     };
