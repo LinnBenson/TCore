@@ -13,8 +13,6 @@
         ],
         'file' => [
             'public/index.php',
-            'support/Helper/global.helper.php',
-            'support/System/config/update.config.php',
             '.env.example',
             '.gitignore',
             'LICENSE',
