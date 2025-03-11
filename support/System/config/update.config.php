@@ -17,7 +17,6 @@
             'support/System/config/update.config.php',
             'tcore/.env.example',
             '.gitignore',
-            'composer.json',
             'LICENSE',
             'README.md',
             'update'
@@ -32,5 +31,13 @@
             'dir' => [
 
             ]
+        ],
+        'composer' => [
+            'vlucas/phpdotenv',
+            'blocktrail/cryptojs-aes-php',
+            'illuminate/database',
+            'workerman/workerman',
+            'workerman/channel',
+            'textalk/websocket'
         ]
     ];
