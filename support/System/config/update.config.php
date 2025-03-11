@@ -15,7 +15,7 @@
             'public/index.php',
             'support/Helper/global.helper.php',
             'support/System/config/update.config.php',
-            'tcore/.env.example',
+            '.env.example',
             '.gitignore',
             'LICENSE',
             'README.md',

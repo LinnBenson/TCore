@@ -117,7 +117,7 @@
     // 检查 composer
     $composer = json_decode( file_get_contents( 'composer.json' ), true );
     foreach( $config['composer'] as $value ) {
-        if ( empty( $composer[$value] ) ) {
+        if ( empty( $composer['require'][$value] ) ) {
             line( "请安装 Composer: {$value}", 'WARNING' );
         }
     }
