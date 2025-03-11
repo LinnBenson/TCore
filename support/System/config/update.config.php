@@ -22,7 +22,7 @@
             'update'
         ],
         'dir' => [
-
+            'support'
         ],
         'delete' => [
             'file' => [

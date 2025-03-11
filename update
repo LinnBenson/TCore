@@ -96,8 +96,17 @@
         checkDir( $file, true );
         line( "文件更新: {$file}", copy( $newFile, $oldFile ) ? 'OK' : 'ERROR' );
     }
-    // 创建目录
+    // 更新目录
     foreach( $config['dir'] as $dir ) {
+        $iterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( "{$latestDir}{$file}" ) );
+        foreach ( $iterator as $file ) {
+            if ( $file->isFile() ) {
+                echo $file->getPathname(); echo PHP_EOL;
+                $fileDir = strpos( $file->getPathname(), $latestDir ) === 0 ? substr( $file->getPathname(), strlen( $latestDir ) ) : $file->getPathname();
+                checkDir( $file->getPathname(), true );
+                line( "文件更新: {$fileDir}", copy( $file->getPathname(), $fileDir ) ? 'OK' : 'ERROR' );
+            }
+        }
         if ( !is_dir( $dir ) ) {
             checkDir( $dir, false );
             line( "目录创建: {$dir}", 'OK' );
