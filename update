@@ -116,9 +116,10 @@
     }
     // 检查 composer
     $composer = json_decode( file_get_contents( 'composer.json' ), true );
-    foreach( $config['composer'] as $value ) {
-        if ( empty( $composer['require'][$value] ) ) {
-            line( "请安装 Composer: {$value}", 'WARNING' );
+    $updateComposer = json_decode( file_get_contents( "{$latestDir}composer.json" ), true );
+    foreach( $updateComposer['require'] as $key => $value ) {
+        if ( empty( $composer['require'][$key] ) ) {
+            line( "请安装 Composer: {$key} => {$value}", 'WARNING' );
         }
     }
     /**
