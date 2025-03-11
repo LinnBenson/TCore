@@ -119,7 +119,7 @@
     $updateComposer = json_decode( file_get_contents( "{$latestDir}composer.json" ), true );
     foreach( $updateComposer['require'] as $key => $value ) {
         if ( empty( $composer['require'][$key] ) ) {
-            line( "请安装 Composer: {$key} => {$value}", 'WARNING' );
+            line( "请安装 Composer: {$key} {$value}", 'WARNING' );
         }
     }
     /**
