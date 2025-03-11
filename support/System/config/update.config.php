@@ -15,6 +15,7 @@
             'public/index.php',
             'support/Helper/global.helper.php',
             'support/System/config/update.config.php',
+            'tcore/.env.example',
             '.gitignore',
             'composer.json',
             'LICENSE',
