@@ -29,5 +29,9 @@
             'dir' => [
 
             ]
+        ],
+        'must' => [
+            'app/Bootstrap/MainProcess.php',
+            'config/app.config.php'
         ]
     ];

@@ -126,6 +126,16 @@
             line( "目录删除: {$dir}", deleteDir( $dir ) ? 'OK' : 'ERROR' );
         }
     }
+    // 创建必须文件
+    foreach( $config['must'] as $file ) {
+        $oldFile = $file;
+        $newFile = "{$latestDir}{$file}";
+        if ( !file_exists( $oldFile ) ) {
+            if ( !file_exists( $newFile ) ) { line( "文件更新: {$file}", 'ERROR' ); continue; }
+            checkDir( $file, true );
+            line( "文件更新: {$file}", copy( $newFile, $oldFile ) ? 'OK' : 'ERROR' );
+        }
+    }
     // 检查 composer
     $composer = json_decode( file_get_contents( 'composer.json' ), true );
     $updateComposer = json_decode( file_get_contents( "{$latestDir}composer.json" ), true );
