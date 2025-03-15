@@ -13,10 +13,7 @@
         ],
         'file' => [
             'public/index.php',
-            '.env.example',
-            '.gitignore',
-            'LICENSE',
-            'README.md',
+            'storage/log/.gitignore',
             'update'
         ],
         'dir' => [
@@ -32,6 +29,8 @@
         ],
         'must' => [
             'app/Bootstrap/MainProcess.php',
-            'config/app.config.php'
+            'config/app.config.php',
+            'config/autoload.config.php',
+            'config/log.config.php'
         ]
     ];

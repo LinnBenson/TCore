@@ -133,7 +133,7 @@
         if ( !file_exists( $oldFile ) ) {
             if ( !file_exists( $newFile ) ) { line( "文件更新: {$file}", 'ERROR' ); continue; }
             checkDir( $file, true );
-            line( "文件更新: {$file}", copy( $newFile, $oldFile ) ? 'OK' : 'ERROR' );
+            line( "文件创建: {$file}", copy( $newFile, $oldFile ) ? 'OK' : 'ERROR' );
         }
     }
     // 检查 composer

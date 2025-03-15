@@ -43,6 +43,8 @@ use Dotenv\Dotenv;
             }catch( Exception $e ) {
                 exit( "A serious error occurred: ".$e->getMessage() );
             }
+            // 启用性检查
+            if ( !config( 'app.enable' ) ) { exit( "The application is disabled." ); }
             // 调整 PHP 配置
             if ( config( 'app.debug' ) ) {
                 error_reporting( E_ERROR | E_WARNING | E_PARSE );
@@ -57,7 +59,20 @@ use Dotenv\Dotenv;
         /**
          * 自动加载应用
          */
+        public static $autoload = []; // 自动加载
         private function autoload() {
-
+            self::$autoload = config( 'autoload.default' );
+            spl_autoload_register( function( $class ) {
+                if ( !empty( Bootstrap::$autoload[$class] ) ) {
+                    import( Bootstrap::$autoload[$class] );
+                    return true;
+                }else if ( startsWith( $class, 'App\\' ) ) {
+                    $class = explode( '\\', $class );
+                    $class[0] = strtolower( $class[0] ); // App
+                    import( implode( '/', $class ).".".strtolower( $class[1] ).".php" );
+                    return true;
+                }
+                return false;
+            });
         }
     }
