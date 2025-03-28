@@ -23,8 +23,6 @@
             'public/library/js/jquery-3.7.1.min.js',
             'public/library/js/marked.min.js',
             'public/library/js/core.js',
-            'resource/lang/zh-CN/base.lang.php',
-            'resource/lang/zh-CN/vaildata.lang.php',
             'storage/backup/readme/TCoreView.md',
             'update'
         ],
