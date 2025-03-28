@@ -1,0 +1,163 @@
+{{view( 'library.header', [ 'title' => 'Welcome to TCore' ] )}}
+
+<style>
+    div#index {
+        width: var( --vw );
+        height: var( --vh );
+        box-sizing: border-box;
+    }
+    div#index main {
+        width: 800px;
+        height: 480px;
+        max-width: calc( 100% - 30px );
+        max-height: 95vh;
+        background: rgb( var( --r3 ), 0.1 );
+        border-radius: 20px;
+        box-sizing: border-box;
+        position: relative;
+    }
+    div#index main.action {
+        width: calc( var( --vw ) - 50px );
+        height: calc( var( --vh ) - 50px );
+    }
+    div#index main i.method {
+        --size: 30px;
+        border-radius: 90px;
+        cursor: pointer;
+    }
+    div#index main i.mainAction {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+    }
+    div#index main i.mainUp {
+        --size: 40px;
+        border-radius: var( --radius );
+        opacity: 0.5;
+        transition: 200ms;
+        position: fixed;
+        right: 20px;
+        bottom: -50px;
+    }
+    div#index main i.mainUp.action{ bottom: 20px; }
+    div#index main div.content {
+        width: 100%;
+        height: 100%;
+        padding: 0px 8px;
+        box-sizing: border-box;
+    }
+    div#index main div.content div.info {
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+    div#index main div.content div.iconsInfo {
+        padding-bottom: 8px;
+    }
+    div#index main div.content ul[icons] {
+        padding: 0;
+        list-style: none;
+    }
+    div#index main div.content ul[icons] li {
+        --size: 50px;
+        display: inline-block;
+        width: 60px;
+        height: 70px;
+        margin-bottom: 4px;
+        background: rgb( var( --r3 ), 0.25 );
+        text-align: center;
+        border-radius: var( --radius );
+        cursor: pointer;
+    }
+    div#index main div.content ul[icons] li p {
+        width: 100%;
+        padding: 0px 5px;
+        box-sizing: border-box;
+    }
+    @media ( max-width: 580px ) {
+        div#index main {
+            width: var( --vw );
+            height: var( --vh );
+            max-width: var( --vw );
+            max-height: var( --vh );
+            border-radius: 0px;
+            box-sizing: border-box;
+        }
+        div#index main i.mainAction { display: none; }
+    }
+</style>
+<div id="index" class="center">
+    <main class="padding24" main>
+        <i class="bi-arrows-angle-expand bold font6 block method mainAction r3" onclick="view.mainAction()"></i>
+        <i class="bi-arrow-up-circle bold font5 block method mainUp r3" onclick="tc.view( 'main div.content' ).scroll( 'top' )"></i>
+        <div class="content scroll">
+            <h3>{{config( 'app.name' )}} Version{{config( 'update.version' )}}</h3>
+            <p class="font7 opa50">{{config( 'view.copyright' )}}</p>
+            <hr />
+            <div class="info r3 bottom8 padding16">
+                <p class="font6">ID: {{$request->id}}</p>
+            </div>
+            <x-card class="bottom8 method" title="组件预览">
+                <button class="r4" onclick="tc.unit.toast( ['base.error.401'] )" vButton>Toast 通知</button>
+                <button class="r5" onclick="tc.unit.toast( ['base.error.401'], true )" vButton>Toast 通知</button>
+                <button class="r3" onclick="tc.unit.load( true, 8000 )" vButton>全屏加载</button>
+                <button class="r3" onclick="tc.view( 'div.method' ).load( true, 8000 )" vButton>局部加载</button>
+                <button class="r1" onclick="tc.unit.popup( '测试标题', tc.view( 'div.info' ), { text: '通过', run: function() { tc.view( 'popup' ).load( true, 5000 ); } } )" vButton>弹窗工具</button>
+            </x-card>
+            <x-card title="Bootstrap Icons" id="icons">
+                <div class="iconsInfo">
+                    <span class="font6"><span iconsCount>0</span> Pie</i>
+                </div>
+                <ul icons></ul>
+            </x-card>
+        </div>
+    </main>
+</div>
+<script>
+    const view = {
+        icons: {},
+        start: function() {
+            this.renderIcons( this.getAllIcons() );
+            tc.view( 'main div.content' ).on( 'scroll', function() {
+                tc.view( 'main i.mainUp' ).action( !($( this ).scrollTop() === 0) );
+            });
+        },
+        mainAction: function() {
+            tc.view( 'main' ).action() ?
+                tc.view( 'i.mainAction' ).removeClass( 'bi-arrows-angle-contract' ).addClass( 'bi-arrows-angle-expand' )
+                :
+                tc.view( 'i.mainAction' ).addClass( 'bi-arrows-angle-contract' ).removeClass( 'bi-arrows-angle-expand' );
+        },
+        getAllIcons: function() {
+            const biClasses = new Set();
+            for ( const stylesheet of document.styleSheets ) {
+                try {
+                    for ( const rule of stylesheet.cssRules || [] ) {
+                        if ( rule.selectorText ) {
+                            const matches = rule.selectorText.match(/\.bi-[\w-]+/g);
+                            if ( matches ) {
+                                matches.forEach( cls => biClasses.add( cls.substring( 1 ) ) );
+                            }
+                        }
+                    }
+                }catch( error ) {
+                    tc.unit.toast( ['error.unknown'], true );
+                }
+            }
+            const icons = Array.from( biClasses );
+            if ( is_array( icons ) ) { this.icons = icons; }
+            return this.icons;
+        },
+        renderIcons: function( icons ) {
+            tc.view( 'iconsCount' ).html( icons.length );
+            tc.view( 'icons' ).list( icons, `
+                <li class="copy" data-clipboard-text="{item}">
+                    <i class="{item} font4 block"></i>
+                    <p class="font7 more">{item}</p>
+                </li>
+            `);
+        }
+    };
+    view.start();
+</script>
+
+{{view( 'library.footer', [] )}}

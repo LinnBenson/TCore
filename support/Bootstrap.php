@@ -1,9 +1,10 @@
 <?php
 
+use App\Bootstrap\MainProcess;
 use Dotenv\Dotenv;
 
     class Bootstrap {
-        public static $cache = array( 'config' => [] ); // 缓存
+        public static $cache = array( 'config' => [], 'lang' => [] ); // 缓存
         /**
          * 构造函数
          * new Bootstrap( $callback|false:function(回调函数) )
@@ -31,8 +32,8 @@ use Dotenv\Dotenv;
          */
         private function initialization() {
             // 基础依赖加载
-            require_once 'support/Helper/global.helper.php';
-            require_once 'support/Helper/system.helper.php';
+            require_once 'support/Helper/Global.helper.php';
+            require_once 'support/Helper/System.helper.php';
             require_once 'app/Bootstrap/MainProcess.php';
             // 加载 Composer
             import( 'vendor/autoload.php' );
@@ -75,4 +76,10 @@ use Dotenv\Dotenv;
                 return false;
             });
         }
+        /**
+         * 抛出一个错误
+         * - Bootstrap::toError( $data:mixed(错误信息) );
+         * - return null
+         */
+        public static function toError( $data ) { throw new Exception( $data ); }
     }

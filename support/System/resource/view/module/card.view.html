@@ -1,0 +1,8 @@
+<div class="<?=!empty( $title ) ? 'hasTitle' : ''?> <?=$class?>" <?=!empty( $id ) ? 'id="'.$id.'"' : ''?> vCard>
+    <?php if ( !empty( $title ) ): ?>
+    <h4 class="cardTitle"><?=$title?></h4>
+    <?php endif; ?>
+    <div class="cardBody">
+        <?=$children?>
+    </div>
+</div>

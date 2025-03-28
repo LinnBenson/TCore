@@ -1,4 +1,7 @@
 <?php
+
+use Support\Provider\HttpProvider;
+
     /**
      * HTTP 服务端入口
      */
@@ -8,5 +11,5 @@
      */
     require_once 'support/Bootstrap.php';
     new Bootstrap(function() {
-        return 'ok';
+        return HttpProvider::init();
     });

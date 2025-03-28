@@ -92,5 +92,5 @@
         }else if ( $val === null ) {
             $echo = "Null( '' )";
         }
-        var_export( $echo ); echo PHP_EOL.PHP_EOL; if ( $exit ) { exit(); }
+        print_r( $echo ); echo PHP_EOL.PHP_EOL; if ( $exit ) { exit(); }
     }
