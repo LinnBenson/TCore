@@ -4,7 +4,7 @@
 
 use Support\Handler\Request;
 
-    class   ViewBase {
+    class ViewBase {
         /**
          * 请求系统信息
          */

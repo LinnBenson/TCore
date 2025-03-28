@@ -14,5 +14,9 @@
         'app' => [
             'support/System/router/app.router.php',
             'router/app.router.php'
+        ],
+        'storage' => [
+            'support/System/router/storage.router.php',
+            'router/storage.router.php'
         ]
     ];
