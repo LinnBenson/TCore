@@ -110,7 +110,7 @@
         foreach ( $iterator as $file ) {
             if ( $file->isFile() ) {
                 $fileDir = strpos( $file->getPathname(), $latestDir ) === 0 ? substr( $file->getPathname(), strlen( $latestDir ) ) : $file->getPathname();
-                checkDir( $file->getPathname(), true );
+                checkDir( $fileDir, true );
                 line( "文件更新: {$fileDir}", copy( $file->getPathname(), $fileDir ) ? 'OK' : 'ERROR' );
             }
         }
