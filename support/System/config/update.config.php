@@ -56,5 +56,9 @@
             'public/library/icon/logo_b.png',
             'public/library/icon/logo_w.png',
             'public/favicon.ico',
+            'router/api.router.php',
+            'router/app.router.php',
+            'router/storage.router.php',
+            'router/view.router.php'
         ]
     ];
