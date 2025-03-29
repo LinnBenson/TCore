@@ -52,6 +52,16 @@
     }
     div#index main div.content div.iconsInfo {
         padding-bottom: 8px;
+        text-align: center;
+    }
+    div#index main div.content div.iconsInfo input {
+        width: 100px;
+        height: 28px;
+        padding: 0px 8px;
+        background: rgb( var( --r0 ) );
+        border: none;
+        border-radius: var( --radius );
+        box-sizing: border-box;
     }
     div#index main div.content ul[icons] {
         padding: 0;
@@ -96,15 +106,30 @@
             <div class="info r3 bottom8 padding16">
                 <p class="font6">ID: {{$request->id}}</p>
             </div>
-            <x-card class="bottom8 method" title="组件预览">
+            <x-card class="bottom8 method" title="组件预览" icon="bi-app-indicator" close="true">
                 <button class="r4" onclick="tc.unit.toast( ['base.error.401'] )" vButton>Toast 通知</button>
                 <button class="r5" onclick="tc.unit.toast( ['base.error.401'], true )" vButton>Toast 通知</button>
                 <button class="r3" onclick="tc.unit.load( true, 8000 )" vButton>全屏加载</button>
                 <button class="r3" onclick="tc.view( 'div.method' ).load( true, 8000 )" vButton>局部加载</button>
                 <button class="r1" onclick="tc.unit.popup( '测试标题', tc.view( 'div.info' ), { text: '通过', run: function() { tc.view( 'popup' ).load( true, 5000 ); } } )" vButton>弹窗工具</button>
             </x-card>
-            <x-card title="Bootstrap Icons" id="icons">
+            <x-card class="bottom8 formShow" title="表单展示" icon="bi-chat-quote" close="false">
+                {{view( 'library.form', [
+                    'left' => true,
+                    'data' => [
+                        [ 'type' => 'text', 'title' => '文本输入', 'name' => 'text', 'hint' => '这是一个文本输入框', 'readme' => [ '第一行提示内容', '这是第二行提示内容' ] ],
+                        [ 'type' => 'alnum', 'title' => '字符串输入', 'name' => 'alnum', 'hint' => '这是一个字符串输入框' ],
+                        [ 'type' => 'phone', 'title' => '手机号输入', 'name' => 'phone', 'hint' => '这是一个手机号输入框' ],
+                        [ 'type' => 'number', 'title' => '数字输入', 'name' => 'number', 'hint' => '这是一个数字输入框' ],
+                        [ 'type' => 'email', 'must' => true, 'title' => '邮箱输入', 'name' => 'email', 'hint' => '这是一个邮箱输入框' ],
+                        [ 'type' => 'password', 'title' => '密码输入', 'name' => 'password', 'hint' => '这是一个密码输入框' ]
+                    ]
+                ])}}
+            </x-card>
+            <x-card class="bottom8" title="Bootstrap Icons" id="icons" icon="bi-star" close="true">
                 <div class="iconsInfo">
+                    <span class="font6">{{$t('base.search')}}:</i>
+                    <input autocomplete="off" searchIcons /> /
                     <span class="font6"><span iconsCount>0</span> Pie</i>
                 </div>
                 <ul icons></ul>
@@ -119,6 +144,16 @@
             this.renderIcons( this.getAllIcons() );
             tc.view( 'main div.content' ).on( 'scroll', function() {
                 tc.view( 'main i.mainUp' ).action( !($( this ).scrollTop() === 0) );
+            });
+            // 搜索框变化事件
+            tc.view( 'searchIcons' ).on( 'input', function() {
+                const value = $( this ).val().toLowerCase();
+                if ( empty( value ) ) {
+                    view.renderIcons( view.icons );
+                }else {
+                    const icons = view.icons.filter(item => item.includes( value ));
+                    view.renderIcons( icons );
+                }
             });
         },
         mainAction: function() {

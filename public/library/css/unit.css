@@ -21,12 +21,43 @@
     border: 1px solid rgb( var( --r3 ), 0.35 );
     border-radius: calc( var( --radius ) * 1.5 );
 }
+[vCard] div.cardBody {
+    transition: 200ms;
+}
 [vCard].hasTitle {
     padding-top: 0px;
 }
-[vCard].hasTitle h4.cardTitle {
-    padding: calc( var( --padding ) * 0.65 ) var( --padding );
+[vCard].closeCard {
+    overflow: hidden;
+}
+[vCard].closeCard div.cardBody {
+    height: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+[vCard].hasTitle.closeCard div.cardTitle {
+    border: none;
+}
+[vCard].hasTitle div.cardTitle{
+    --size: 28px;
+    --cardTitleRight: calc( var( --size ) * 2 );
+    display: flex;
+    padding: calc(var(--padding)* 0.65) var(--padding);
     border-bottom: 1px solid rgb( var( --r3 ), 0.35 );
+}
+[vCard].hasTitle div.cardTitle div.cardTitleLeft {
+    width: calc( 100% - var( --cardTitleRight ) );
+}
+[vCard].hasTitle div.cardTitle div.cardTitleLeft h5 {
+    line-height: var( --size );
+}
+[vCard].hasTitle div.cardTitle div.cardTitleRight {
+    width: var( --cardTitleRight );
+}
+[vCard].hasTitle div.cardTitle div.cardTitleRight i.cardMethod {
+    float: right;
+    font-weight: bold;
+    cursor: pointer;
 }
 [vCard] div.cardBody {
     padding: var( --padding );
@@ -225,3 +256,92 @@ div#TCoreUnit div#popup div.unit-popup-content div.unit-popup-footer.hasMethod d
     display: inline-block;
     width: calc( 50% - 0.5px )
 }
+/* 表单元素 */
+div[vFormInput] {
+    --height: 32px;
+    --color: var( --r3 );
+    margin-bottom: 16px;
+}
+div[vFormInput] div[vFormLeft], div[vForm] div[vFormRight] { width: 100%; box-sizing: border-box; position: relative; }
+div[vFormInput].model_two div[vFormLeft] { padding-left: 4px; padding-bottom: 2px; }
+div[vFormLeft] p.itemTitle {
+    font-size: 14px;
+}
+div[vFormInput].required p.itemTitle::after {
+    content: " *";
+    color: rgb( var( --r5 ) );
+}
+div[vFormRight] div.itemInputBox {
+    overflow: hidden;
+    position: relative;
+}
+div[vFormRight] div.itemInputBox .itemInput {
+    width: 100%;
+    height: var( --height );
+    padding: 0px 16px;
+    background: rgb( var( --r0 ) );
+    color: rgb( var( --r1 ) );
+    border: 1px solid rgb( var( --color ), 0.25 );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+}
+div[vFormRight] div.itemInputBox .itemInput:hover { border-color: rgb( var( --color ) ); }
+div[vFormRight] div.itemInputBox .itemInput,
+div[vFormRight] div.itemInputBox .itemInput::-webkit-inner-spin-button,
+div[vFormRight] div.itemInputBox .itemInput::-webkit-outer-spin-button {
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+    appearance: none;
+}
+div[vFormRight] div.itemInputBox .itemInput::placeholder { color: rgb( var( --r1 ), 0.25 ); font-size: 14px !important; }
+div[vFormRight] div.itemInputBox.hasIcon .itemInput { padding-left: calc( var( --height ) + 8px ); }
+div[vFormRight] div.itemInputBox.hasMethod .itemInput { padding-right: calc( var( --height ) + 8px ); }
+div[vFormRight] div.itemInputBox i.itemInputIcon {
+    --size: var( --height );
+    background: rgb( var( --color ) );
+    color: rgb( var( --r3c ) );
+    border-radius: var( --radius ) 0px 0px var( --radius );
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+div[vFormRight] div.itemInputBox i.itemInputIcon.itemInputMethod {
+    border-radius: 0px var( --radius ) var( --radius ) 0px;
+    cursor: pointer;
+    left: auto;
+    right: 0;
+}
+div[vFormRight] ul.itemReadme {
+    margin-top: 2px;
+    padding: 0px;
+    padding-left: 20px;
+    list-style: circle;
+}
+div[vFormRight] ul.itemReadme li {
+    font-size: 12px;
+    color: rgb( var( --r1 ), 0.5 );
+}
+/* 表单双栏显示 */
+div[vFormInput].model_two.model_lock { display: flex; }
+div[vFormInput].model_two.model_lock div[vFormLeft] { width: var( --left ); padding: 0px; text-align: right; }
+div[vFormInput].model_two.model_lock div[vFormLeft].correct { text-align: left; }
+div[vFormInput].model_two.model_lock div[vFormLeft] p.itemTitle { line-height: var( --height ); }
+div[vFormInput].model_two.model_lock.required div[vFormLeft]:not(.correct) p.itemTitle::before {
+    content: "* ";
+    color: rgb( var( --r5 ) );
+}
+div[vFormInput].model_two.model_lock.required div[vFormLeft]:not(.correct) p.itemTitle::after { content: ""; }
+div[vFormInput].model_two.model_lock div[vFormRight] { width: calc( 100% - var( --left ) ); padding-left: 8px; }
+@media ( min-width: 580px ) {
+    div[vFormInput].model_two { display: flex; }
+    div[vFormInput].model_two div[vFormLeft] { width: var( --left ); padding: 0px; text-align: right; }
+    div[vFormInput].model_two.model_lock div[vFormLeft].correct { text-align: left; }
+    div[vFormInput].model_two div[vFormLeft] p.itemTitle { line-height: var( --height ); }
+    div[vFormInput].model_two.required div[vFormLeft]:not(.correct) p.itemTitle::before {
+        content: "* ";
+        color: rgb( var( --r5 ) );
+    }
+    div[vFormInput].model_two.required div[vFormLeft]:not(.correct) p.itemTitle::after { content: ""; }
+    div[vFormInput].model_two div[vFormRight] { width: calc( 100% - var( --left ) ); padding-left: 8px; }
+}
+/* 表单元素 - 手机号 */

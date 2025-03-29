@@ -179,7 +179,7 @@ window['tc'] = {
      * 视图操作
      */
     view: function( name ) {
-        let $element = typeof name === 'string' ? /[.#\s]/.test( name ) ? $( name ) : $( `[${name}]` ) : name;
+        let $element = typeof name === 'string' ? /[.#\s\[\]]/.test( name ) ? $( name ) : $( `[${name}]` ) : name;
         return {
             // 添加代码
             html: function( code = null ) { if ( code === null ) { return $element.html(); } $element.html( code ); return tc.view( $element ); },
@@ -220,11 +220,11 @@ window['tc'] = {
             // 设置样式
             style: function( data ) { $element.css( data ); return tc.view( $element ); },
             // 设置属性
-            attr: function( name, value ) { $element.attr( name, value ); return tc.view( $element ); },
+            attr: function( name, value = null ) { if ( value === null ) { return $element.attr( name ); } $element.attr( name, value ); return tc.view( $element ); },
             // 移除元素
             remove: function() { return $element.remove(); },
             // 查询子元素
-            find: function( name ) { return tc.view( $element.find( /[.#\s]/.test( name ) ? name : `[${name}]` ) ); },
+            find: function( name ) { return tc.view( $element.find( /[.#\s\[\]]/.test( name ) ? name : `[${name}]` ) ); },
             // 为元素执行动画
             animation: function( name, time = 180 ) {
                 $element.addClass( name );
@@ -429,6 +429,36 @@ window['tc'] = {
             $popup.action( true );
             return true;
         },
+    },
+    form: {
+        cache: {},
+        /**
+         * 切换密码显示
+         * @param {string} rid 输入框 rid
+         */
+        showPassword: function( rid ) {
+            tc.view( `div[rid='${rid}']` ).find( 'i.itemInputMethod' ).replace( 'bi-eye', 'bi-eye-slash' );
+            const $input = tc.view( `div[rid='${rid}']` ).find( 'input.itemInput' );
+            if ( $input.attr( 'type' ) === 'password' ) {
+                return $input.attr( 'type', 'text' );
+            }
+            return $input.attr( 'type', 'password' );
+        },
+        /**
+         * 注册输入框数据
+         * @param {string} rid 输入框 rid
+         * @param {json} data 输入框数据
+         * @returns boolean 注册结果
+         */
+        register: function( rid, data ) {
+            tc.form.cache[rid] = typeof data === 'string' ? JSON.parse( data ) : data;
+            for( const id in tc.form.cache ) {
+                if( !tc.view( `div[rid='${id}']` ).has ) {
+                    delete tc.form.cache[id];
+                }
+            }
+            return true;
+        }
     }
 };
 tc.SystemDefaultLoading();
