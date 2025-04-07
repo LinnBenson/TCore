@@ -9,8 +9,8 @@
 ?>
 <div class="<?=!empty( $title ) ? 'hasTitle' : ''?> <?=$class?> <?=$closeCard ? 'closeCard' : ''?>" <?=!empty( $id ) ? 'id="'.$id.'"' : ''?> rid="<?=$rid?>" vCard>
     <?php if ( !empty( $title ) ): ?>
-    <div class="cardTitle">
-        <div class="cardTitleLeft">
+    <div class="cardTitle <?=!empty( $titleColor ) ? $titleColor : ''?>">
+        <div class="cardTitleLeft" <?=is_bool( $closeCard ) ? "onclick='rid_{$rid}()' style='cursor: pointer;'" : ''?>">
             <h5 class="more"><?=!empty( $icon ) ? "<i class='{$icon} right8'></i>":''?><?=$title?></h5>
         </div>
         <div class="cardTitleRight">

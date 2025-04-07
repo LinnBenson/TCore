@@ -187,6 +187,21 @@
       close: false // 点击确认后是否自动关闭
   });
   ```
+- 注册输入框数据
+  ```
+  tc.form.register( rid:string(RID), data:json(数据) )
+  return boolean:注册结果
+  ```
+- 提交表单
+  ```
+  tc.form.submit( id:string(表单ID), method|null:string(执行方法), link|null:string(提交地址) )
+  return array:表单数据
+  ```
+- 提交表单
+  ```
+  tc.form.vaildata( data:object(表单数据), rules:object(表单规则) )
+  return boolean:验证结果
+  ```
 - 判断变量是否存在
   ```
   empty( v:any(检查参数) )
@@ -237,15 +252,15 @@
   is_date( v:any(检查参数) )
   return boolean:判断结果
   ```
-- 判断变量是否为时间
+- 转为时间
   ```
-  is_time( v:any(检查参数) )
-  return boolean:判断结果
+  toTime( v:string(参数) )
+  return string:转换结果
   ```
-- 判断变量是否为完整时间
+- 转为完整时间
   ```
-  is_datetime( v:any(检查参数) )
-  return boolean:判断结果
+  toDatetime( v:string(参数) )
+  return string:转换结果
   ```
 - 使用语言包
   ```

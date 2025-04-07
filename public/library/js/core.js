@@ -101,7 +101,7 @@ window['tc'] = {
         return $.ajax({
             url: data.url,
             type: !empty( data.type ) ? data.type : 'GET',
-            contentType: parameter,
+            contentType: data.contentType ? data.contentType : parameter,
             data: data.data ? data.data : false,
             headers: tc.header(),
             async: data.async === false ? false : true,
@@ -445,6 +445,76 @@ window['tc'] = {
             return $input.attr( 'type', 'password' );
         },
         /**
+         * 生成 UUID
+         * @param {string} rid 输入框 rid
+         */
+        generateUuid: function( rid ) {
+            return $( `div[rid='${rid}']` ).find( 'input.itemInput' ).val( uuid() );
+        },
+        /**
+         * 上传文件
+         * @param {string} rid 输入框 rid
+         * @param {string} file 文件
+         * @param {string} link 上传地址
+         */
+        upload: function( rid, file, link ) {
+            const $box = $( `div[rid='${rid}']` );
+            const rule = !empty( tc.form.cache[rid] ) ? tc.form.cache[rid] : {};
+            // 验证类型
+            let fileType = 'other';
+            if ( !empty( rule.file ) ) {
+                fileType = file.name.split( '.' ).pop().toUpperCase();
+                const allow = rule.file.split( '|' );
+                if ( !allow.includes( fileType ) ) {
+                    tc.unit.toast( [ 'vaildata.type.upload', { name:rule.title ?? rule.name  } ], true );
+                    return tc.form.inputError( rid );
+                }
+            }
+            // 生成展示内容
+            const id = uuid();
+            $box.find( 'ul.files' ).append(`
+                <li id="${id}" class="top8">
+                    <img src="" />
+                    <p class="more">${file.name}</p>
+                </li>
+            `);
+            const img = [ 'JPG', 'PNG', 'GIF', 'SVG', 'JPEG' ];
+            if ( img.includes( fileType ) ) {
+                let reader = new FileReader();
+                reader.onload = function( e ) {
+                    $box.find( `ul.files li#${id} img` ).attr( 'src', e.target.result ).show();
+                };
+                reader.readAsDataURL( file );
+            }else {
+                $box.find( `ul.files li#${id} img` ).attr( 'src', '/library/icon/file.png' );
+            }
+            // 上传内容
+            let formData = new FormData();
+            console.log( file );
+            formData.append( 'upload', file );
+            tc.send({
+                url: link,
+                data: formData,
+                other: {
+                    contentType: false,
+                    processData: false,
+                    xhr: function() {
+                        let xhr = new XMLHttpRequest();
+                        xhr.upload.onprogress = function( event ) {
+                            if ( event.lengthComputable ) {
+                                let percent = Math.round( ( event.loaded / event.total ) * 100 );
+                                console.log( percent );
+                            }
+                        };
+                        return xhr;
+                    },
+                },
+                run: function( res ) {
+
+                }
+            });
+        },
+        /**
          * 注册输入框数据
          * @param {string} rid 输入框 rid
          * @param {json} data 输入框数据
@@ -458,6 +528,204 @@ window['tc'] = {
                 }
             }
             return true;
+        },
+        /**
+         * 提交表单
+         * @param {string} id 表单元素
+         * @param {string} method 提交执行内容
+         * @param {string} link 提交地址
+         * @returns object 表单内容
+         */
+        submit: function( id, method = null, link = null ) {
+            event.preventDefault();
+            // 获取表单数据
+            let data = {}; const rule = {};
+            const $form = $( `form[id="${id}"]` );
+            $form.find( 'div.itemInputInfo' ).each(function() {
+                // 遍历表单内容
+                const rid = $( this ).attr( 'rid' );
+                if ( !empty( rid ) ) {
+                    const type = $( this ).attr( 'type' );
+                    const name = $( this ).attr( 'name' );
+                    let value = '';
+                    switch ( type ) {
+                        case 'select':
+                            value = $( this ).find( 'select' ).val();
+                            break;
+                        case 'longtext':
+                        case 'json':
+                            value = $( this ).find( 'textarea' ).val();
+                            break;
+                        case 'upload':
+                            value = $( this ).find( `input[name="${name}"]` ).val();
+                            break;
+                        case 'switch':
+                        case 'check':
+                            value = !empty( $( this ).find( 'input' ).prop('checked') );
+                            break;
+                        case 'phone':
+                            let qv = $( this ).find( `select[name="qv_${name}"]` ).val();
+                            let phone = $( this ).find( `input[name="phone_${name}"]` ).val();
+                            value = !empty( qv ) && !empty( phone ) ? `+${qv} ${phone}` : '';
+                            break;
+
+                        default: value = $( this ).find( 'input' ).val(); break;
+                    }
+                    data[name] = value;
+                    rule[name] = !empty( tc.form.cache[rid] ) ? tc.form.cache[rid] : {};
+                    rule[name]['rid'] = rid;
+                }
+            });
+            // 规则验证
+            data = tc.form.vaildata( data, rule );
+            if ( data === false ) { return false; }
+            // 是否自动提交
+            if ( typeof method === 'string' && !empty( method ) ) {
+                if ( typeof link === 'string' && !empty( link ) ) {
+                    tc.send({
+                        url: link,
+                        data: data,
+                        check: true,
+                        run: function( res ) {
+                            eval( `${method}( res )` );
+                        }
+                    }, function( state ) {
+                        tc.view( `form#${id}` ).load( state );
+                    });
+                }else {
+                    eval( `${method}( data )` );
+                }
+            }
+            return data;
+        },
+        /**
+         * 规则验证
+         * @param {object} data 表单数据
+         * @param {object} rules 表单规则
+         * @returns boolean 验证结果
+         */
+        vaildata: function( data, rules ) {
+            for ( const name in data ) {
+                // 数据整理
+                const value = data[name];
+                const rule = rules[name];
+                if ( empty( rule ) ) { continue; }
+                const title = !empty( rule.title ) ? rule.title : name;
+                const type = rule.type;
+                const rid = rule.rid;
+                // 必填验证
+                if ( !empty( rule.must ) && ( empty( value ) && value !== 0 && value !== '0' && value !== false ) ) {
+                    tc.unit.toast( [ 'vaildata.required', { name:title  } ], true );
+                    return tc.form.inputError( rid );
+                }
+                if ( empty( value ) && value !== 0 && value !== '0' && value !== false ) { continue; }
+                // 类型验证
+                switch ( type ) {
+                    case 'json':
+                        if ( !is_json( value ) ) {
+                            tc.unit.toast( [ 'vaildata.type.json', { name:title  } ], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+                    case 'number':
+                        if ( !Number( value ) ) {
+                            tc.unit.toast( ['vaildata.type.number',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        data[name] = Number( value );
+                        break;
+                    case 'email':
+                        if ( !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test( value ) ) {
+                            tc.unit.toast( ['vaildata.type.email',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+                    case 'alnum':
+                        if ( !/^[a-zA-Z0-9]+$/.test( value ) ) {
+                            tc.unit.toast( ['vaildata.type.alnum',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+                    case 'phone':
+                        if ( !/^\+\d{1,4} \d{5,}$/.test( value ) ) {
+                            tc.unit.toast( ['vaildata.type.phone',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+                    case 'datetime':
+                        data[name] = toDatetime( value );
+                        if ( !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test( data[name] ) ) {
+                            tc.unit.toast( ['vaildata.type.datetime',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+                    case 'date':
+                        if ( !/^\d{4}-\d{2}-\d{2}$/.test( value ) ) {
+                            tc.unit.toast( ['vaildata.type.date',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+                    case 'time':
+                        data[name] = toTime( value );
+                        if ( !/^\d{2}:\d{2}:\d{2}$/.test( data[name] ) ) {
+                            tc.unit.toast( ['vaildata.type.time',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+                    case 'uuid':
+                        if ( !is_uuid( value ) ) {
+                            tc.unit.toast( ['vaildata.type.uuid',{name: title}], true );
+                            return tc.form.inputError( rid );
+                        }
+                        break;
+
+                    default: break;
+                }
+                // 验证正则
+                if ( !empty( rule.regex ) ) {
+                    const regex = new RegExp( rule.regex.replace(/^\/|\/$/g, '') );
+                    if ( !regex.test( value ) ) {
+                        tc.unit.toast( ['vaildata.regex',{name: title}], true );
+                        return tc.form.inputError( rid );
+                    }
+                }
+                // 验证大小
+                if ( !empty( rule.min ) || rule.min === 0 || rule.min === '0' ) {
+                    if ( typeof data[name] === 'string' ) {
+                        if ( data[name].length < rule.min ) {
+                            tc.unit.toast( ['vaildata.length.min',{name: title, length: rule.min}], true );
+                            return tc.form.inputError( rid );
+                        }
+                    }else {
+                        if ( data[name] < rule.min ) {
+                            tc.unit.toast( ['vaildata.size.min',{name: title, size: rule.min}], true );
+                            return tc.form.inputError( rid );
+                        }
+                    }
+                }
+                // 验证大小
+                if ( !empty( rule.max ) || rule.max === 0 || rule.max === '0' ) {
+                    if ( typeof data[name] === 'string' ) {
+                        if ( data[name].length > rule.max ) {
+                            tc.unit.toast( ['vaildata.length.max',{name: title, length: rule.max}], true );
+                            return tc.form.inputError( rid );
+                        }
+                    }else {
+                        if ( data[name] > rule.max ) {
+                            tc.unit.toast( ['vaildata.size.max',{name: title, size: rule.max}], true );
+                            return tc.form.inputError( rid );
+                        }
+                    }
+                }
+            }
+            return data;
+        },
+        inputError: function( rid ) {
+            tc.view( `div.itemInputInfo[rid="${rid}"] div.itemInputBox` ).addClass( 'error' );
+            setTimeout(() => {
+                tc.view( `div.itemInputInfo[rid="${rid}"] div.itemInputBox` ).removeClass( 'error' );
+            }, 1000 );
+            return false;
         }
     }
 };
@@ -582,47 +850,30 @@ function is_uuid( v ) {
     return false;
 }
 /**
- * 判断变量是否为日期
- * @param {any} str 判断对象
+ * 转为时间
+ * @param {any} inputValue 参数
  * @returns boolean
  */
-function is_date( dateString ) {
-    const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-    // 检查格式
-    if ( !regex.test( dateString ) ) { return false; }
-    // 检查日期是否合法
-    const [year, month, day] = dateString.split('-').map( Number );
-    const date = new Date( year, month - 1, day );
-    return date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day;
+function toTime( inputValue ) {
+    if ( !inputValue ) return '';
+    let [hours, minutes, seconds = '00'] = inputValue.split( ':' );
+    return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
 }
 /**
- * 判断变量是否为时间
- * @param {any} str 判断对象
+ * 转为完整时间
+ * @param {any} inputValue 参数
  * @returns boolean
  */
-function is_time( input ) {
-    const regexFull = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
-    const regexPartial = /^([01]\d|2[0-3]):([0-5]\d)$/;
-    if ( regexFull.test( input ) ) {
-        return input;
-    }else if ( regexPartial.test( input ) ) {
-        return input+":00";
-    } else {
-        return false;
-    }
-}
-/**
- * 判断变量是否为完整时间
- * @param {any} str 判断对象
- * @returns boolean
- */
-function is_datetime( str ) {
-    if ( typeof str !== 'string' ) { return false; }
-    str = str.split( ' ' );
-    if ( !is_date( str[0] ) || is_time( str[1] ) === false ) {
-        return false;
-    }
-    return true;
+function toDatetime( inputValue ) {
+    if ( !inputValue ) return '';
+    const date = new Date( inputValue );
+    const year = date.getFullYear();
+    const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
+    const day = String( date.getDate() ).padStart( 2, '0' );
+    const hours = String( date.getHours() ).padStart( 2, '0' );
+    const minutes = String( date.getMinutes() ).padStart( 2, '0' );
+    const seconds = String( date.getSeconds() ).padStart( 2, '0' );
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 /**
  * 使用语言包

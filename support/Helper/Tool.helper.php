@@ -9,6 +9,7 @@ namespace Support\Helper;
          * - return boolean(创建结果)
          */
         public static function inFolder( $dir ) {
+            $dir = explode( '.', $dir )[0];
             $dir = str_replace( '\\', '/', $dir );
             $dir = explode( '/', $dir );
             if ( count( $dir ) <= 1 ) { return false; }

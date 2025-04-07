@@ -44,6 +44,13 @@ body {
     color: rgb( var( --r1 ) );
     font-size: var( --fontSize );
 }
+.code {
+    min-height: 120px !important;
+    background: rgb( 40, 44, 52 ) !important;
+    font-size: 13px !important;
+    font-family: 'code', Courier, monospace !important;
+    color: rgb( 167, 174, 187 ) !important;
+}
 .copy { cursor: pointer; }
 i.block {
     display: inline-block;

@@ -1,11 +1,16 @@
 {{/* 准备渲染工作 */}}
 {{!!
-    $allowType = [ 'text', 'alnum', 'number', 'phone', 'email', 'password', 'select', 'datetime', 'json', 'longtext', 'markdown', 'switch', 'check' ]; // 允许的输入框
-    $inputs = [ 'text', 'alnum', 'number', 'email', 'password' ]; // 普通输入
+    $allowType = [ 'text', 'alnum', 'number', 'phone', 'email', 'password', 'uuid', 'select', 'datetime', 'date', 'time', 'json', 'longtext', 'switch', 'check', 'upload', 'markdown' ]; // 允许的输入框
+    $inputs = [ 'text', 'alnum', 'number', 'email', 'password', 'datetime', 'date', 'time', 'uuid' ]; // 普通输入
     $replaceMap = function( $type ) {
         $data = [
             'alnum' => 'text',
-            'longtext' => 'textarea'
+            'phone' => 'tel',
+            'date' => 'date',
+            'time' => 'time',
+            'datetime' => 'datetime-local',
+            'longtext' => 'textarea',
+            'uuid' => 'text'
         ];
         return !empty( $data[$type] ) ? $data[$type] : $type;
     };
@@ -18,7 +23,10 @@
         'email' => 'bi bi-envelope-open',
         'password' => 'bi bi-key',
         'select' => 'bi bi-body-text',
-        'datetime' => 'bi bi-calendar3'
+        'datetime' => 'bi bi-calendar3',
+        'date' => 'bi-calendar2-date',
+        'time' => 'bi-clock',
+        'uuid' => 'bi-bezier'
     ]; // 默认图标
     $defaultLeft = '100px';
     if ( $left === true ) { $left = $defaultLeft; } // 左边栏
@@ -26,94 +34,195 @@
     $steps = [
         'phone' => '1',
         'number' => '0.0000000001',
-        'datetime' => '1'
+        'datetime' => '1',
+        'time' => '1'
     ];
-    // 区号
-    $qv = [ 1, 7, 20, 27, 30, 31, 32, 33, 34, 36, 39, 40, 41, 43, 44, 45, 46, 47, 48, 49,
-    51, 52, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 66, 81, 82, 84, 86, 90,
-    91, 92, 93, 94, 95, 98, 211, 212, 213, 216, 218, 220, 221, 222, 223, 224, 225,
-    226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241,
-    242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257,
-    258, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 290, 291, 297, 298, 299,
-    350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 370, 371, 372, 373, 374, 375,
-    376, 377, 378, 379, 380, 381, 382, 383, 385, 386, 387, 389, 420, 421, 423, 500,
-    501, 502, 503, 504, 505, 506, 507, 508, 509, 590, 591, 592, 593, 594, 595, 596,
-    597, 598, 599, 670, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683,
-    685, 686, 687, 688, 689, 690, 691, 692, 850, 852, 853, 855, 856, 870, 880, 886,
-    960, 961, 962, 963, 964, 965, 966, 967, 968, 970, 971, 972, 973, 974, 975, 976,
-    977, 992, 993, 994, 995, 996, 998 ];
 !!}}
+@if( !empty( $form ) ):
+<form id="{{$form['id']}}" onsubmit="tc.form.submit( `{{$form['id']}}`, `{{$form['method']}}`, `{{$form['link']}}` )">
+@endif
 @foreach( $data as $item ):
-{{/* 项目参数准备 */}}
-{{!!
-    $rid = 'rid_'.md5( uuid() ); // RID
-    $itemMust = !empty( $item['must'] ) ? true : false; // 必填选择
-    $itemTitle = $item['title']; // 标题
-    $itemType = !empty( $item['type'] ) ? $item['type'] : 'text'; // 输入框
-    $itemName = $item['name']; // 名称
-    if ( empty( $itemName ) || ! in_array( $itemType, $allowType ) ) { continue; }
-    $itemHint = $item['hint']; // 提示内容
-    $itemValue = isset( $item['value'] ) ? addslashes( $item['value'] ) : ''; // 默认值
-    $itemReadme = $item['readme']; // 帮助内容
-    // 显示图标
-    $itemIcon = $item['icon'];
-    if ( empty( $itemIcon ) && !empty( $icons[$item['type']] ) ) { $itemIcon = $icons[$item['type']]; }
-    if ( $item['icon'] === false ) { $itemIcon = false; }
-    $itemMethod = !empty( $item['method'] ) ? explode( "|", $item['method'] ) : false;
-    if ( $itemType === 'password' ) { $itemMethod = [ 'bi-eye', "tc.form.showPassword( '{$rid}' )" ]; }
-    // 双栏显示
-    $itemLeft = $left;
-    $itemLeftLock = false;
-    if ( in_array( $item['type'], $modelLock ) ) {
-        if ( empty( $itemLeft ) ) { $itemLeft = $defaultLeft; }
-        $itemLeftLock = true;
-    }
-!!}}
-{{/* 元素内容 */}}
-<div class="{{!empty( $itemLeft ) ? 'model_two' : ''}} {{$itemLeftLock ? 'model_lock' : ''}} {{$itemMust ? 'required' : ''}}" rid="{{$rid}}" style="--left: {{!empty( $itemLeft ) ? $itemLeft : $defaultLeft}}" vFormInput>
-    {{/* 元素内容 - 左边 */}}
-    <div class="{{$itemLeftLock && empty( $left ) ? 'correct' : ''}}" vFormLeft>
-    @if( !empty( $itemTitle ) ):
-        <p class="itemTitle">{{$itemTitle}}</p>
-    @endif
-    </div>
-    {{/* 元素内容 - 右边 */}}
-    <div vFormRight>
-        <div class="itemInputBox itemInputBox_{{$itemType}} {{!empty( $itemIcon ) ? 'hasIcon' : ''}}  {{!empty( $itemMethod ) ? 'hasMethod' : ''}}">
-            {{/* 输入框 */}}
-            @if( in_array( $itemType, $inputs ) ):
-            <input
-                class="itemInput"
-                type="{{$replaceMap( $itemType )}}"
-                name="{{$itemName}}"
-                placeholder="{{$itemHint}}"
-                value="{{$itemValue}}"
-                {{!empty( $steps[$item['type']] ) ? "step='{$steps[$item['type']]}'" : ''}}
-                rid="{{$rid}}"
-                autocomplete="off"
-            />
-            @elseif( $itemType === 'phone' ):
-            @endif
-            {{/* 输入框图标 */}}
-            @if( !empty( $itemIcon ) ):
-            <i class="{{$itemIcon}} itemInputIcon block"></i>
-            @endif
-            @if( !empty( $itemMethod ) ):
-            <i class="{{$itemMethod[0]}} itemInputIcon itemInputMethod block" onclick="{{$itemMethod[1]}}"></i>
+    {{/* 项目参数准备 */}}
+    {{!!
+        $rid = 'rid_'.md5( uuid() ); // RID
+        $itemMust = !empty( $item['must'] ) ? true : false; // 必填选择
+        $itemTitle = $item['title']; // 标题
+        $itemType = !empty( $item['type'] ) ? $item['type'] : 'text'; // 输入框
+        $itemName = $item['name']; // 名称
+        if ( empty( $itemName ) || ! in_array( $itemType, $allowType ) ) { continue; }
+        $itemHint = $item['hint']; // 提示内容
+        $itemValue = isset( $item['value'] ) ? $item['value'] : ''; // 默认值
+        if ( is_string( $itemValue ) ) { $itemValue = addslashes( $itemValue ); }
+        $itemReadme = $item['readme']; // 帮助内容
+        $itemData = $item['data']; // 数据
+        // 显示图标
+        $itemIcon = $item['icon'];
+        if ( empty( $itemIcon ) && !empty( $icons[$item['type']] ) ) { $itemIcon = $icons[$item['type']]; }
+        if ( $item['icon'] === false ) { $itemIcon = false; }
+        $itemMethod = !empty( $item['method'] ) ? explode( "|", $item['method'] ) : false;
+        if ( $itemType === 'password' ) { $itemMethod = [ 'bi-eye', "tc.form.showPassword( '{$rid}' )" ]; }
+        if ( $itemType === 'select' ) { $itemMethod = [ 'bi-chevron-down', "" ]; }
+        if ( $itemType === 'uuid' ) { $itemMethod = [ 'bi-arrow-repeat', "tc.form.generateUuid( '{$rid}' )" ]; }
+        // 双栏显示
+        $itemLeft = $left;
+        $itemLeftLock = false;
+        if ( in_array( $item['type'], $modelLock ) ) {
+            if ( empty( $itemLeft ) ) { $itemLeft = $defaultLeft; }
+            $itemLeftLock = true;
+        }
+    !!}}
+    {{/* 元素内容 */}}
+    <div
+        class="itemInputInfo {{!empty( $itemLeft ) ? 'model_two' : ''}} {{$itemLeftLock ? 'model_lock' : ''}} {{$itemMust ? 'required' : ''}}"
+        rid="{{$rid}}"
+        type="{{$itemType}}"
+        name="{{$itemName}}"
+        style="--left: {{!empty( $itemLeft ) ? $itemLeft : $defaultLeft}}"
+        vFormInput
+    >
+        {{/* 元素内容 - 左边 */}}
+        <div class="{{$itemLeftLock && empty( $left ) ? 'correct' : ''}}" vFormLeft>
+        @if( !empty( $itemTitle ) ):
+            <p class="itemTitle">{{$itemTitle}}</p>
+        @endif
+        </div>
+        {{/* 元素内容 - 右边 */}}
+        <div vFormRight>
+            <div class="itemInputBox itemInputBox_{{$itemType}} {{!empty( $itemIcon ) ? 'hasIcon' : ''}}  {{!empty( $itemMethod ) ? 'hasMethod' : ''}}">
+                {{/* 输入框 */}}
+                @if( in_array( $itemType, $inputs ) ):
+                    <input
+                        class="itemInput"
+                        type="{{$replaceMap( $itemType )}}"
+                        name="{{$itemName}}"
+                        placeholder="{{$itemHint}}"
+                        value="{{$itemValue}}"
+                        {{!empty( $steps[$item['type']] ) ? "step='{$steps[$item['type']]}'" : ''}}
+                        rid="{{$rid}}"
+                        autocomplete="off"
+                    />
+                @elseif( $itemType === 'phone' ):
+                    {{!! $phone = [ '', '' ]; if ( !empty( $itemValue ) ) { $phone = explode( ' ', $itemValue ); } !!}}
+                    <select class="itemInput" name="qv_{{$itemName}}">
+                        @foreach( config( 'view.qv.data' ) as $qv ):
+                        <option
+                            value="{{$qv}}"
+                            {{empty( $phone[0] ) && config( 'view.qv.defaul' ) === $qv ? 'selected' : ''}}
+                            {{!empty( $phone[0] ) && $phone[0] === "+{$qv}" ? 'selected' : ''}}
+                        >+{{$qv}}</option>
+                        @endforeach
+                    </select>
+                    <input
+                        class="itemInput"
+                        type="{{$replaceMap( $itemType )}}"
+                        name="phone_{{$itemName}}"
+                        placeholder="{{$itemHint}}"
+                        value="{{$phone[1]}}"
+                        {{!empty( $steps[$item['type']] ) ? "step='{$steps[$item['type']]}'" : ''}}
+                        rid="{{$rid}}"
+                        autocomplete="off"
+                    />
+                @elseif( $itemType === 'select' ):
+                    <select class="itemInput" name="{{$itemName}}">
+                        @if( !empty( $itemHint ) ):
+                        <option disabled>{{$itemHint}}</option>
+                        @endif
+                        @foreach( $itemData as $option_key => $option_value ):
+                        <option
+                            value="{{$option_key}}"
+                            {{$itemValue == $option_key ? 'selected' : ''}}
+                        >{{$option_value}}</option>
+                        @endforeach
+                    </select>
+                @elseif( $itemType === 'longtext' ):
+                    <textarea class="itemInput" name="{{$itemName}}">{{$itemValue}}</textarea>
+                @elseif( $itemType === 'json' ):
+                    {{!!
+                        if ( is_json( $itemValue ) ) { $itemValue = json_decode( $itemValue, true ); }
+                        if ( is_array( $itemValue ) ) { $itemValue = addslashes( json_encode( $itemValue, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) ); }
+                    !!}}
+                    <textarea class="itemInput code" name="{{$itemName}}">{{$itemValue}}</textarea>
+                    <script>
+                        tc.view( 'div.itemInputInfo[rid="{{$rid}}"] textarea.itemInput' ).on( 'keydown', function( event ) {
+                            const textarea = $(this)[0];
+                            const start = textarea.selectionStart;
+                            const end = textarea.selectionEnd;
+                            if ( event.key === 'Tab' ) {
+                                event.preventDefault();
+                                const spaces = '    ';
+                                textarea.value = textarea.value.substring( 0, start ) + spaces + textarea.value.substring( end );
+                                textarea.selectionStart = textarea.selectionEnd = start + spaces.length;
+                            }
+                            const pairs = { '{': '}', '[': ']', '(': ')', '"': '"', "'": "'" };
+                            if ( pairs[event.key] ) {
+                                event.preventDefault();
+                                const closingChar = pairs[event.key];
+                                textarea.value = textarea.value.substring( 0, start ) + event.key + closingChar + textarea.value.substring( end );
+                                textarea.selectionStart = textarea.selectionEnd = start + 1;
+                            }
+                        });
+                    </script>
+                @elseif( $itemType === 'switch' ):
+                    <x-switch name="{{$itemName}}" checked="{{!empty( $itemValue ) ? 'checked' : ''}}" ></x-switch>
+                @elseif( $itemType === 'check' ):
+                    <input type='checkbox' id="{{$rid}}" name='{{$itemName}}'>
+                    <label for='{{$rid}}'>{{$itemHint}}</label>
+                @elseif( $itemType === 'upload' ):
+                    <input type="text" name="{{$itemName}}" style="display: none;" />
+                    <label class="upload">
+                        <input type="file" name="upload_{{$itemName}}" style="display: none;" />
+                        <i class="bi-cloud-upload-fill bold"></i>
+                        <p class="title top8">{{!empty( $itemHint ) ? $itemHint : $t( 'base.uploadFile' )}}</p>
+                        <p class="top8 font7 opa50">{{$t('base.support')}} ( {{!empty( $item['file'] ) ? $item['file'] : '*'}} )</p>
+                    </label>
+                    <ul class="files"></ul>
+                    <script>
+                        tc.view( 'div.itemInputInfo[rid="{{$rid}}"] input[name="upload_{{$itemName}}"]' ).on( 'input', function( event ) {
+                            const $input = $( this )[0];
+                            const files = this.files;
+                            if ( files.length > 0 ) {
+                                tc.form.upload( '{{$rid}}', files[0], `{{!empty( $item['link'] ) ? $item['link'] : '/storage/upload'}}` );
+                            }
+                            $input.val( '' );
+                        });
+                    </script>
+                @endif
+                {{/* 输入框图标 */}}
+                @if( !empty( $itemIcon ) ):
+                <i class="{{$itemIcon}} itemInputIcon block"></i>
+                @endif
+                @if( !empty( $itemMethod ) ):
+                <i class="{{$itemMethod[0]}} itemInputIcon itemInputMethod block" onclick="{{$itemMethod[1]}}"></i>
+                @endif
+            </div>
+            {{/* 帮助内容 */}}
+            @if( !empty( $itemReadme ) && is_array( $itemReadme ) ):
+            <ul class="itemReadme">
+                @foreach( $itemReadme as $value ):
+                <li>{{$value}}</li>
+                @endforeach
+            </ul>
             @endif
         </div>
-        {{/* 帮助内容 */}}
-        @if( !empty( $itemReadme ) && is_array( $itemReadme ) ):
-        <ul class="itemReadme">
-            @foreach( $itemReadme as $value ):
-            <li>{{$value}}</li>
-            @endforeach
-        </ul>
-        @endif
     </div>
-</div>
-<script>
     {{/* 注册输入框 */}}
-    tc.form.register( '{{$rid}}', '{{addslashes( json_encode( $item ) )}}' );
-</script>
-@endforeach
+    <script>tc.form.register( '{{$rid}}', '{{addslashes( json_encode( $item ) )}}' );</script>
+    @endforeach
+@if( !empty( $form ) ):
+    <div
+        class="itemInput {{!empty( $itemLeft ) ? 'model_two' : ''}}"
+        style="margin-top: 24px; --left: {{!empty( $itemLeft ) ? $itemLeft : $defaultLeft}}"
+        vFormInput
+    >
+        <div vFormLeft></div>
+        <div vFormRight>
+            @if( !empty( $form['method'] ) ):
+            <button class="r3" type="submit" vButton><i class="{{!empty( $form['icon'] ) ? $form['icon'] : 'bi-check2-circle'}} right8"></i>{{!empty( $form['text'] ) ? $form['text'] : $t( 'base.submit' )}}</button>
+            @endif
+            @if( $form['reset'] !== false ):
+                <button class="r5" type="reset" vButton><i class="bi-arrow-counterclockwise right8"></i>{{$t( 'base.reset' )}}</button>
+            @endif
+        </div>
+    </div>
+</form>
+@endif

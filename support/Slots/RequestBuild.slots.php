@@ -15,6 +15,7 @@ namespace Support\Slots;
         public $header = [];
         public $get = [];
         public $post = [];
+        public $file = [];
         public $cookie = [];
         public $session = [];
         public $uid = null;
@@ -31,6 +32,7 @@ namespace Support\Slots;
             $this->header = array_change_key_case( getallheaders(), CASE_LOWER );
             $this->get = $_GET;
             $this->post = $_POST;
+            $this->file = $_FILES;
             $this->cookie = $_COOKIE;
             if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
                 $this->ip = $_SERVER['HTTP_CLIENT_IP'];

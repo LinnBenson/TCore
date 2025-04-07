@@ -20,15 +20,13 @@
     background: rgb( var( --r6 ) );
     border: 1px solid rgb( var( --r3 ), 0.35 );
     border-radius: calc( var( --radius ) * 1.5 );
+    overflow: hidden;
 }
 [vCard] div.cardBody {
     transition: 200ms;
 }
 [vCard].hasTitle {
     padding-top: 0px;
-}
-[vCard].closeCard {
-    overflow: hidden;
 }
 [vCard].closeCard div.cardBody {
     height: 0px;
@@ -275,6 +273,9 @@ div[vFormRight] div.itemInputBox {
     overflow: hidden;
     position: relative;
 }
+div[vFormRight] div.itemInputBox.error {
+    --color: var( --r5 );
+}
 div[vFormRight] div.itemInputBox .itemInput {
     width: 100%;
     height: var( --height );
@@ -332,6 +333,9 @@ div[vFormInput].model_two.model_lock.required div[vFormLeft]:not(.correct) p.ite
 }
 div[vFormInput].model_two.model_lock.required div[vFormLeft]:not(.correct) p.itemTitle::after { content: ""; }
 div[vFormInput].model_two.model_lock div[vFormRight] { width: calc( 100% - var( --left ) ); padding-left: 8px; }
+@media ( max-width: 580px ) {
+    div[vFormInput].model_two.model_lock div[vFormLeft] { padding-left: 4px; text-align: left; }
+}
 @media ( min-width: 580px ) {
     div[vFormInput].model_two { display: flex; }
     div[vFormInput].model_two div[vFormLeft] { width: var( --left ); padding: 0px; text-align: right; }
@@ -345,3 +349,178 @@ div[vFormInput].model_two.model_lock div[vFormRight] { width: calc( 100% - var( 
     div[vFormInput].model_two div[vFormRight] { width: calc( 100% - var( --left ) ); padding-left: 8px; }
 }
 /* 表单元素 - 手机号 */
+div[vFormRight] div.itemInputBox.itemInputBox_phone select.itemInput {
+    width: 90px;
+    padding-right: 8px;
+    border-right: 0px;
+    border-top-right-radius: 0px;
+    border-end-end-radius: 0px;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_phone input.itemInput {
+    float: right;
+    width: calc( 100% - 90px );
+    padding-left: 8px;
+    border-start-start-radius: 0px;
+    border-end-start-radius: 0px;
+}
+/* 表单元素 - 选择输入 */
+div[vFormRight] div.itemInputBox select.itemInput {
+    font-size: 16px;
+    cursor: pointer;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_select i.itemInputIcon.itemInputMethod {
+    background: none;
+    color: rgb( var( --r1 ) );
+    pointer-events: none;
+}
+/* 表单元素 - 长文本输入 */
+div[vFormRight] div.itemInputBox textarea.itemInput {
+    width: 100%;
+    max-width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+/* 表单元素 - 开关按钮 */
+div[vFormRight] div.itemInputBox.itemInputBox_switch div.switch-button {
+    margin: calc( ( var( --height ) - 26px ) / 2 );
+}
+@media ( max-width: 580px ) {
+    div[vFormRight] div.itemInputBox.itemInputBox_switch { text-align: right; }
+}
+div.switch-button {
+    --buttonSize: 26px;
+    display: inline-block;
+}
+div.switch-button input {
+    display: none;
+}
+div.switch-button input+label {
+    display: inline-block;
+    min-width: calc( var( --buttonSize ) * 2.4 );
+    height: var( --buttonSize );
+    line-height: 20px;
+    background-color: rgb( var( --r0 ) );
+    vertical-align: middle;
+    border-radius: var( --radius );
+    border: 1px solid rgb( var( --r3 ), 0.25 );
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: all 0.36s;
+    -webkit-transition: all 0.36s;
+    position: relative;
+}
+div.switch-button input+label:hover {
+    border-color: rgb( var( --r3 ) );
+}
+div.switch-button input:checked+label {
+    background-color: rgb( var( --r3 ) );
+}
+div.switch-button input+label::before {
+    content: "";
+    display: block;
+    width: calc( var( --buttonSize ) - 6px - 2px );
+    height: calc( var( --buttonSize ) - 6px - 2px );
+    border-radius: var( --radius );
+    background-color: rgb( var( --r3 ) );
+    cursor: pointer;
+    transition: all 0.36s cubic-bezier( 0.78, 0.14, 0.15, 0.86 );
+    -webkit-transition: all 0.36s cubic-bezier( 0.78, 0.14, 0.15, 0.86 );
+    position: absolute;
+    left: 3px;
+    top: 3px;
+}
+div.switch-button input:checked+label::before {
+    background-color: rgb( var( --r0 ) );
+    transition: all 0.36s cubic-bezier( 0.78, 0.14, 0.15, 0.86 );
+    -webkit-transition: all 0.36s cubic-bezier( 0.78, 0.14, 0.15, 0.86 );
+    left: calc( ( var( --buttonSize ) * 2.4 ) - ( var( --buttonSize ) - 6px - 2px ) - 5px );
+}
+/* 表单元素 - 勾选 */
+div[vFormRight] div.itemInputBox.itemInputBox_check {
+    height: var( --height );
+}
+div[vFormRight] div.itemInputBox.itemInputBox_check input {
+    opacity: 0;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_check label {
+    height: 20px;
+    line-height: var( --height );
+    cursor: pointer;
+    position: absolute;
+    left: 30px;
+    top: 0;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_check label:before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --color ), 0.25 );
+    border-radius: var( --radius );
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    position: absolute;
+    left: -30px;
+    top: calc( ( var( --height ) - 20px - 2px ) / 2 );
+}
+div[vFormRight] div.itemInputBox.itemInputBox_check label:after {
+    content: '';
+    width: 6px;
+    height: 12px;
+    border: 0;
+    border-right: 1px solid rgb( var( --r6 ) );
+    border-bottom: 1px solid rgb( var( --r6 ) );
+    background: rgb( var( --r6 ) );
+    transform: rotate(45deg);
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    position: absolute;
+    left: -22px;
+    top: calc( ( var( --height ) - 20px - 2px + 3px ) / 2 );
+}
+div[vFormRight] div.itemInputBox.itemInputBox_check input[type='checkbox']:checked + label:before {
+    background: rgb( var( --color ) );
+    border-color: rgb( var( --color ) );
+}
+div[vFormRight] div.itemInputBox.itemInputBox_check input[type='checkbox']:checked + label:after {
+    background: rgb( var( --color ) );
+}
+/* 表单元素 - 上传文件 */
+div[vFormRight] div.itemInputBox.itemInputBox_upload label.upload,
+div[vFormRight] div.itemInputBox.itemInputBox_upload ul.files li {
+    display: block;
+    padding: 24px 8px;
+    background: rgb( var( --r0 ) );
+    text-align: center;
+    border: 1px solid rgb( var( --color ), 0.25 );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+    cursor: pointer;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_upload label.upload i {
+    font-size: 38px;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_upload ul.files { padding: 0; list-style: none; }
+div[vFormRight] div.itemInputBox.itemInputBox_upload ul.files li {
+    --height: 50px;
+    display: inline-block;
+    width: calc( var( --height ) + 60px );
+    padding: 8px;
+    text-align: center;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_upload ul.files li img {
+    width: var( --height );
+    height: var( --height );
+    margin-bottom: 8px;
+    border-radius: var( --radius );
+    object-fit: cover;
+}
+div[vFormRight] div.itemInputBox.itemInputBox_upload ul.files li p {
+    font-size: 14px;
+}
