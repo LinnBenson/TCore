@@ -26,7 +26,9 @@ use Illuminate\Support\Str;
     function config( $key, $default = null ) {
         // 三方程序干预
         if ( Bootstrap::$init ) {
-            $cover = Bootstrap::processRun( 'QueryConfiguration', $key );
+            $cover = Bootstrap::cache( 'thread', "config_cover:{$key}", function()use( $key ) {
+                return Bootstrap::processRun( 'QueryConfiguration', $key );
+            });
             if ( $cover !== $key && $cover !== null ) { return $cover; }
         }
         // 键拆分

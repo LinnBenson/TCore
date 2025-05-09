@@ -2,6 +2,8 @@
 
 namespace Support\Provider;
 
+use Bootstrap;
+
     /**
      * HTTP 服务端提供者
      */

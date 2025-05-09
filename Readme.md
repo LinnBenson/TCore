@@ -101,11 +101,12 @@
 #### 核心驱动器缓存名称申明
 - ENV 环境变量 : file | env.php
 - 配置缓存 : thread | config:xxx
+- 配置键覆写缓存 : thread | config_cover:xxx
 - 自动加载类 : thread | autoload
 - 插件缓存 : thread | plug:xxx
 - 系统干预流程 : thread | process
 #### 允许的系统干预流程
 - 系统初始化完成 : InitializationCompleted
-- 输出返回结果 : OutputReturnResult
-- 查询配置信息 : QueryConfiguration
+- 修改输出返回结果 : OutputReturnResult
+- 修改查询配置信息 : QueryConfiguration
 #### 日志名称申明

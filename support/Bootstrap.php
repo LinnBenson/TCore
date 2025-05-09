@@ -7,10 +7,11 @@ use Dotenv\Dotenv;
         public static $init = false;
         // 应用缓存
         public static $cache = [
+            // 系统干预流程权限标识
             'process' => [
-                'InitializationCompleted' => [], // 系统初始化完成
-                'OutputReturnResult' => [], // 输出返回结果
-                'QueryConfiguration' => [], // 查询配置信息
+                'InitializationCompleted' => [], // 系统初始化完成时
+                'OutputReturnResult' => [], // 修改输出返回结果
+                'QueryConfiguration' => [], // 修改查询配置信息
             ],
         ];
         /**
