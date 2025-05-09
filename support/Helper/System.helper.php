@@ -1,0 +1,92 @@
+<?php
+
+use Illuminate\Support\Str;
+
+    /**
+     * ENV 变量
+     * - 获取 ENV 环境变量
+     * - @param string $key 变量名
+     * - @param mixed $default 默认值
+     * - @return mixed
+     */
+    function env( $key, $default = null ) {
+        $value = isset( $_ENV[$key] ) && $_ENV[$key] !== '' ? $_ENV[$key] : $default;
+        if ( $value === 'true' ) { return true; }
+        if ( $value === 'false' ) { return false; }
+        if ( $value === 'null' ) { return null; }
+        return $value;
+    }
+    /**
+     * 批量引用文件
+     * - 用于引用一个或多个文件
+     * - @param string|array $file 文件名或文件数组
+     * - @return mixed 引用结果
+     */
+    function import( $file ) {
+        if ( is_string( $file ) ) { return require __file( $file ); }
+        if ( is_array( $file ) ) {
+            $result = [];
+            for ( $i = 0; $i < 9999; $i++ ) {
+                if ( empty( $file[$i] ) ) { break; }
+                $quote = require_once __file( $file[$i] );
+                if ( is_array( $quote ) ) { $result = array_merge( $result, $quote ); }
+            }
+            return $result;
+        }
+        return null;
+    }
+    /**
+     * 格式化时间
+     * - 将时间戳转换为日期格式
+     * - @param int|object|false $time 时间戳或时间对象，为 false 时使用当前时间
+     * - @return string 格式化后的日期字符串
+     */
+    function toDate( $time = false ) {
+        if ( !empty( $time ) && is_numeric( $time ) ) { return date( 'Y-m-d H:i:s', $time ); }
+        if ( is_object( $time ) ) { return \Carbon\Carbon::parse( $time )->timezone( config('app.timezone') ); }
+        return date( 'Y-m-d H:i:s' );
+    };
+    /**
+     * 哈希一个参数
+     * - 用于对一个参数进行哈希处理
+     * - @param string $content 要哈希的内容
+     * - @return string 哈希后的字符串
+     */
+    function h( $content ) {
+        if ( !is_string( $content ) ) { return null; }
+        return hash( 'sha256', $content.env( 'APP_KEY', 'DefaultKey' ) );
+    }
+    /**
+     * 判断字符串是否以指定内容开始
+     * - 用于判断一个字符串是否以指定内容开始
+     * - @param string $string 要判断的字符串
+     * - @param string $val 要判断的内容
+     * - @return bool 判断结果
+     */
+    function startsWith( $string, $val ) { return Str::startsWith( $string, $val ); }
+    /**
+     * 判断字符串是否以指定内容结尾
+     * - 用于判断一个字符串是否以指定内容结尾
+     * - @param string $string 要判断的字符串
+     * - @param string $val 要判断的内容
+     * - @return bool 判断结果
+     */
+    function endsWith( $string, $val ) { return Str::endsWith( $string, $val ); }
+    /**
+     * 截断字符 [ Chinese ]
+     * - 用于截断中文字符
+     * - @param string $value 要截断的字符串
+     * - @param int $length 截断长度
+     * - @param string $end 截断后缀
+     * - @return string 处理后的内容
+     */
+    function limitCn( $value, $length, $end = '' ) { return Str::limit( $value, $length, $end ); }
+    /**
+     * 截断字符 [ English ]
+     * - 用于截断英文字符
+     * - @param string $value 要截断的字符串
+     * - @param int $length 截断长度
+     * - @param string $end 截断后缀
+     * - @return string 处理后的内容
+     */
+    function limitEn( $value, $length, $end = '' ) { return Str::words( $value, $length, $end ); }

@@ -1,0 +1,12 @@
+# File
+.env
+
+# Composer
+vendor
+composer.lock
+
+# Log
+*.log
+
+#test
+test
