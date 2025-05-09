@@ -24,6 +24,11 @@ use Illuminate\Support\Str;
      * - @return mixed
      */
     function config( $key, $default = null ) {
+        // 三方程序干预
+        if ( Bootstrap::$init ) {
+            $cover = Bootstrap::processRun( 'QueryConfiguration', $key );
+            if ( $cover !== $key && $cover !== null ) { return $cover; }
+        }
         // 键拆分
         $keys = explode( '.', $key );
         // 获取配置文件

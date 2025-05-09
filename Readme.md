@@ -17,10 +17,14 @@
 
 ### 基础方法
 #### 核心驱动器 support/Bootstrap.php
+- 初始化状态 : bool `Bootstrap::$init`
 - 应用缓存 : array `Bootstrap::$cache`
 - 构建应用 - 用于构建并初始化应用，此方法只需在启动应用时调用一次
   - `Bootstrap::build( $method|null[function]传入方法 )`
   - return mixed 回调结果
+- 系统干预流程 - 用于执行系统干预流程的任务
+  - `Bootstrap::processRun( $type[string]任务类型, $parameter|null[mixed]传递参数 )`
+  - return mixed 处理结果
 - 获取应用缓存 - 用于获取和设置应用缓存，名称以 php 结尾则以 php 保存，否则保存为 txt ，加载方法可以输出一段代码或文本或数组
   - `Bootstrap::cache( $type[thread|file]缓存类型, $name[string]缓存名称, $load|null[function]加载方法 )`
   - return mixed 缓存结果
@@ -85,6 +89,13 @@
   - return string 处理后的内容
 - 使用系统插件 - 用于使用系统插件
   - `Plug( $name[string]插件名称, $target|class[class|config|folder]访问目标 )`
+#### 工具集 support/Helper/Tool.helper.php
+- 方法请求 - 用于请求控制器中的方法
+  - `Tool::runMethod( $type[string]控制器类型, $class[string|array]类名和方法, ...$parameter[mixed]传递参数 )`
+  - return mixed 方法返回值
+- 将字符串转换为数组 - 用于将 a:1|b:2 字符串转换为数组
+  - `Tool::toArray( $str[string]字符串 )`
+  - return array 数组
 
 ### 开发者说明
 #### 核心驱动器缓存名称申明
@@ -92,4 +103,9 @@
 - 配置缓存 : thread | config:xxx
 - 自动加载类 : thread | autoload
 - 插件缓存 : thread | plug:xxx
+- 系统干预流程 : thread | process
+#### 允许的系统干预流程
+- 系统初始化完成 : InitializationCompleted
+- 输出返回结果 : OutputReturnResult
+- 查询配置信息 : QueryConfiguration
 #### 日志名称申明

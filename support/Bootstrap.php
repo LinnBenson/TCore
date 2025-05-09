@@ -3,8 +3,16 @@
 use Dotenv\Dotenv;
 
     class Bootstrap {
+        // 初始化状态
+        public static $init = false;
         // 应用缓存
-        public static $cache = [];
+        public static $cache = [
+            'process' => [
+                'InitializationCompleted' => [], // 系统初始化完成
+                'OutputReturnResult' => [], // 输出返回结果
+                'QueryConfiguration' => [], // 查询配置信息
+            ],
+        ];
         /**
          * 构建应用
          * - 用于构建并初始化应用，此方法只需在启动应用时调用一次
@@ -15,9 +23,7 @@ use Dotenv\Dotenv;
             // 初始化应用
             self::init();
             // 执行用户传入的方法
-            return config( 'process.OutputReturnResult' )(
-                is_callable( $method ) ? $method() : null
-            );;
+            return self::processRun( 'OutputReturnResult', is_callable( $method ) ? $method() : null );
         }
         /**
          * 初始化应用
@@ -50,7 +56,7 @@ use Dotenv\Dotenv;
             }
             date_default_timezone_set( config( 'app.timezone' ) );
             // 自动加载应用
-            Bootstrap::$cache['autoload'] = [];
+            self::$cache['autoload'] = config( 'autoload.base' );
             spl_autoload_register( function( $class ) {
                 if ( isset( Bootstrap::$cache['autoload'][$class] ) ) {
                     import( Bootstrap::$cache['autoload'][$class] );
@@ -63,8 +69,48 @@ use Dotenv\Dotenv;
                 }
                 return false;
             });
-            // 用户配置流程
-            config( 'process.InitializationCompleted' )();
+            // 注册插件自启动
+            for ( $i=0; $i < 999; $i++ ) {
+                $plug = config( 'plug' )[$i] ?? null;
+                if ( empty( $plug ) || !is_string( $plug ) ) { break; }
+                $plugConfig = Plug( $plug, 'config' );
+                if ( !is_array( $plugConfig ) ) { continue; }
+                $run = $plugConfig['run'] ?? null;
+                if ( !is_array( $run ) || empty( $run ) ) { continue; }
+                foreach( $run as $type => $method ) {
+                    if ( isset( self::$cache['process'][$type] ) ) {
+                        self::$cache['process'][$type][] = [ 'plug', $plug, $method ];
+                    }
+                }
+            }
+            // 三方程序干预
+            self::processRun( 'InitializationCompleted' );
+            // 标记初始化完成
+            self::$init = true;
+        }
+        /**
+         * 系统干预流程
+         * - 用于执行系统干预流程的任务
+         * - @param string $type 任务类型
+         * - @param mixed $parameter 传递参数，默认为 null
+         * - @return mixed 处理结果
+         */
+        public static function processRun( $type, $parameter = null ) {
+            $runs = self::$cache['process'][$type] ?? null;
+            if ( empty( $runs ) || !is_array( $runs ) ) { return $parameter; }
+            for ( $i=0; $i < 999; $i++ ) {
+                $run = $runs[$i] ?? null;
+                if ( empty( $run ) || !is_array( $run ) ) { break; }
+                switch ( $run[0] ) {
+                    case 'plug':
+                        $method = $run[2];
+                        $parameter = Plug( $run[1] )->$method( $parameter );
+                        break;
+
+                    default: break;
+                }
+            }
+            return $parameter;
         }
         /**
          * 获取应用缓存
@@ -138,7 +184,7 @@ use Dotenv\Dotenv;
          */
         public static function autoload( $config ) {
             if ( !is_array( $config ) ) { return false; }
-            Bootstrap::$cache['autoload'] = array_merge( Bootstrap::$cache['autoload'], $config );
+            self::$cache['autoload'] = array_merge( self::$cache['autoload'], $config );
             return true;
         }
     }
