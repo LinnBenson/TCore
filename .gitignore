@@ -1,12 +1,13 @@
 # File
 .env
 
+# Folder
+storage/cache
+storage/log
+
 # Composer
 vendor
 composer.lock
 
 # Log
 *.log
-
-#test
-test

@@ -17,6 +17,37 @@ use Illuminate\Support\Str;
         return $value;
     }
     /**
+     * 配置信息
+     * - 获取配置信息
+     * - @param string $key 变量名
+     * - @param mixed $default 默认值
+     * - @return mixed
+     */
+    function config( $key, $default = null ) {
+        // 键拆分
+        $keys = explode( '.', $key );
+        // 获取配置文件
+        $value = Bootstrap::cache( 'thread', "config:{$keys[0]}", function()use( $keys ) {
+            $result = [];
+            $systemFile = "support/System/config/{$keys[0]}.config.php";
+            if ( file_exists( $systemFile ) ) { $result = require $systemFile; }
+            $userFile = "config/{$keys[0]}.config.php";
+            if ( file_exists( $userFile ) ) { $result = array_merge( $result, require $userFile ); }
+            return $result;
+        });
+        // 获取配置值
+        if ( !is_array( $value ) ) { return $default; }
+        if ( count( $keys ) === 1 ) { return $value; }
+        array_shift( $keys ); foreach ( $keys as $k ) {
+            if ( isset( $value[$k] ) ) {
+                $value = $value[$k];
+            }else {
+                return $default;
+            }
+        }
+        return $value;
+    }
+    /**
      * 批量引用文件
      * - 用于引用一个或多个文件
      * - @param string|array $file 文件名或文件数组
@@ -90,3 +121,44 @@ use Illuminate\Support\Str;
      * - @return string 处理后的内容
      */
     function limitEn( $value, $length, $end = '' ) { return Str::words( $value, $length, $end ); }
+    /**
+     * 使用系统插件
+     * - 用于使用系统插件
+     * - @param string $name 插件名称
+     * - @param string $target 访问目标，class|config|folder，默认为 class
+     * - @return object 插件对象
+     */
+    function Plug( $name, $target = 'class' ) {
+        $config = Bootstrap::cache( 'thread', "plug:{$name}", function()use( $name ) {
+            $plugFolder = "plug/{$name}";
+            if ( !is_dir( $plugFolder ) ) { return null; }
+            $plugConfig = "{$plugFolder}/config.php";
+            if ( !file_exists( $plugConfig ) ) { return null; }
+            $plugConfig = require $plugConfig;
+            $plugMain = "{$plugFolder}/main.php";
+            if ( !file_exists( $plugMain ) ) { return null; }
+            $plugClass = require $plugMain;
+            if ( !is_object( $plugClass ) ) { return null; }
+            if ( method_exists( $config['class'], '__' ) ) { $config['class']->__(); }
+            return [
+                'folder' => $plugFolder,
+                'config' => $plugConfig,
+                'class' => $plugClass
+            ];
+        });
+        if ( !is_array( $config ) ) { return null; }
+        switch ( $target ) {
+            case 'class':
+                return $config['class'];
+                break;
+            case 'config':
+                return $config['config'];
+                break;
+            case 'folder':
+                return $config['folder'];
+                break;
+            default:
+                return null;
+                break;
+        }
+    }

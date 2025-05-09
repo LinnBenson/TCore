@@ -24,6 +24,26 @@
         return rmdir( $dir );
     }
     /**
+     * 路径文件夹保护
+     * - 检查传入的路径是否存在，如果不存在则创建
+     * - @param string $dir 传入的路径
+     * - @return string|false 创建成功的路径或 false
+     */
+    function inFolder( $dir ) {
+        $check = preg_match( '/[^\/]+\.\w+$/', $dir ) ? dirname( $dir ) : $dir;
+        if ( is_dir( $check ) ) { return $dir; }
+        $check = str_replace( '\\', '/', $check );
+        $check = explode( '/', $check );
+        if ( count( $check ) <= 1 ) { return false; }
+        $current = '';
+        foreach( $check as $value ) {
+            if ( $value === '' ) { continue; }
+            $current .= $value.DIRECTORY_SEPARATOR;
+            if ( !is_dir( $current ) ) { mkdir( $current, 0777, true ); }
+        }
+        return $dir;
+    }
+    /**
      * 检查是否为 JSON 格式
      * - 检查传入的值是否为有效的 JSON 格式
      * - @param mixed $val 传入的值

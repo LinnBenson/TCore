@@ -8,5 +8,5 @@
      */
     require_once 'support/Bootstrap.php';
     echo Bootstrap::build(function(){
-        return env( 'APP_NAME' );
+        return config( 'app.title' );
     });
