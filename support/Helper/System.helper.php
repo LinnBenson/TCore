@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Support\Helper\Tool;
 
     /**
      * ENV 变量
@@ -74,6 +75,47 @@ use Illuminate\Support\Str;
         return null;
     }
     /**
+     * 使用语言包
+     * - 用于使用语言包
+     * - @param string $key 语言包键
+     * - @param array $replace 替换内容
+     * - @param string|null $locale 语言
+     * - @return string 语言包内容
+     */
+    function __( $key, $replace = [], $locale = null ) {
+        // 检查是否为双重语言调用
+        $check = explode( ':', $key );
+        if ( count( $check ) === 2 && empty( $replace ) ) { return __( $check[0], [], $locale ).__( $check[1], [], $locale ); }
+        // 整理参数
+        $keys = explode( '.', $key );
+        if ( empty( $locale ) ) { $locale = config( 'app.lang' ); }
+        // 加载使用的语言包
+        $text = Bootstrap::cache( 'thread', "lang:{$locale}|{$keys[0]}", function()use( $locale, $keys ) {
+            $result = Bootstrap::processRun( 'QueryLanguagePackage', [ 'lang' => $locale, 'target' => $keys[0] ] );
+            if ( !is_array( $result ) ) { $result = []; }
+            $folder1 = "support/System/resource/lang/{$locale}/{$keys[0]}.lang.php";
+            $folder2 = "resource/lang/{$locale}/{$keys[0]}.lang.php";
+            if ( !file_exists( $folder1 ) && !file_exists( $folder2 ) ) {
+                $locale = config( 'app.lang' );
+                $folder1 = "support/System/resource/lang/{$locale}/{$keys[0]}.lang.php";
+                $folder2 = "resource/lang/{$locale}/{$keys[0]}.lang.php";
+            }
+            if ( file_exists( $folder1 ) ) { $result = array_merge( $result, require $folder1 ); }
+            if ( file_exists( $folder2 ) ) { $result = array_merge( $result, require $folder2 ); }
+            return is_array( $result ) ? $result : [];
+        });
+        // 查询语言包
+        array_shift( $keys ); foreach ( $keys as $k ) {
+            if ( !isset( $text[$k] ) ) { return $key; }
+            $text = $text[$k];
+        }
+        if ( !is_string( $text ) ) { return $key; }
+        if ( empty( $replace ) ) { return $text; }
+        // 替换占位符
+        foreach ( $replace as $k => $v ) { $text = str_replace( "{{".$k."}}", $v, $text ); }
+        return $text;
+    }
+    /**
      * 格式化时间
      * - 将时间戳转换为日期格式
      * - @param int|object|false $time 时间戳或时间对象，为 false 时使用当前时间
@@ -137,11 +179,9 @@ use Illuminate\Support\Str;
      */
     function Plug( $name, $target = 'class' ) {
         $config = Bootstrap::cache( 'thread', "plug:{$name}", function()use( $name ) {
-            $plugFolder = "plug/{$name}";
+            $plugFolder = "support/System/plug/{$name}/";
+            if ( !is_dir( $plugFolder ) ) { $plugFolder = "plug/{$name}/"; }
             if ( !is_dir( $plugFolder ) ) { return null; }
-            $plugConfig = "{$plugFolder}/config.php";
-            if ( !file_exists( $plugConfig ) ) { return null; }
-            $plugConfig = require $plugConfig;
             $plugMain = "{$plugFolder}/main.php";
             if ( !file_exists( $plugMain ) ) { return null; }
             $plugClass = require $plugMain;
@@ -149,7 +189,6 @@ use Illuminate\Support\Str;
             if ( method_exists( $config['class'], '__' ) ) { $config['class']->__(); }
             return [
                 'folder' => $plugFolder,
-                'config' => $plugConfig,
                 'class' => $plugClass
             ];
         });
@@ -159,7 +198,7 @@ use Illuminate\Support\Str;
                 return $config['class'];
                 break;
             case 'config':
-                return $config['config'];
+                return $config['class']->config;
                 break;
             case 'folder':
                 return $config['folder'];
@@ -169,3 +208,7 @@ use Illuminate\Support\Str;
                 break;
         }
     }
+    // 访问接口控制器
+    function Controller( $class, ...$parameter ) { return Tool::runMethod( 'Controller', $class, ...$parameter ); }
+    // 访问任务控制器
+    function Task( $class, ...$parameter ) { return Tool::runMethod( 'Task', $class, ...$parameter ); }

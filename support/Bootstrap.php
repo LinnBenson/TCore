@@ -2,6 +2,9 @@
 
 use Dotenv\Dotenv;
 
+    /**
+     * 核心驱动器
+     */
     class Bootstrap {
         // 初始化状态
         public static $init = false;
@@ -12,6 +15,10 @@ use Dotenv\Dotenv;
                 'InitializationCompleted' => [], // 系统初始化完成时
                 'OutputReturnResult' => [], // 修改输出返回结果
                 'QueryConfiguration' => [], // 修改查询配置信息
+                'ConstructingRequest' => [], // 构建请求
+                'ResultCallback' => [], // 结果回调
+                'RouteRegistration' => [], // 路由注册
+                'QueryLanguagePackage' => [], // 查询语言包
             ],
         ];
         /**
@@ -76,7 +83,7 @@ use Dotenv\Dotenv;
                 if ( empty( $plug ) || !is_string( $plug ) ) { break; }
                 $plugConfig = Plug( $plug, 'config' );
                 if ( !is_array( $plugConfig ) ) { continue; }
-                $run = $plugConfig['run'] ?? null;
+                $run = $plugConfig['auto'] ?? null;
                 if ( !is_array( $run ) || empty( $run ) ) { continue; }
                 foreach( $run as $type => $method ) {
                     if ( isset( self::$cache['process'][$type] ) ) {

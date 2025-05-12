@@ -3,6 +3,8 @@
 namespace Support\Provider;
 
 use Bootstrap;
+use Support\Handler\Request;
+use Support\Handler\Router;
 
     /**
      * HTTP 服务端提供者
@@ -12,6 +14,7 @@ use Bootstrap;
          * HTTP 服务端入口
          */
         public static function start() {
-            return 'ok';
+            $request = Bootstrap::processRun( 'ConstructingRequest', new Request( 'http' ) );
+            return Router::init( $request );
         }
     }

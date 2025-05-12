@@ -69,6 +69,9 @@
 - 批量引用文件 - 用于引用一个或多个文件
   - `import( $file[string|array]文件名或文件数组 )`
   - return mixed 引用结果
+- 使用语言包 - 用于使用语言包
+  - `__( $key[string]语言包键, $replace[array]替换内容, $locale[string]语言 )`
+  - return string 语言包内容
 - 格式化时间 - 将时间戳转换为日期格式
   - `toDate( $time|false[int|object|false]时间戳或时间对象，为 false 时使用当前时间 )`
   - return string 格式化后的日期字符串
@@ -96,6 +99,76 @@
 - 将字符串转换为数组 - 用于将 a:1|b:2 字符串转换为数组
   - `Tool::toArray( $str[string]字符串 )`
   - return array 数组
+#### Session support/Handler/Session.helper.php
+- 初始化 Session - 使用 Session 时会自动调用此方法
+  - `Session::init()`
+  - return boolean 初始化结果
+- 获取 Session - 键名为 null 时返回所有 Session
+  - `Session::get( $key|null[string]键名 )`
+  - return mixed Session 值
+- 删除 Session - 用于删除 Session
+  - `Session::del( $key[string]键名 )`
+  - return boolean 删除结果
+- 设置 Session - 值为数组时会自动转换为 JSON
+  - `Session::set( $key[string]键名，$value[string|array]值 )`
+  - return boolean 设置结果
+- 重置 Session - 清空 Session
+  - `Session::reset()`
+  - return boolean 重置结果
+#### 请求构建器 support/Handler/Request.helper.php
+- 构造请求 - $type 传入数组可自定义构造
+  - `new Request( $type|null[string|array]请求类型 )`
+  - return void
+- 初始化请求 - 用于初始化一个请求
+  - `$request->init( $type|null[string]请求类型 )`
+  - return void
+- 验证请求 - 用于验证请求参数是否正常
+  - `$request->verifyRequest()`
+  - return bool 验证结果
+- 自动构建 - 根据请求类型自动构建请求
+  - `$request->autoBuild()`
+  - return bool 构建结果
+- 修改构建的请求 - 传入一个数组用于自定义请求
+  - `$request->edit( $data[array]请求数据 )`
+  - return bool 构建结果
+- 使用语言包 - 用于针对用户语言使用语言包
+  - `$request->t( $key[string]语言包键, $replace[array]替换内容 )`
+  - return string 语言包内容
+- 回调数据结果 - $state 支持 Boolean / Array / Int
+  - `$request->echo( $state[int|array|bool]返回状态, $data[mixed]返回数据, $code|null[mixed]返回状态码, $header|[ 'Content-Type' => 'application/json' ][array]返回头部 )`
+  - return string 返回结果
+#### 路由驱动器 support/Handler/Router.helper.php
+- 路由缓存 : array Router::$cache
+- 路由初始化 - 用于初始化加载路由
+  - `Router::init( $request[Request] )`
+  - return string 路由结果
+- 路由加载 - 用于加载路由文件
+  - `Router::load( $router[string]路由名称 )`
+  - return bool 加载结果
+- 路由构建器 - 用于构建路由
+  - `Router::add( $target[string]路由名称, $method|null[string]路由方法 )`
+  - return RouterBuild 路由构建器对象
+- 路由搜索 - 用于搜索路由
+  - `Router::search( $request[Request], $router[string]路由名称, $target[string]路由目标, $method|'ANY'[string]路由方法, $parameter|[][array]传递参数 )`
+  - return mixed 路由结果
+- 运行路由 - 用于运行指定路由配置
+  - `Router::runRouter( $request[Request], $config[array]路由配置, ...$parameter[mixed]传递参数 )`
+  - return mixed 路由结果
+- 路由错误处理 - 用于输出由于路由导致的错误
+  - `Router::error( $request[Request], $code[int]错误代码, $msg[mixed]错误内容 )`
+  - return string 错误结果
+#### 路由构造器 support/Slots/RouterBuild.slots.php
+```
+Router::add( '/test/{{必填}}{{选填}}' )
+->auth( $callable[function]验证方法 ) // 添加验证项
+->to( $callable[function]回调方法 ) // 以函数形式回调
+->url( $url[string]跳转地址 ) // 以地址回调
+->controller( $class[string|array]类方法 ) // 以接口控制器回调
+->task( $class[string|array]类方法 ) // 以任务控制器回调
+->html( $file[string]文件路径 ) // 以 public 下的文件回调
+->group( $callable[function]函数形式书写 ) // 添加子路由
+->save() // 保存路由
+```
 
 ### 开发者说明
 #### 核心驱动器缓存名称申明
@@ -105,8 +178,26 @@
 - 自动加载类 : thread | autoload
 - 插件缓存 : thread | plug:xxx
 - 系统干预流程 : thread | process
+- 语言包缓存 : thread | lang:xxx
 #### 允许的系统干预流程
-- 系统初始化完成 : InitializationCompleted
-- 修改输出返回结果 : OutputReturnResult
-- 修改查询配置信息 : QueryConfiguration
-#### 日志名称申明
+- 系统初始化完成 :
+  - InitializationCompleted
+  - 系统初始化构建完成时调用
+- 修改输出返回结果 :
+  - OutputReturnResult => $data[返回数据]
+  - 所有响应结果都会响应达此处，且可以修改返回内容。
+- 修改查询配置信息 :
+  - QueryConfiguration => $key[查询键]
+  - 当输出内容不为 null 且不等于 $key 时，以输出内容覆盖查询。
+- 请求构建完成 :
+  - ConstructingRequest => $request[Request]
+  - 可修改 $request，但必须输出 $request 。
+- 请求回调结果 :
+  - ResultCallback => $res[接口回调内容]
+  - 可调整 $res 输出，但必须输出 $res 。
+- 路由注册 :
+  - RouteRegistration => $router[当前查询路由名称]
+  - 可用于注册新的路由
+- 查询语言包 :
+  - QueryLanguagePackage => [ 'lang' => $locale, 'target' => $target ]
+  - 输出一个数组以添加语言包
