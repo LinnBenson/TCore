@@ -2,6 +2,7 @@
 
 namespace Support\Slots;
 
+use Support\Handler\File;
 use Support\Handler\Router;
 
     /**
@@ -76,13 +77,19 @@ use Support\Handler\Router;
             };
             return $this;
         }
-        // 访问 HTML 文件
-        public function html( $file ) {
+        // 访问 public 文件
+        public function file( $file ) {
             if ( !is_string( $file ) ) { return $this; }
             $this->result = function()use( $file ) {
-                $file = __file( "public/{$file}" );
-                if ( !file_exists( $file ) ) { return null; }
-                return file_get_contents( $file );
+                return File::echo( "public/{$file}" );
+            };
+            return $this;
+        }
+        // 访问视图文件
+        public function view( $view, $share = [] ) {
+            if ( !is_string( $view ) ) { return $this; }
+            $this->result = function( $request )use( $view, $share ) {
+                return View( $view, array_merge( $share, [ 'request' => $request ] ) );
             };
             return $this;
         }

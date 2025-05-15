@@ -11,6 +11,7 @@
         public $config = [
             'info' => [
                 'name' => 'Example',
+                'title' => '示例插件',
                 'version' => '1.0.0',
                 'author' => 'Author',
                 'description' => 'This is an example plugin.',

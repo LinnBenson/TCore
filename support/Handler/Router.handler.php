@@ -74,8 +74,8 @@ use Support\Slots\RouterBuild;
                 if ( strpos( $routerTarget, '{{' ) === false ) { continue; }
                 $routerTargets = explode( '|', $routerTarget );
                 if ( $routerTargets[0] !== $request->method && $routerTargets[0] !== 'ANY' ) { continue; }
-                $pattern = preg_replace( '#{{[^?]+}}#', '([^/]+)', $routerTargets[1] );
-                $pattern = preg_replace( '#{{.*?\?}}#', '(.*?)', $pattern );
+                $pattern = preg_replace( '#{{.*?\?}}#', '(.*?)', $routerTargets[1] );
+                $pattern = preg_replace( '#{{[^}]+}}#', '([^/]+)', $pattern );
                 if ( preg_match( "#^{$pattern}$#", $target, $matches ) === 1 ) {
                     array_shift( $matches );
                     $matches = array_merge( $parameter, $matches );
@@ -144,8 +144,7 @@ use Support\Slots\RouterBuild;
                     $check = $request->t( $msg[0], $msg[1] ?? [] );
                     if ( $check !== $msg[0] ) { $msg = $check; }
                 }
-                require __file( 'resource/view/error.view.php' );
-                return null;
+                return View( 'error', [ 'request' => $request, 'code' => $code, 'msg' => $msg ] );
             }
             return $request->echo( 2, $msg, $code );
         }

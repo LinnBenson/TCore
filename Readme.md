@@ -59,6 +59,9 @@
 - 调试参数 - 打印传入的参数，并在最后选择性退出
   - `dd( $val[mixed]传入的值, $exit|true[bool]是否退出 )`
   - return void
+- 拼接长文本 - 将传入的数组或字符串拼接成一个长文本
+  - `toString( $text[mixed]传入的文本 )`
+  - return string 拼接后的文本
 #### 系统基础函数 support/Helper/System.helper.php
 - ENV 变量 - 获取 ENV 环境变量
   - `env( $key[string]变量名, $default|null[mixed]默认值 )`
@@ -92,6 +95,16 @@
   - return string 处理后的内容
 - 使用系统插件 - 用于使用系统插件
   - `Plug( $name[string]插件名称, $target|class[class|config|folder]访问目标 )`
+  - return object 插件对象
+- 访问接口控制器 - 用于访问接口控制器
+  - `Controller( $class[string|array]控制器方法, ...$parameter[mixed]传递参数 )`
+  - return mixed 控制器返回值
+- 访问任务控制器 - 用于访问务控制器
+  - `Task( $class[string|array]控制器方法, ...$parameter[mixed]传递参数 )`
+  - return mixed 控制器返回值
+- 访问视图 - 用于访问视图
+  - `View( $view[string]视图名称, $parameter|[][array]传递参数, $cache|false[bool]是否缓存 )`
+  - return string 视图内容
 #### 工具集 support/Helper/Tool.helper.php
 - 方法请求 - 用于请求控制器中的方法
   - `Tool::runMethod( $type[string]控制器类型, $class[string|array]类名和方法, ...$parameter[mixed]传递参数 )`
@@ -130,7 +143,10 @@
   - return bool 构建结果
 - 修改构建的请求 - 传入一个数组用于自定义请求
   - `$request->edit( $data[array]请求数据 )`
-  - return bool 构建结果
+  - return RequestBuild 返回当前对象
+- 数据验证 - 用于验证请求参数
+  - `$request->vaildata( $rules[array]验证规则, $data|null[array]验证数据 )`
+  - return array 验证结果
 - 使用语言包 - 用于针对用户语言使用语言包
   - `$request->t( $key[string]语言包键, $replace[array]替换内容 )`
   - return string 语言包内容
@@ -165,10 +181,52 @@ Router::add( '/test/{{必填}}{{选填}}' )
 ->url( $url[string]跳转地址 ) // 以地址回调
 ->controller( $class[string|array]类方法 ) // 以接口控制器回调
 ->task( $class[string|array]类方法 ) // 以任务控制器回调
-->html( $file[string]文件路径 ) // 以 public 下的文件回调
+->file( $file[string]文件路径 ) // 以 public 下的文件回调
+->view( $view[string]视图路径, $share[][array]共享参数 ) // 访问视图文件
 ->group( $callable[function]函数形式书写 ) // 添加子路由
 ->save() // 保存路由
 ```
+#### 命令行工具 support/Provider/Shell.provider.php
+- 格式化参数 - 用于处理个性化文字
+  - `Shell::format( $content[string|array]内容 )`
+  - return string 格式化后的内容
+- 要求输入 - 用于要求用户输入
+  - `Shell::input( $content[string|array]提示内容 )`
+  - return string 返回输入内容
+- 输出菜单内容 - 用于输出一个选项菜单内容
+  - `Shell::menu( $request[Request], $data[array]菜单数据, $inputText|false[string|array]输入提示内容, $run|false[string]运行数据 )`
+  - return mixed 返回运行结果
+- 确认执行 - 用于确认执行操作
+  - `Shell::confirm( $request[Request], $content[string|array]提示内容, $method[function]执行方法 )`
+  - return mixed 返回执行结果
+- 循环输出 - 用于循环输出内容
+  - `Shell::loop( $text[string|array]输出内容 )`
+  - return string 返回格式化后的内容
+- 进度条 - 用于输出进度条
+  - `Shell::schedule( $current[int]当前进度, $total|100[int]总进度 )`
+  - return string 返回格式化后的进度条
+#### 文件处理器 support/Handler/File.handler.php
+- 构造文件
+  - `new File( $file[string]文件路径 )`
+  - return void
+- 删除文件 - 用于删除当前文件
+  - `$file->delete()`
+  - return boolean 删除结果
+- 复制文件 - 用于复制当前文件
+  - `$file->copy( $to[string]目标路径, $delete|false[bool]是否删除源文件 )`
+- 输出文件 - 用于输出文件
+  - `File::echo( $file[string]文件路径, $expires|2592000[int]过期时间（秒） )`
+  - return null
+#### 存储管理器 support/Handler/Storage.handler.php
+- 构造存储器
+  - `new Storage( $name[string]存储器名称 )`
+  - return void
+- 上传文件 - 用于处理 form 上传的文件
+  - `$storage->upload( $file[array]上传的文件 )`
+  - return File|boolean 上传结果
+- 复制文件 - 用于复制当前文件
+  - `$storage->copy( $file[string]文件名, $to[string]目标路径, $delete|false[bool]是否删除源文件 )`
+  - return File|boolean 复制结果
 
 ### 开发者说明
 #### 核心驱动器缓存名称申明
@@ -201,3 +259,271 @@ Router::add( '/test/{{必填}}{{选填}}' )
 - 查询语言包 :
   - QueryLanguagePackage => [ 'lang' => $locale, 'target' => $target ]
   - 输出一个数组以添加语言包
+#### 视图模板语法
+- 注释内容
+  ```
+  {{/* 这是一段注释 */}}
+  ```
+- 输出变量
+  ```
+  {{ $variable }}
+  ```
+- PHP 代码
+  ```
+  {{!! $variable = '1'; echo $variable; !!}}
+  ```
+- 判断语句
+  ```
+  @if( $variable === 1 ):
+      ...
+  @elseif( $variable === 2 ):
+      ...
+  @else:
+      ...
+  @endif
+  ```
+- foreach 循环
+  ```
+  @foreach( $variable as $key => $value ):
+      ...
+  @endforeach
+  ```
+- for 循环
+  ```
+  @for( $i = 0; $i < 5; $i++ ):
+      ...
+  @endfor
+  ```
+- while 循环
+  ```
+  @while( $variable < 5 ):
+      ...
+  @endwhile
+  ```
+- 组件调用
+  ```
+  // 调用 resource/view/module/ 目录下的组件
+  <x-...></x-...>
+  // 调用 resource/view/ 目录下的组件
+  <x-_...></x-_...>
+- 视图名称: String `{{ $ViewName }}`
+- 当前主题: Array `{{ $theme['...'] }}`
+- 当前主题名称: String `{{ $themeName }}`
+- 文件版本: String `{{ $v }}`
+- 系统版本: String `{{ $version }}`
+- 当前语言: String `{{ $lang }}`
+- 调用静态文件: Function `{{ $assets( '...' ) }}`
+- 当前请求: Object `{{ $request }}`
+- 语言包使用:
+  ```
+  {{ $t( '...' ) }} // 调用全局语言包
+  {{ $t( '&...' ) }} // 调用视图同名下的语言包
+  ```
+#### Core.js 说明
+- 页面加载状态: `tc.complete` boolean
+- 语言包: `tc.text` object
+- 服务器信息: `tc.server` object
+- 用户信息: `tc.user` object
+- 屏幕尺寸: `tc.size` object
+- 复制对象: `tc.clipboard` object
+- 初始化页面
+  ```
+  tc.SystemDefaultLoading()
+  return null
+  ```
+- 从服务器刷新信息
+  ```
+  tc.refresh( type:string(类型) )
+  return null
+  // 类型支持: [ 'text', 'server', 'all' ]
+  ```
+- 缓存操作
+  ```
+  tc.cache( name:string(缓存名), value|false:string(缓存值) )
+  return boolean:操作结果
+  // 允许的缓存: [ 'id', 'lang', 'themeName', 'theme' ]
+  ```
+- 发起一个网络请求
+  ```
+  tc.send( data:array(请求数据), load|false:function( 加载函数 ) )
+  return async:异步请求实体;
+  // data 示例
+  const data = {
+      url: 链接[string],
+      type: 请求方法[string],
+      data: 传递参数[json/array],
+      async: 是否为异步请求[boolean],
+      check: 是否使用内部检查器[boolean],
+      run: 请求成功执行方法[function],
+      error: 请求失败执行方法[function],
+      other: 其它传递给 ajax 的内容[array]
+  };
+  ```
+- 验证 API 数据
+  ```
+  tc.res( data:array(请求配置), res:any(数据) )
+  return any:数据
+  // data 示例
+  const data = {
+      run: 验证成功执行方法[function],
+      error: 验证失败执行方法[function]
+  };
+  ```
+- 附加请求头
+  ```
+  tc.header()
+  return array:请求头数据
+  ```
+- 登录账户
+  ```
+  tc.login( res:array(登录信息) )
+  return boolean 通知结果
+  ```
+- 注销登录
+  ```
+  tc.logout( reload|false:boolean/string(注销完成行为) )
+  return boolean 通知结果
+  ```
+- 视图操作
+  ```
+  tc.view( 'name' )
+  // 添加代码 ( code 为 null 时返回组件内代码 )
+  .html( code|null:string(代码) )
+  // 检查元素是否存在
+  .has()
+  // 检查类名是否存在
+  .hasClass()
+  // 激活元素 ( state 为 null 时自动切换，并返回当前元素激活状态 )
+  .action( state|null:boolean(状态) )
+  // 类名交换
+  .replace( params1:string(类名), params2:string(类名) )
+  // 添加类名
+  .addClass( name:string(类名) )
+  // 移除类名
+  .removeClass( name:string(类名) )
+  // 设置类名
+  .setClass( value:string(类名) )
+  // 设置样式
+  .style( data:array(样式集合) )
+  // 设置属性
+  .attr( name:string(属性名), value:string(属性值) )
+  // 移除元素
+  .remove()
+  // 查询子元素
+  .find( name:string(子元素) )
+  // 为元素执行动画
+  .animation( name:string(动画名称), time|180:number(动画时长) )
+  // 为元素添加加载动画
+  .load( state:boolean(状态), timeout|3000:number(自动消失时间) )
+  // 渲染列表
+  .list( list:array(列表数据), code:string(项目代码) )
+  // 组件滚动
+  .scroll( type:string(滚动方向), offset|null:number(偏移数值), timeout|180:number(偏移时间) )
+  // 事件注册
+  .on( type:string(事件类型), method:function(事件) )
+
+  return ohject|链式调用
+  ```
+- Toast 通知
+  ```
+  tc.unit.toast( text:string(通知内容), error|false:boolean(错误消息), timeout|3000:number(自动消失时间) )
+  return boolean:响应结果
+  ```
+- 加载动画
+  ```
+  tc.unit.load( state:boolean(状态), timeout|3000:number(自动消失时间) )
+  return boolean:响应结果
+  ```
+- 弹窗组件
+  ```
+  tc.unit.popup( title|false:string(标题), body|'':string(主内容) option|{}:array(可选参数) )
+  return boolean:响应结果
+  // 使用示例
+  tc.unit.popup( '这是一个标题', '弹窗内容代码', {
+      width: '300px', // 弹窗宽度
+      run: () => {} // 确认执行函数
+      icon: 'bi-star', // 确认执行图标
+      text: '确定', // 确认执行文本
+      close: false // 点击确认后是否自动关闭
+  });
+  ```
+- 注册输入框数据
+  ```
+  tc.form.register( rid:string(RID), data:json(数据) )
+  return boolean:注册结果
+  ```
+- 提交表单
+  ```
+  tc.form.submit( id:string(表单ID), method|null:string(执行方法), link|null:string(提交地址) )
+  return array:表单数据
+  ```
+- 提交表单
+  ```
+  tc.form.vaildata( data:object(表单数据), rules:object(表单规则) )
+  return boolean:验证结果
+  ```
+- 判断变量是否存在
+  ```
+  empty( v:any(检查参数) )
+  return boolean:判断结果
+  ```
+- 判断变量是否为 JSON
+  ```
+  is_json( v:any(检查参数) )
+  return boolean:判断结果
+  ```
+- 判断变量是否为数组或者对象
+  ```
+  is_array( v:any(检查参数) )
+  return boolean:判断结果
+  ```
+- 查询本地存储
+  ```
+  get( key:string(键名) )
+  return any:查询结果
+  ```
+- 设置本地存储
+  ```
+  set( key:string(键名), value:any(值) )
+  return boolean:设置结果
+  ```
+- 删除本地存储
+  ```
+  del( key:string(键名) )
+  return boolean:删除结果
+  ```
+- 判断变量是否为数字
+  ```
+  is_number( v:any(检查参数) )
+  return boolean:判断结果
+  ```
+- 生成 UUID
+  ```
+  uuid( check|false:boolean(检查参数) )
+  return string:UUID
+  ```
+- 判断变量是否为 UUID
+  ```
+  is_uuid( v:any(检查参数) )
+  return boolean:判断结果
+  ```
+- 判断变量是否为日期
+  ```
+  is_date( v:any(检查参数) )
+  return boolean:判断结果
+  ```
+- 转为时间
+  ```
+  toTime( v:string(参数) )
+  return string:转换结果
+  ```
+- 转为完整时间
+  ```
+  toDatetime( v:string(参数) )
+  return string:转换结果
+  ```
+- 使用语言包
+  ```
+  t( word:string(语言键), replace|{}:array(替换参数) )
+  return string:传出语言
+  ```

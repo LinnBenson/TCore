@@ -1,0 +1,248 @@
+{{View( 'ViewHeader', [ 'title' => 'Welcome to TCore' ] )}}
+
+<style>
+    div#index {
+        width: var( --vw );
+        height: var( --vh );
+        box-sizing: border-box;
+    }
+    div#index main {
+        width: 800px;
+        height: 480px;
+        max-width: calc( 100% - 30px );
+        max-height: 95vh;
+        background: rgb( var( --r3 ), 0.1 );
+        border-radius: 20px;
+        box-sizing: border-box;
+        position: relative;
+    }
+    div#index main.action {
+        width: calc( var( --vw ) - 50px );
+        height: calc( var( --vh ) - 50px );
+    }
+    div#index main i.method {
+        --size: 30px;
+        border-radius: 90px;
+        cursor: pointer;
+    }
+    div#index main i.mainAction {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+    }
+    div#index main i.mainUp {
+        --size: 40px;
+        border-radius: var( --radius );
+        opacity: 0.5;
+        transition: 200ms;
+        position: fixed;
+        right: 20px;
+        bottom: -50px;
+        z-index: 1;
+    }
+    div#index main i.mainUp.action{ bottom: 20px; }
+    div#index main div.content {
+        width: 100%;
+        height: 100%;
+        padding: 0px 8px;
+        box-sizing: border-box;
+    }
+    div#index main div.content div.info {
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+    div#index main div.content div.iconsInfo {
+        padding-bottom: 8px;
+        text-align: center;
+    }
+    div#index main div.content div.iconsInfo input {
+        width: 100px;
+        height: 28px;
+        padding: 0px 8px;
+        background: rgb( var( --r0 ) );
+        border: none;
+        border-radius: var( --radius );
+        box-sizing: border-box;
+    }
+    div#index main div.content ul[icons] {
+        padding: 0;
+        list-style: none;
+    }
+    div#index main div.content ul[icons] li {
+        --size: 50px;
+        display: inline-block;
+        width: 60px;
+        height: 70px;
+        margin-bottom: 4px;
+        background: rgb( var( --r3 ), 0.25 );
+        text-align: center;
+        border-radius: var( --radius );
+        cursor: pointer;
+    }
+    div#index main div.content ul[icons] li p {
+        width: 100%;
+        padding: 0px 5px;
+        box-sizing: border-box;
+    }
+    @media ( max-width: 580px ) {
+        div#index main {
+            width: var( --vw );
+            height: var( --vh );
+            max-width: var( --vw );
+            max-height: var( --vh );
+            border-radius: 0px;
+            box-sizing: border-box;
+        }
+        div#index main i.mainAction { display: none; }
+    }
+</style>
+<div id="index" class="center">
+    <main class="padding24" main>
+        <i class="bi-arrows-angle-expand bold font6 block method mainAction r3" onclick="view.mainAction()"></i>
+        <i class="bi-arrow-up-circle bold font5 block method mainUp r3" onclick="tc.view( 'main div.content' ).scroll( 'top' )"></i>
+        <div class="content scroll">
+            <h3>{{config( 'app.name' )}} Version{{config( 'app.version' )}}</h3>
+            <p class="font7 opa50">© {{date( 'Y' )}} <a href="{{config( 'app.host' )}}" target="_blank">{{config( 'app.title' )}}</a> All Rights Reserved.</p>
+            <hr />
+            <div class="info r3 bottom8 padding16">
+                <p class="font6">ID: {{$request->id}}</p>
+            </div>
+            <x-card class="bottom8 method" title="组件预览" icon="bi-app-indicator" close="true">
+                <button class="r4" onclick="tc.unit.toast( ['base.error.401'] )" vButton>Toast 通知</button>
+                <button class="r5" onclick="tc.unit.toast( ['base.error.401'], true )" vButton>Toast 通知</button>
+                <button class="r3" onclick="tc.unit.load( true, 8000 )" vButton>全屏加载</button>
+                <button class="r3" onclick="tc.view( 'div.method' ).load( true, 8000 )" vButton>局部加载</button>
+                <button class="r1" onclick="tc.unit.popup( '测试标题', tc.view( 'div.info' ), { text: '通过', run: function() { tc.view( 'popup' ).load( true, 5000 ); } } )" vButton>弹窗工具</button>
+            </x-card>
+            <script>
+                function testpass( res ) {
+                    console.log( res );
+                }
+                function login( res ) { tc.login( res, true ); }
+            </script>
+            <x-card class="bottom8 user" title="用户信息" icon="bi-person-circle" close="false">
+                @if( !empty( $request->user ) ):
+                    <p><span class="bold right8">UID: </span>{{$request->user->uid}}</p>
+                    <p><span class="bold right8">昵称: </span>{{$request->user->nickname}}</p>
+                    <p><span class="bold right8">用户名: </span>{{$request->user->username}}</p>
+                    <p><span class="bold right8">邮箱: </span>{{$request->user->email}}</p>
+                    <p><span class="bold right8">手机号: </span>{{$request->user->phone}}</p>
+                    <p><span class="bold right8">级别: </span>{{$request->user->status}}</p>
+                    <button class="r5 top8" onclick="tc.logout( true )" vButton>{{$t('base.logout')}}</button>
+                @else:
+                    {{view( 'ViewForm', [
+                        'form' => [
+                            'id' => 'login',
+                            'method' => 'login',
+                            'link' => '/api/account/login',
+                            'text' => $t( 'base.login' ),
+                            'reset' => false
+                        ],
+                        'left' => true,
+                        'data' => [
+                            [ 'type' => 'string', 'title' => '用户名/邮箱', 'name' => 'user', 'must' => 'true' ],
+                            [ 'type' => 'password', 'title' => '密码', 'name' => 'password', 'must' => 'true' ],
+                            [ 'type' => 'check', 'name' => 'remember', 'hint' => '记住登录状态' ],
+                        ]
+                    ])}}
+                @endif
+            </x-card>
+            <x-card class="bottom8 formShow" title="表单展示" icon="bi-chat-quote" close="true">
+                {{view( 'ViewForm', [
+                    'form' => [
+                        'id' => 'testpass',
+                        'method' => 'testpass',
+                        'link' => '/api/test',
+                        'text' => $t( 'base.submit' )
+                    ],
+                    'left' => true,
+                    'data' => [
+                        [ 'type' => 'string', 'title' => '文本输入', 'name' => 'text', 'hint' => '这是一个文本输入框', 'readme' => [ '第一行提示内容', '这是第二行提示内容' ], 'max' => 5 ],
+                        [ 'type' => 'alnum', 'title' => '字符串输入', 'name' => 'alnum', 'hint' => '这是一个字符串输入框' ],
+                        [ 'type' => 'phone', 'title' => '手机号输入', 'name' => 'phone', 'hint' => '这是一个手机号输入框', 'readme' => [ '第一行提示内容', '这是第二行提示内容' ] ],
+                        [ 'type' => 'number', 'title' => '数字输入', 'name' => 'number', 'hint' => '这是一个数字输入框', 'max' => 5 ],
+                        [ 'type' => 'email', 'title' => '邮箱输入', 'name' => 'email', 'hint' => '这是一个邮箱输入框' ],
+                        [ 'type' => 'password', 'title' => '密码输入', 'name' => 'password', 'hint' => '这是一个密码输入框' ],
+                        [ 'type' => 'select', 'data' => [ 'a' => 'aa', 'b' => 'bb' ], 'value' => 'b', 'title' => '选择框', 'name' => 'select', 'hint' => '这是一个选择框' ],
+                        [ 'type' => 'date', 'title' => '日期输入', 'name' => 'date' ],
+                        [ 'type' => 'time', 'title' => '时间输入', 'name' => 'time' ],
+                        [ 'type' => 'datetime', 'title' => '完整时间输入', 'name' => 'datetime', 'value' => '2020-02-02 03:03:03' ],
+                        [ 'type' => 'uuid', 'title' => 'UUID 输入', 'name' => 'uuid', 'hint' => '这是一个 UUID 输入框' ],
+                        [ 'type' => 'switch', 'title' => '开关按钮', 'name' => 'switch', 'value' => true ],
+                        [ 'type' => 'longtext', 'title' => '长文本输入', 'name' => 'longtext', 'hint' => '这是一个长文本输入框' ],
+                        [ 'type' => 'json', 'title' => 'json输入', 'name' => 'json', 'value' => '[ 1, 2, 3 ]', 'hint' => '这是一个json输入框' ],
+                        [ 'type' => 'check', 'title' => '勾选项目', 'name' => 'check', 'hint' => '勾选我', 'value' => true, 'readme' => [ '第一行提示内容', '这是第二行提示内容' ] ],
+                        [ 'type' => 'upload', 'title' => '上传文件', 'name' => 'upload', 'file' => '*', 'num' => 1 ],
+                    ]
+                ])}}
+            </x-card>
+            <x-card class="bottom8" title="Bootstrap Icons" id="icons" icon="bi-star" close="true">
+                <div class="iconsInfo">
+                    <span class="font6">{{$t('base.search')}}:</i>
+                    <input autocomplete="off" searchIcons /> /
+                    <span class="font6"><span iconsCount>0</span> Pie</i>
+                </div>
+                <ul icons></ul>
+            </x-card>
+        </div>
+    </main>
+</div>
+<script>
+    const view = {
+        icons: {},
+        start: function() {
+            this.renderIcons( this.getAllIcons() );
+            tc.view( 'main div.content' ).on( 'scroll', function() {
+                tc.view( 'main i.mainUp' ).action( !($( this ).scrollTop() === 0) );
+            });
+            // 搜索框变化事件
+            tc.view( 'searchIcons' ).on( 'input', function() {
+                const value = $( this ).val().toLowerCase();
+                if ( empty( value ) ) {
+                    view.renderIcons( view.icons );
+                }else {
+                    const icons = view.icons.filter(item => item.includes( value ));
+                    view.renderIcons( icons );
+                }
+            });
+        },
+        mainAction: function() {
+            tc.view( 'main' ).action() ?
+                tc.view( 'i.mainAction' ).removeClass( 'bi-arrows-angle-contract' ).addClass( 'bi-arrows-angle-expand' )
+                :
+                tc.view( 'i.mainAction' ).addClass( 'bi-arrows-angle-contract' ).removeClass( 'bi-arrows-angle-expand' );
+        },
+        getAllIcons: function() {
+            const biClasses = new Set();
+            for ( const stylesheet of document.styleSheets ) {
+                try {
+                    for ( const rule of stylesheet.cssRules || [] ) {
+                        if ( rule.selectorText ) {
+                            const matches = rule.selectorText.match(/\.bi-[\w-]+/g);
+                            if ( matches ) {
+                                matches.forEach( cls => biClasses.add( cls.substring( 1 ) ) );
+                            }
+                        }
+                    }
+                }catch( error ) {
+                    tc.unit.toast( ['error.unknown'], true );
+                }
+            }
+            const icons = Array.from( biClasses );
+            if ( is_array( icons ) ) { this.icons = icons; }
+            return this.icons;
+        },
+        renderIcons: function( icons ) {
+            tc.view( 'iconsCount' ).html( icons.length );
+            tc.view( 'icons' ).list( icons, `
+                <li class="copy" data-clipboard-text="{item}">
+                    <i class="{item} font4 block"></i>
+                    <p class="font7 more">{item}</p>
+                </li>
+            `);
+        }
+    };
+    view.start();
+</script>
+
+{{View( 'ViewFooter', [] )}}

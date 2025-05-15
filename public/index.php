@@ -1,6 +1,6 @@
 <?php
 
-use Support\Provider\HttpProvider;
+use Support\Provider\Http;
 
     /**
      * HTTP 服务端入口
@@ -11,5 +11,5 @@ use Support\Provider\HttpProvider;
      */
     require_once 'support/Bootstrap.php';
     echo Bootstrap::build(function(){
-        return HttpProvider::start();
+        return Http::start();
     });

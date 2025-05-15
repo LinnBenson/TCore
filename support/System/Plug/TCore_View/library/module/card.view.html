@@ -1,0 +1,41 @@
+<?php
+    $rid = md5( uuid() );
+    $closeCard = '';
+    if ( !empty( $close ) ) {
+        if ( empty( $title ) ) { $title = 'Card'; }
+        $closeCard = $close === 'true' ? true : false;
+    }
+    if ( !empty( $method ) ) { $method = explode( "|", $method ); }
+?>
+<div class="<?=!empty( $title ) ? 'hasTitle' : ''?> <?=$class?> <?=$closeCard ? 'closeCard' : ''?>" <?=!empty( $id ) ? 'id="'.$id.'"' : ''?> rid="<?=$rid?>" vCard>
+    <?php if ( !empty( $title ) ): ?>
+    <div class="cardTitle <?=!empty( $titleColor ) ? $titleColor : ''?>">
+        <div class="cardTitleLeft" <?=is_bool( $closeCard ) ? "onclick='rid_{$rid}()' style='cursor: pointer;'" : ''?>">
+            <h5 class="more"><?=!empty( $icon ) ? "<i class='{$icon} right8'></i>":''?><?=$title?></h5>
+        </div>
+        <div class="cardTitleRight">
+            <?php if ( is_bool( $closeCard ) ): ?>
+            <i class="cardMethod cardMethodClose block <?=$closeCard ? 'bi-chevron-down' : 'bi-chevron-up'?>" onclick="rid_<?=$rid?>()"></i>
+            <?php endif; ?>
+            <?php if ( !empty( $method ) ): ?>
+            <i class="cardMethod block <?=$method[0]?>" onclick="<?=$method[1]?>"></i>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    <div class="cardBody">
+        <?=$children?>
+    </div>
+</div>
+<?php if ( is_bool( $closeCard ) ): ?>
+<script>
+    function rid_<?=$rid?>() {
+        const $card = $( 'div[rid="<?=$rid?>"]' );
+        tc.view( $card.find( 'div.cardTitleRight i.cardMethodClose' ) ).replace( 'bi-chevron-down', 'bi-chevron-up' );
+        if ( $card.hasClass( 'closeCard' ) ) {
+            return $card.removeClass( 'closeCard' );
+        }
+        $card.addClass( 'closeCard' );
+    }
+</script>
+<?php endif; ?>

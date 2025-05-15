@@ -103,3 +103,14 @@
         }
         print_r( $echo ); echo PHP_EOL.PHP_EOL; if ( $exit ) { exit(); }
     }
+    /**
+     * 拼接长文本
+     * - 将传入的数组或字符串拼接成一个长文本
+     * - @param mixed $text 传入的文本
+     * - @return string 拼接后的文本
+     */
+    function toString( $text ) {
+        if ( !is_array( $text ) && !is_string( $text ) ) { return ''; }
+        if ( is_string( $text ) ) { return $text; }
+        return implode( "\n", $text );
+    }

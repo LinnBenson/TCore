@@ -27,5 +27,9 @@
         /**
          * 运行时区
          */
-        'timezone' => env( 'APP_TIMEZONE', 'UTC' )
+        'timezone' => env( 'APP_TIMEZONE', 'UTC' ),
+        /**
+         * 应用版本
+         */
+        'version' => '1.0.0',
     ];

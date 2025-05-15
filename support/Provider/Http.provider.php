@@ -9,7 +9,7 @@ use Support\Handler\Router;
     /**
      * HTTP 服务端提供者
      */
-    class HttpProvider{
+    class Http{
         /**
          * HTTP 服务端入口
          */

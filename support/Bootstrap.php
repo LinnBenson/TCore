@@ -169,7 +169,7 @@ use Dotenv\Dotenv;
             $file = inFolder( 'storage/log/Bootstrap_'.date( 'Ymd' ).'.log' );
             // 传入为对象时认为是异常对象
             if ( is_object( $content ) && method_exists( $content, 'getMessage' ) ) {
-                $content = $content->getMessage();
+                $content = "{$content->getFile()}[{$content->getLine()}]: {$content->getMessage()}";
             }
             // 再次检查是否为字符串
             if ( !is_string( $content ) ) { $content = print_r( $content, true ); }

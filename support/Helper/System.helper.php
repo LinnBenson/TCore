@@ -45,7 +45,8 @@ use Support\Helper\Tool;
         });
         // 获取配置值
         if ( !is_array( $value ) ) { return $default; }
-        if ( count( $keys ) === 1 ) { return $value; }
+        if ( count( $keys ) === 1 && !empty( $value ) ) { return $value; }
+        if ( empty( $value ) ) { return $default;}
         array_shift( $keys ); foreach ( $keys as $k ) {
             if ( isset( $value[$k] ) ) {
                 $value = $value[$k];
@@ -179,6 +180,7 @@ use Support\Helper\Tool;
      */
     function Plug( $name, $target = 'class' ) {
         $config = Bootstrap::cache( 'thread', "plug:{$name}", function()use( $name ) {
+            $name =str_replace( '.', '/', $name );
             $plugFolder = "support/System/plug/{$name}/";
             if ( !is_dir( $plugFolder ) ) { $plugFolder = "plug/{$name}/"; }
             if ( !is_dir( $plugFolder ) ) { return null; }
@@ -186,7 +188,6 @@ use Support\Helper\Tool;
             if ( !file_exists( $plugMain ) ) { return null; }
             $plugClass = require $plugMain;
             if ( !is_object( $plugClass ) ) { return null; }
-            if ( method_exists( $config['class'], '__' ) ) { $config['class']->__(); }
             return [
                 'folder' => $plugFolder,
                 'class' => $plugClass
@@ -208,7 +209,46 @@ use Support\Helper\Tool;
                 break;
         }
     }
-    // 访问接口控制器
+    /**
+     * 访问接口控制器
+     * - 用于访问接口控制器
+     * - @param string|array $class 控制器方法
+     * - @param mixed ...$parameter 传递参数
+     * - @return mixed 控制器返回值
+     */
     function Controller( $class, ...$parameter ) { return Tool::runMethod( 'Controller', $class, ...$parameter ); }
-    // 访问任务控制器
+    /**
+     * 访问任务控制器
+     * - 用于访问务控制器
+     * - @param string $class 控制器方法
+     * - @param mixed ...$parameter 控制器参数
+     * - @return mixed 控制器返回值
+     */
     function Task( $class, ...$parameter ) { return Tool::runMethod( 'Task', $class, ...$parameter ); }
+    /**
+     * 访问视图
+     * - 用于访问视图
+     * - @param string $view 视图名称
+     * - @param array $parameter 视图参数
+     * - @param bool $cache 是否缓存
+     * - @return string 视图内容
+     */
+    function View( $view, $parameter = [], $cache = true ) {
+        $view = str_replace( '.', '/', $view );
+        if ( is_string( config( 'drive.view' ) ) ) {
+            return Plug( config( 'drive.view' ) )->show( $view, $parameter, $cache );
+        }else {
+            $file = __file( "resource/view/{$view}.view.php" );
+            if ( file_exists( $file ) ) {
+                ob_start();
+                    extract( $parameter );
+                    require $file;
+                return ob_get_clean();
+            }
+            $file = __file( "resource/view/{$view}.view.html" );
+            if ( file_exists( $file ) ) {
+                return file_get_contents( $file );
+            }
+            return null;
+        }
+    }

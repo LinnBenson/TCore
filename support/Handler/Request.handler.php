@@ -56,7 +56,9 @@ use Support\Slots\RequestBuild;
          */
         public function verifyRequest() {
             // 请求 ID 生成
-            $this->id = $this->header['id'] ?? $this->session['id'] ?? $this->cookie['id'] ?? uuid();
+            if ( !is_uuid( $this->id ) ) {
+                $this->id = $this->header['id'] ?? $this->session['id'] ?? $this->cookie['id'] ?? uuid();
+            }
             // 检查语言
             $this->lang = $this->header['lang'] ?? $this->session['lang'] ?? $this->cookie['lang'] ?? config( 'app.lang' );
             if (
@@ -77,6 +79,18 @@ use Support\Slots\RequestBuild;
             if ( substr( $this->target, 0, 1 ) !== '/' ) { $this->target = "/{$this->target}"; }
             if ( empty( $this->source ) ) { $this->source = '/'; }
             return true;
+        }
+        /**
+         * 数据验证
+         * - 用于验证请求参数
+         * - @param array $rules 验证规则
+         * - @param array $data 验证数据
+         * - @return array 验证结果
+         */
+        public function vaildata( $rules, $data = null ) {
+            $data = is_array( $data ) ? $data : $this->post;
+            $vaildata = new Vaildata( $this, $rules, $data );
+            return $vaildata->check();
         }
         /**
          * 使用语言包
@@ -104,7 +118,13 @@ use Support\Slots\RequestBuild;
             }
             // 返回状态
             $stateMap = [ 0 => 'success', 1 => 'fail', 2 => 'error', 3 => 'warning', ];
-            if ( is_bool( $state ) ) { $state = $state ? 0 : 1; }
+            if ( is_bool( $state ) ) {
+                if ( is_array( $data ) && count( $data ) === 1 ) {
+                    $addState = $state ? 'base.true' : 'base.false';
+                    $data[0] = "{$data[0]}:{$addState}";
+                }
+                $state = $state ? 0 : 1;
+            }
             $stateName = $stateMap[$state] ?? 'info';
             // 语言处理
             if ( is_array( $data ) && count( $data ) <= 2 && is_string( $data[0] ) ) {

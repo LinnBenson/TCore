@@ -24,6 +24,8 @@ use Support\Handler\Session;
                 switch ( $this->type ) {
                     case 'http':
                         $this->autoBuildHttp(); break;
+                    case 'admin':
+                        $this->autoBuildAdmin(); break;
 
                     default: return false; break;
                 }
@@ -88,10 +90,20 @@ use Support\Handler\Session;
             return true;
         }
         /**
+         * 自动构建 - Admin
+         */
+        private function autoBuildAdmin() {
+            $this->code = 200;
+            $this->id = '00000000-0000-0000-0000-000000000000';
+            $this->ua = 'Administrator';
+            $this->ip = '0.0.0.0';
+            $this->method = 'ANY';
+        }
+        /**
          * 修改构建的请求
          * - 传入一个数组用于自定义请求
          * - @param array $data 请求数据
-         * - @return bool 构建结果
+         * - @return RequestBuild 返回当前对象
          */
         public function edit( $data ) {
             $this->type = $data['type'] ?? null;
@@ -110,6 +122,7 @@ use Support\Handler\Session;
             $this->file = $data['file'] ?? $this->file;
             $this->cookie = $data['cookie'] ?? $this->cookie;
             $this->share = $data['share'] ?? $this->share;
-            return true;
+            $this->verifyRequest();
+            return $this;
         }
     }
