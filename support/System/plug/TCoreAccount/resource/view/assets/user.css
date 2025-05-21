@@ -1,0 +1,36 @@
+div#user div.userinfo {
+    margin-bottom: 24px;
+}
+div#user div.userinfo div { text-align: center; }
+div#user div.userinfo div img {
+    width: 48px;
+    height: 48px;
+    border-radius: var( --radius );
+    border: 1px solid rgb(var(--r3), 0.35);
+    object-fit: cover;
+    cursor: pointer;
+}
+div#user table.info {
+    width: 100%;
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    border-radius: var( --radius );
+    border: 1px solid rgb(var(--r3), 0.35);
+    border-spacing: 0px;
+    box-sizing: border-box;
+}
+div#user table.info tr {
+    width: 100%;
+}
+div#user table.info tr td:first-of-type {
+    width: 100px;
+    padding-right: 8px;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+div#user table.info tr td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgb( var( --r1 ), 0.1 );
+}
+div#user table.info tr:last-of-type td { border: none; }

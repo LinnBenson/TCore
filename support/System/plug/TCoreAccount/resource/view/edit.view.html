@@ -1,0 +1,130 @@
+{{View( 'account.header', [
+    'title' => $t( '&title.edit' ),
+    'img' => $assets( 'user.jpg' )
+])}}
+
+<style>
+    div#edit div.userinfo {
+        margin-bottom: 24px;
+    }
+    div#edit div.userinfo div { text-align: center; }
+    div#edit div.userinfo div img {
+        width: 48px;
+        height: 48px;
+        border-radius: var( --radius );
+        border: 1px solid rgb(var(--r3), 0.35);
+        object-fit: cover;
+        cursor: pointer;
+    }
+    div#edit div.form {
+        width: 100%;
+        max-width: 360px;
+        margin: 0px auto;
+        margin-bottom: 32px;
+    }
+</style>
+<div id="edit">
+    <div class="userinfo center">
+        <div>
+            <label>
+                <img class="bottom8" src="/api/account/avatar/{{$request->user->uid}}" />
+                <input type="file" name="avatar" style="display: none;" />
+            </label>
+            <p class="font6 opa50 more">{{$t( '&item.avatarHint' )}}</p>
+        </div>
+    </div>
+    <div class="form">
+        {{view( 'ViewForm', [
+            'form' => [
+                'id' => 'edit',
+                'method' => 'view.submit',
+                'text' => $t( 'base.submit' )
+            ],
+            'left' => false,
+            'data' => [
+                [ 'type' => 'string', 'title' => $t( '&item.nickname' ), 'name' => 'nickname', 'value' => $request->user->info->nickname, 'must' => true, 'max' => 20 ],
+                [ 'type' => 'alnum', 'title' => $t( '&item.username' ), 'name' => 'username', 'value' => $request->user->info->username, 'readme' => [ $t( '&item.usernameTip' ) ], 'must' => true, 'max' => 12 ],
+                [ 'type' => 'longtext', 'title' => $t( '&item.slogan' ), 'name' => 'slogan', 'value' => $request->user->info->slogan, 'must' => true, 'max' => 50 ],
+                [ 'type' => 'verify', 'title' => $t( '&item.verify' ), 'name' => 'edituserinfo', 'must' => 'true' ]
+            ]
+        ])}}
+    </div>
+    {{/* 其它信息 */}}
+    {{!!
+        $back = urldecode( $request->get['back'] ?? '' );
+        $pass = urldecode( $request->get['pass'] ?? '' );
+        $invite = urldecode( $request->get['invite'] ?? '' );
+        $link = '';
+        if ( !empty( $back ) ) { $link = "?back=".urlencode( $back ); }
+        if ( !empty( $pass ) ) { $link = !empty( $link ) ? "{$link}&pass=".urlencode( $pass ) : "?pass=".urlencode( $pass ); }
+        if ( !empty( $invite ) ) { $link = !empty( $link ) ? "{$link}&invite=".urlencode( $invite ) : "?invite=".urlencode( $invite ); }
+    !!}}
+    <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
+        <ul>
+            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/account/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
+        </ul>
+    </x-card>
+</div>
+<script>
+    var view = {
+        submit: function( res ) {
+            tc.send({
+                url: '/api/account/edit',
+                type: 'POST',
+                data: res,
+                check: true,
+                run: function( res ) {
+                    tc.unit.toast(['base.edit:base.true']);
+                    setTimeout(() => { location.href = '/account/user{{$link}}'; }, 360 );
+                },
+                error: function() { tc.form.verifyImg( 'edituserinfo' ); }
+            }, ( state ) => { tc.view( 'div#content' ).load( state ); });
+        },
+        uploadAvatar: function( file ) {
+            fileType = file.name.split( '.' ).pop().toUpperCase();
+            const allow = [ 'JPG', 'PNG', 'GIF', 'JPEG' ];
+            if ( !allow.includes( fileType ) ) {
+                tc.view( 'div#content' ).load( false );
+                return tc.unit.toast( [ 'vaildata.type.upload', { name: "{{$t( '&item.avatar' )}}",  } ], true );
+            }
+            let reader = new FileReader();
+            reader.onload = function( e ) {
+                $( 'div#edit div.userinfo div img' ).attr( 'src', e.target.result ).show();
+            };
+            reader.readAsDataURL( file );
+            // 上传内容
+            let formData = new FormData();
+            formData.append( 'upload', file );
+            tc.send({
+                url: '/api/account/upload/avatar',
+                data: formData,
+                check: true,
+                other: {
+                    contentType: false,
+                    processData: false
+                },
+                run: function( res ) {
+                    tc.view( 'div#content' ).load( false );
+                    tc.unit.toast(['base.upload:base.true']);
+                },
+                error: function() {
+                    tc.view( 'div#content' ).load( false );
+                }
+            });
+        }
+    };
+    tc.view( 'div#edit input[name="avatar"]' ).on( 'input', function( event ) {
+        tc.view( 'div#content' ).load( true );
+        const $input = $( this );
+        const files = this.files;
+        if ( files.length > 0 ) {
+            view.uploadAvatar( files[0] );
+        }else {
+            tc.view( 'div#content' ).load( false );
+        }
+        $input.val( '' );
+    });
+</script>
+
+{{View( 'account.footer', [] )}}

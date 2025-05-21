@@ -2,4 +2,4 @@
 
 use Support\Handler\Router;
 
-    Router::add( '/' )->view( 'welcome' )->save();
+    Router::add( '/' )->url( '/account' )->save();

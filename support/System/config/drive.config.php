@@ -4,5 +4,5 @@
      * - 用于配置驱动程序
      */
     return [
-        'view' => 'TCore_View',
+        'view' => 'TCoreView',
     ];

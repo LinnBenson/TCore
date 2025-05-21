@@ -1,6 +1,7 @@
 <?php
 
 use Dotenv\Dotenv;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
     /**
      * 核心驱动器
@@ -8,6 +9,8 @@ use Dotenv\Dotenv;
     class Bootstrap {
         // 初始化状态
         public static $init = false;
+        // 数据库连接
+        public static $db = null;
         // 应用缓存
         public static $cache = [
             // 系统干预流程权限标识
@@ -77,6 +80,25 @@ use Dotenv\Dotenv;
                 }
                 return false;
             });
+            // 挂载数据库
+            try {
+                self::$db = new Capsule;
+                self::$db->addConnection([
+                    'driver' => config( 'database.mysql.driver' ),
+                    'charset' => config( 'database.mysql.charset' ),
+                    'collation' => config( 'database.mysql.collation' ),
+                    'prefix' => config( 'database.mysql.prefix' ),
+                    'host' => config( 'database.mysql.host' ),
+                    'port' => config( 'database.mysql.port' ),
+                    'database' => config( 'database.mysql.database' ),
+                    'username' => config( 'database.mysql.username' ),
+                    'password' => config( 'database.mysql.password' ),
+                ]);
+                self::$db->setAsGlobal();
+                self::$db->bootEloquent();
+            }catch ( Exception $e ) {
+                self::log( 'Database Connection Error', $e );
+            }
             // 注册插件自启动
             for ( $i=0; $i < 999; $i++ ) {
                 $plug = config( 'plug' )[$i] ?? null;
@@ -109,16 +131,12 @@ use Dotenv\Dotenv;
             for ( $i=0; $i < 999; $i++ ) {
                 $run = $runs[$i] ?? null;
                 if ( empty( $run ) || !is_array( $run ) ) { break; }
-                switch ( $run[0] ) {
-                    case 'plug':
-                        $method = $run[2];
-                        $parameter = Plug( $run[1] )->$method( $parameter );
-                        break;
-
-                    default: break;
+                if ( $run[0] === 'plug' ) {
+                    $method = $run[2];
+                    $backParameter = Plug( $run[1] )->$method( $parameter );
                 }
             }
-            return $parameter;
+            return $backParameter;
         }
         /**
          * 获取应用缓存

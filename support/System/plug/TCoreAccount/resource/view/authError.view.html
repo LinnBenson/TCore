@@ -1,0 +1,57 @@
+{{View( 'account.header', [
+    'title' => $t( '&title.authError' ),
+    'img' => $assets( 'authError.jpg' )
+])}}
+
+<style>
+    div#authError div.content {
+        width: 100%;
+        max-width: 360px;
+        padding: 30px 0px;
+        margin: 0px auto;
+        margin-bottom: 16px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    div#authError div.content i.error {
+        --size: 80px;
+        margin-bottom: 32px;
+        font-size: 30px;
+        font-weight: bold;
+        border-radius: 90px;
+    }
+    div#authError div.content div.target {
+        padding: 16px;
+        margin-top: 24px;
+        border-radius: var( --radius );
+    }
+</style>
+<div id="authError">
+    <div class="content">
+        <i class="error r5 bi-shield-exclamation block"></i>
+        <p>{{$t( '&error.auth' )}}</p>
+        {{!!
+            $back = urldecode( $request->get['back'] ?? '' );
+            $pass = urldecode( $request->get['pass'] ?? '' );
+            $invite = urldecode( $request->get['invite'] ?? '' );
+            $link = '';
+            if ( !empty( $back ) ) { $link = "?back=".urlencode( $back ); }
+            if ( !empty( $pass ) ) { $link = !empty( $link ) ? "{$link}&pass=".urlencode( $pass ) : "?pass=".urlencode( $pass ); }
+            if ( !empty( $invite ) ) { $link = !empty( $link ) ? "{$link}&invite=".urlencode( $invite ) : "?invite=".urlencode( $invite ); }
+        !!}}
+        @if ( !empty( $pass ) ):
+            <div class="target r0 more">
+                {{$pass}}
+            </div>
+        @endif
+    </div>
+    {{/* 其它信息 */}}
+    <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
+        <ul>
+            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/account/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
+        </ul>
+    </x-card>
+</div>
+
+{{View( 'account.footer', [] )}}

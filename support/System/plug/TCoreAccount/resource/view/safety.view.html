@@ -1,0 +1,189 @@
+{{View( 'account.header', [
+    'title' => $t( '&title.safety' ),
+    'img' => $assets( 'safety.jpg' )
+])}}
+
+<style>
+    div#safety ul.editType {
+        --height: 40px;
+        width: 100%;
+        height: var( --height );
+        padding: 0px;
+        margin-bottom: 16px;
+        background: rgb( var( --r3 ), 0.25 );
+        overflow: hidden;
+        border-radius: var( --radius );
+    }
+    div#safety ul.editType li {
+        float: left;
+        width: 50%;
+        height: 100%;
+        text-align: center;
+        line-height: var( --height );
+        list-style: none;
+        cursor: pointer;
+    }
+    div#safety ul.editType li.action {
+        background: rgb( var( --r3 ) );
+        color: rgb( var( --r3c ) );
+    }
+    div#safety div.form {
+        display: none;
+        margin-bottom: 16px;
+    }
+    div#safety div.form.action {
+        display: block;
+    }
+    div#safety div.form div.itemInput:last-of-type { margin-bottom: 0px; }
+</style>
+<div id="safety">
+    <ul class="editType">
+        <li onclick="view.editType( 'email' )" email><i class="bi-envelope-open right8"></i>{{$t( '&item.editEmail' )}}</li>
+        <li onclick="view.editType( 'phone' )" phone><i class="bi-phone right8"></i>{{$t( '&item.editPhone' )}}</li>
+    </ul>
+    <x-card class="form email" title="{{$t( '&item.editEmail' )}}" icon="bi-shield">
+        {{view( 'ViewForm', [
+            'form' => [
+                'id' => 'editEmail',
+                'method' => 'view.editEmail',
+                'text' => $t( 'base.submit' )
+            ],
+            'left' => false,
+            'data' => [
+                [ 'type' => 'password', 'title' => $t( '&item.password' ), 'name' => 'password', 'must' => true ],
+                [ 'type' => 'email', 'title' => $t( '&item.newEmail' ), 'name' => 'email' ],
+                [ 'type' => config( 'account.verify.email' ) ? 'code' : 'null', 'title' => $t( '&item.checkEmail' ), 'name' => 'code', 'bind' => 'email', 'link' => '/api/account/verify/email', 'must' => true ],
+                [ 'type' => 'verify', 'title' => $t( '&item.verify' ), 'name' => 'editemail', 'must' => 'true' ]
+            ]
+        ])}}
+    </x-card>
+    <x-card class="form phone" title="{{$t( '&item.editPhone' )}}" icon="bi-shield">
+        {{view( 'ViewForm', [
+            'form' => [
+                'id' => 'editPhone',
+                'method' => 'view.editPhone',
+                'text' => $t( 'base.submit' )
+            ],
+            'left' => false,
+            'data' => [
+                [ 'type' => 'password', 'title' => $t( '&item.password' ), 'name' => 'password', 'must' => true ],
+                [ 'type' => 'phone', 'title' => $t( '&item.newPhone' ), 'name' => 'phone' ],
+                [ 'type' => config( 'account.verify.phone' ) ? 'code' : 'null', 'title' => $t( '&item.checkPhone' ), 'name' => 'code', 'bind' => 'phone', 'link' => '/api/account/verify/phone', 'must' => true ],
+                [ 'type' => 'verify', 'title' => $t( '&item.verify' ), 'name' => 'editphone', 'must' => 'true' ]
+            ]
+        ])}}
+    </x-card>
+    {{/* 其它信息 */}}
+    {{!!
+        $back = urldecode( $request->get['back'] ?? '' );
+        $pass = urldecode( $request->get['pass'] ?? '' );
+        $invite = urldecode( $request->get['invite'] ?? '' );
+        $link = '';
+        if ( !empty( $back ) ) { $link = "?back=".urlencode( $back ); }
+        if ( !empty( $pass ) ) { $link = !empty( $link ) ? "{$link}&pass=".urlencode( $pass ) : "?pass=".urlencode( $pass ); }
+        if ( !empty( $invite ) ) { $link = !empty( $link ) ? "{$link}&invite=".urlencode( $invite ) : "?invite=".urlencode( $invite ); }
+    !!}}
+    <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
+        <ul>
+            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/account/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a onclick="view.editPassword()"><li><i class="bi-shield-lock right8"></i>{{$t( '&item.editPassword' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a onclick="view.downAllUser()"><li><i class="bi-universal-access-circle right8"></i>{{$t( '&item.downAllUser' )}}<i class="bi-chevron-right block"></i></li></a>
+        </ul>
+    </x-card>
+</div>
+<div class="hidden" editPassword>
+    {{view( 'ViewForm', [
+        'left' => false,
+        'data' => [
+            [ 'type' => 'password', 'title' => $t( '&item.oldPassword' ), 'name' => 'oldPassword', 'must' => 'true' ],
+            [ 'type' => 'password', 'title' => $t( '&item.newPassword1' ), 'name' => 'newPassword1', 'must' => 'true', 'min' => 5 ],
+            [ 'type' => 'password', 'title' => $t( '&item.newPassword2' ), 'name' => 'newPassword2', 'must' => 'true' ],
+        ]
+    ])}}
+</div>
+<script>
+    var view = {
+        // 初始化
+        init: function() {
+            view.editType( 'email' );
+        },
+        // 切换类型
+        editType: function( name ) {
+            tc.view( 'div#safety ul.editType li' ).removeClass( 'action' );
+            tc.view( 'div#safety div.form' ).removeClass( 'action' );
+            tc.view( `div#safety ul.editType li[${name}]` ).addClass( 'action' );
+            tc.view( `div#safety div.form.${name}` ).addClass( 'action' );
+        },
+        editPassword: function() {
+            tc.unit.popup( "{{$t( '&item.editPassword' )}}", `<form id="editPassword">${tc.view( 'editPassword' ).html()}</form>`, {
+                run: () => {
+                    tc.form.submit( 'editPassword', 'view.editPasswordSubmit' );
+                },
+                text: "{{$t( 'base.submit' )}}",
+                close: false
+            });
+        },
+        editPasswordSubmit: function( res ) {
+                if ( res.newPassword1 !== res.newPassword2 ) { return tc.unit.toast( "{{$t( 'account.api.password' )}}", true ); }
+            tc.send({
+                url: '/api/account/edit/password',
+                type: 'POST',
+                data: res,
+                check: true,
+                run: function( res ) {
+                    tc.unit.toast( ['base.edit:base.true'] );
+                    setTimeout(() => { location.reload(); }, 360 );
+                }
+            }, ( state ) => { tc.unit.load( state ); });
+        },
+        downAllUser: function() {
+            tc.unit.popup( "{{$t( '&item.downAllUser' )}}", "{{$t( '&item.downAllUserTip' )}}", {
+                run: () => {
+                    tc.send({
+                        url: '/api/account/offlineall',
+                        type: 'GET',
+                        check: true,
+                        run: function( res ) {
+                            tc.unit.toast( ['base.operate:base.true'] );
+                            setTimeout(() => { location.reload(); }, 360 );
+                        }
+                    }, ( state ) => { tc.unit.load( state ); });
+                },
+                text: "{{$t( 'base.submit' )}}",
+                close: false
+            });
+        },
+        editEmail: function( res ) {
+            res.type = 'email';
+            tc.send({
+                url: '/api/account/safety',
+                type: 'POST',
+                data: res,
+                check: true,
+                run: function( res ) {
+                    tc.unit.toast(['base.edit:base.true']);
+                    setTimeout(() => { location.href = '/account/user{{$link}}'; }, 360 );
+                },
+                error: function() { tc.form.verifyImg( 'editemail' ); }
+            }, ( state ) => { tc.view( 'div#content' ).load( state ); });
+        },
+        editPhone: function( res ) {
+            res.type = 'phone';
+            tc.send({
+                url: '/api/account/safety',
+                type: 'POST',
+                data: res,
+                check: true,
+                run: function( res ) {
+                    tc.unit.toast(['base.edit:base.true']);
+                    setTimeout(() => { location.href = '/account/user{{$link}}'; }, 360 );
+                },
+                error: function() { tc.form.verifyImg( 'editphone' ); }
+            }, ( state ) => { tc.view( 'div#content' ).load( state ); });
+        }
+    };
+    view.init();
+</script>
+
+{{View( 'account.footer', [] )}}

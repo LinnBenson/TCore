@@ -1,0 +1,32 @@
+div#login ul.loginType {
+    --height: 40px;
+    width: 100%;
+    height: var( --height );
+    padding: 0px;
+    margin-bottom: 48px;
+    background: rgb( var( --r3 ), 0.25 );
+    overflow: hidden;
+    border-radius: var( --radius );
+}
+div#login ul.loginType li {
+    float: left;
+    width: 50%;
+    height: 100%;
+    text-align: center;
+    line-height: var( --height );
+    list-style: none;
+    cursor: pointer;
+}
+div#login ul.loginType li.action {
+    background: rgb( var( --r3 ) );
+    color: rgb( var( --r3c ) );
+}
+div#login div.form {
+    display: none;
+    width: 100%;
+    max-width: 360px;
+    margin: 0px auto;
+    margin-bottom: 48px;
+    box-sizing: border-box;
+}
+div#login div.form.action { display: block; }

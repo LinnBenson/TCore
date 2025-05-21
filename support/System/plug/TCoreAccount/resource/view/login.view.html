@@ -1,0 +1,94 @@
+{{View( 'account.header', [
+    'title' => $t( '&title.login' ),
+    'img' => $assets( 'login.jpg' )
+])}}
+
+<link rel="stylesheet" href="{{$assets( 'login.css' )}}">
+<div id="login">
+    <ul class="loginType">
+        <li onclick="view.loginType( 'email' )" email><i class="bi-person-circle right8"></i>{{$t( '&type.email' )}}</li>
+        <li onclick="view.loginType( 'phone' )" phone><i class="bi-phone right8"></i>{{$t( '&type.phone' )}}</li>
+    </ul>
+    {{/* 邮箱/用户名 登录 */}}
+    <div class="form" email>
+        {{view( 'ViewForm', [
+            'form' => [
+                'id' => 'loginEmail',
+                'method' => 'view.login',
+                'text' => $t( '&item.login' ),
+                'reset' => false
+            ],
+            'left' => false,
+            'data' => [
+                [ 'type' => 'string', 'title' => $t( '&type.emailInput' ), 'name' => 'user', 'must' => 'true' ],
+                [ 'type' => 'password', 'title' => $t( '&item.password' ), 'name' => 'password', 'must' => 'true' ],
+                [ 'type' => 'check', 'name' => 'remember', 'hint' => $t( '&item.remember' ) ],
+            ]
+        ])}}
+    </div>
+    {{/* 手机号 登录 */}}
+    <div class="form" phone>
+        {{view( 'ViewForm', [
+            'form' => [
+                'id' => 'loginPhone',
+                'method' => 'view.login',
+                'text' => $t( '&item.login' ),
+                'reset' => false
+            ],
+            'left' => false,
+            'data' => [
+                [ 'type' => 'phone', 'title' => $t( '&type.phoneInput' ), 'name' => 'user', 'must' => 'true' ],
+                [ 'type' => 'password', 'title' => $t( '&item.password' ), 'name' => 'password', 'must' => 'true' ],
+                [ 'type' => 'check', 'name' => 'remember', 'hint' => $t( '&item.remember' ) ],
+            ]
+        ])}}
+    </div>
+    {{/* 其它信息 */}}
+    {{!!
+        $back = urldecode( $request->get['back'] ?? '' );
+        $pass = urldecode( $request->get['pass'] ?? '' );
+        $invite = urldecode( $request->get['invite'] ?? '' );
+        $link = '';
+        if ( !empty( $back ) ) { $link = "?back=".urlencode( $back ); }
+        if ( !empty( $pass ) ) { $link = !empty( $link ) ? "{$link}&pass=".urlencode( $pass ) : "?pass=".urlencode( $pass ); }
+        if ( !empty( $invite ) ) { $link = !empty( $link ) ? "{$link}&invite=".urlencode( $invite ) : "?invite=".urlencode( $invite ); }
+    !!}}
+    <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
+        <ul>
+            <a href="/account/register{{$link}}"><li><i class="bi-person-plus right8"></i>{{$t( '&title.register' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/account/find{{$link}}"><li><i class="bi-search-heart right8"></i>{{$t( '&title.find' )}}<i class="bi-chevron-right block"></i></li></a>
+        </ul>
+    </x-card>
+</div>
+<script>
+    var back = `{{$back}}`;
+    var pass = `{{$pass}}`;
+    var view = {
+        // 初始化
+        init: function() {
+            view.loginType( 'email' );
+        },
+        // 切换登录类型
+        loginType: function( name ) {
+            tc.view( 'div#login ul.loginType li' ).removeClass( 'action' );
+            tc.view( 'div#login div.form' ).removeClass( 'action' );
+            tc.view( `div#login ul.loginType li[${name}]` ).addClass( 'action' );
+            tc.view( `div#login div.form[${name}]` ).addClass( 'action' );
+        },
+        // 登录账户
+        login: function( res ) {
+            tc.send({
+                url: '/api/account/login',
+                type: 'POST',
+                data: res,
+                check: true,
+                run: function( res ) {
+                    tc.login( res, !empty( pass ) ? pass : '/account/user{{$link}}' );
+                }
+            }, ( state ) => { tc.view( 'div#content' ).load( state ); });
+        }
+    };
+    view.init();
+</script>
+
+{{View( 'account.footer', [] )}}

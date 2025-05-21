@@ -1,0 +1,60 @@
+{{View( 'account.header', [
+    'title' => $t( '&title.user' ),
+    'img' => $assets( 'user.jpg' )
+])}}
+
+<link rel="stylesheet" href="{{$assets( 'user.css' )}}">
+<div id="user">
+    <div class="userinfo center">
+        <div>
+            <img class="bottom8" src="/api/account/avatar/{{$request->user->uid}}" onclick="tc.unit.bigImage( `/api/account/avatar/{{$request->user->uid}}` )" />
+            <p class="font4 bold" style="margin-bottom: 4px;">{{$request->user->info->nickname}}</p>
+            <p class="font6 opa50 more">{{$request->user->info->slogan}}</p>
+        </div>
+    </div>
+    <table class="info r0">
+        <tr>
+            <td>UID</td>
+            <td>{{$request->user->uid}}<i class="bi-copy left8 copy" data-clipboard-text="{{$request->user->uid}}"></i></td>
+        </tr>
+        <tr>
+            <td>{{$t( '&item.username' )}}</td>
+            <td>{{$request->user->info->username}}</td>
+        </tr>
+        <tr>
+            <td>{{$t( '&item.email' )}}</td>
+            <td>{{$request->user->info->email}}</td>
+        </tr>
+        <tr>
+            <td>{{$t( '&item.phone' )}}</td>
+            <td>{{$request->user->info->phone}}</td>
+        </tr>
+        <tr>
+            <td>{{$t( '&item.status' )}}</td>
+            <td>{{$request->user->status}}</td>
+        </tr>
+        <tr>
+            <td>{{$t( '&item.invite' )}}</td>
+            <td>{{$request->user->info->invite}}<i class="bi-copy left8 copy" data-clipboard-text="{{$request->user->info->invite}}"></i></td>
+        </tr>
+    </table>
+    {{/* 其它信息 */}}
+    {{!!
+        $back = urldecode( $request->get['back'] ?? '' );
+        $pass = urldecode( $request->get['pass'] ?? '' );
+        $invite = urldecode( $request->get['invite'] ?? '' );
+        $link = '';
+        if ( !empty( $back ) ) { $link = "?back=".urlencode( $back ); }
+        if ( !empty( $pass ) ) { $link = !empty( $link ) ? "{$link}&pass=".urlencode( $pass ) : "?pass=".urlencode( $pass ); }
+        if ( !empty( $invite ) ) { $link = !empty( $link ) ? "{$link}&invite=".urlencode( $invite ) : "?invite=".urlencode( $invite ); }
+    !!}}
+    <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
+        <ul>
+            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/account/edit{{$link}}"><li><i class="bi-marker-tip right8"></i>{{$t( '&title.edit' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/account/safety{{$link}}"><li><i class="bi-shield-check right8"></i>{{$t( '&title.safety' )}}<i class="bi-chevron-right block"></i></li></a>
+        </ul>
+    </x-card>
+</div>
+
+{{View( 'account.footer', [] )}}

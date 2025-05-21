@@ -1,0 +1,20 @@
+
+                {{!! $service = \App\Server\CustomerServiceServer::getLink(); !!}}
+                @if ( $service ):
+                    <a class="service" href="{{$service}}" target="__blank">
+                        <i class="bi-chat-dots block"></i>
+                        <div class="info">
+                            <h5>{{$t( '&item.service' )}}</h5>
+                            <p class="more font6 opa50">{{$t( '&item.serviceHint' )}}</p>
+                        </div>
+                        <i class="bi-chevron-right block right"></i>
+                    </a>
+                @endif
+            </main>
+            <footer class="center">
+                <p class="font6">© {{date( 'Y' )}} <a href="{{config( 'app.host' )}}" target="_blank">{{config( 'app.title' )}}</a> All Rights Reserved.</p>
+            </footer>
+        </div>
+    </div>
+</div>
+{{View( 'ViewFooter', [] )}}

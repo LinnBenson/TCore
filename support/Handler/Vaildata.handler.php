@@ -106,6 +106,9 @@ use Support\Helper\Tool;
                 case 'time':
                     if ( $has() && preg_match( '/^\d{2}:\d{2}:\d{2}$/', $value ) !== 1 ) { Bootstrap::error( $this->request->echo( 2, ["vaildata.type.time", ['name' => $name]] ) ); }
                     break;
+                case 'verify':
+                    if ( $has() && strtoupper( $value ) !== Redis::getCache( "VerifyImg_{$name}_{$this->request->id}" ) ) { Bootstrap::error( $this->request->echo( 2, ["vaildata.type.verify"] ) ); }
+                    break;
                 case 'file':
                     if ( $has() && !is_json( $value ) ) { Bootstrap::error( $this->request->echo( 2, ["vaildata.type.upload", ['name' => $name]] ) ); }
                     if ( $has() ) {
@@ -134,7 +137,7 @@ use Support\Helper\Tool;
                 }else if ( $rule['type'] === 'file' ) {
                     if ( is_numeric( $rule['num'] ) && count( $value ) > (float)$rule['num'] ) { Bootstrap::error( $this->request->echo( 2, ["vaildata.num", ['name' => $name, 'num' => $rule['num']]] ) ); }
                 }else {
-                    $length = strlen( $value );
+                    $length = mb_strlen( $value, 'UTF-8' );
                     if ( is_numeric( $rule['min'] ) && $length < (float)$rule['min'] ) { Bootstrap::error( $this->request->echo( 2, ["vaildata.length.min", ['name' => $name, 'length' => $rule['min']]] ) ); }
                     if ( is_numeric( $rule['max'] ) && $length > (float)$rule['max'] ) { Bootstrap::error( $this->request->echo( 2, ["vaildata.length.max", ['name' => $name, 'length' => $rule['max']]] ) ); }
                 }

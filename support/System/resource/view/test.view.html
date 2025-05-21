@@ -97,7 +97,7 @@
     }
 </style>
 <div id="index" class="center">
-    <main class="padding24" main>
+    <main class="padding24 action" main>
         <i class="bi-arrows-angle-expand bold font6 block method mainAction r3" onclick="view.mainAction()"></i>
         <i class="bi-arrow-up-circle bold font5 block method mainUp r3" onclick="tc.view( 'main div.content' ).scroll( 'top' )"></i>
         <div class="content scroll">
@@ -120,13 +120,13 @@
                 }
                 function login( res ) { tc.login( res, true ); }
             </script>
-            <x-card class="bottom8 user" title="用户信息" icon="bi-person-circle" close="false">
-                @if( !empty( $request->user ) ):
+            <x-card class="bottom8 user" title="用户信息" icon="bi-person-circle" close="true">
+                @if( !empty( $request->user->state ) ):
                     <p><span class="bold right8">UID: </span>{{$request->user->uid}}</p>
-                    <p><span class="bold right8">昵称: </span>{{$request->user->nickname}}</p>
-                    <p><span class="bold right8">用户名: </span>{{$request->user->username}}</p>
-                    <p><span class="bold right8">邮箱: </span>{{$request->user->email}}</p>
-                    <p><span class="bold right8">手机号: </span>{{$request->user->phone}}</p>
+                    <p><span class="bold right8">昵称: </span>{{$request->user->info->nickname}}</p>
+                    <p><span class="bold right8">用户名: </span>{{$request->user->info->username}}</p>
+                    <p><span class="bold right8">邮箱: </span>{{$request->user->info->email}}</p>
+                    <p><span class="bold right8">手机号: </span>{{$request->user->info->phone}}</p>
                     <p><span class="bold right8">级别: </span>{{$request->user->status}}</p>
                     <button class="r5 top8" onclick="tc.logout( true )" vButton>{{$t('base.logout')}}</button>
                 @else:
@@ -147,7 +147,7 @@
                     ])}}
                 @endif
             </x-card>
-            <x-card class="bottom8 formShow" title="表单展示" icon="bi-chat-quote" close="true">
+            <x-card class="bottom8 formShow" title="表单展示" icon="bi-chat-quote" close="false">
                 {{view( 'ViewForm', [
                     'form' => [
                         'id' => 'testpass',
@@ -161,7 +161,9 @@
                         [ 'type' => 'alnum', 'title' => '字符串输入', 'name' => 'alnum', 'hint' => '这是一个字符串输入框' ],
                         [ 'type' => 'phone', 'title' => '手机号输入', 'name' => 'phone', 'hint' => '这是一个手机号输入框', 'readme' => [ '第一行提示内容', '这是第二行提示内容' ] ],
                         [ 'type' => 'number', 'title' => '数字输入', 'name' => 'number', 'hint' => '这是一个数字输入框', 'max' => 5 ],
+                        [ 'type' => 'verify', 'title' => '验证码', 'name' => 'verify', 'hint' => '这是一个验证码' ],
                         [ 'type' => 'email', 'title' => '邮箱输入', 'name' => 'email', 'hint' => '这是一个邮箱输入框' ],
+                        [ 'type' => 'code', 'title' => '验证码', 'name' => 'code', 'bind' => 'email', 'link' => '/api/account/verify/telegram', 'hint' => '这是一个验证码输入框' ],
                         [ 'type' => 'password', 'title' => '密码输入', 'name' => 'password', 'hint' => '这是一个密码输入框' ],
                         [ 'type' => 'select', 'data' => [ 'a' => 'aa', 'b' => 'bb' ], 'value' => 'b', 'title' => '选择框', 'name' => 'select', 'hint' => '这是一个选择框' ],
                         [ 'type' => 'date', 'title' => '日期输入', 'name' => 'date' ],

@@ -2,7 +2,6 @@
 
 namespace Support\Slots;
 
-use Support\Handler\File;
 use Support\Handler\Router;
 
     /**
@@ -59,7 +58,7 @@ use Support\Handler\Router;
         public function url( $url ) {
             if ( !is_string( $url ) ) { return $this; }
             $this->result = function() use( $url ) {
-                return "<script type=\"text/javascript\">window.location.href='{$url}';</script>";
+                return ToUrl( $url );
             };
             return $this;
         }
@@ -81,7 +80,8 @@ use Support\Handler\Router;
         public function file( $file ) {
             if ( !is_string( $file ) ) { return $this; }
             $this->result = function()use( $file ) {
-                return File::echo( "public/{$file}" );
+                $file = ToFile( "public/{$file}" );
+                return $file ? $file->echo() : null;
             };
             return $this;
         }
@@ -90,6 +90,18 @@ use Support\Handler\Router;
             if ( !is_string( $view ) ) { return $this; }
             $this->result = function( $request )use( $view, $share ) {
                 return View( $view, array_merge( $share, [ 'request' => $request ] ) );
+            };
+            return $this;
+        }
+        // 动态调用资产
+        public function assets( $path ) {
+            if ( !is_string( $path ) ) { return $this; }
+            $this->result = function( $request )use( $path ) {
+                $target = $request->get['file'] ?? null;
+                if ( empty( $target ) ) { return null; }
+                $path = "{$path}{$target}";
+                $file = ToFile( $path );
+                return $file ? $file->echo() : null;
             };
             return $this;
         }

@@ -1,0 +1,152 @@
+div#body {
+    width: var( --vw );
+    height: var( --vh );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+div#body div#bodyMask {
+    background: rgb( var( --r0 ), 0.65 );
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+div#body div#bodyMask, div#body div#bodyContent {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+div#content {
+    --headerHeight: 240px;
+    --footerHeight: 60px;
+    width: 620px;
+    background: rgb( var( --r6 ) );
+    margin: 300px auto;
+    border-radius: calc( var( --radius ) * 8 );
+    box-sizing: border-box;
+    overflow: hidden;
+    box-shadow: 0px 0px 3px rgb( var( --r1 ), 0.25 );
+    position: relative;
+}
+@media ( max-width: 636px ) {
+    div#content {
+        width: calc( 100% - 32px );
+        margin: 180px auto;
+    }
+}
+div#content header {
+    --titleHeight: 32px;
+    width: 100%;
+    height: var( --headerHeight );
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+div#content header img.logo {
+    width: auto;
+    height: 20px;
+}
+div#content header a.avatar {
+    --height: 20px;
+    display: block;
+    padding: 4px;
+    padding-right: 12px;
+    border-radius: var( --radius );
+    position: absolute;
+    bottom: calc( var( --titleHeight ) + 8px );
+}
+div#content header a.avatar img {
+    float: left;
+    width: var( --height );
+    height: var( --height );
+    margin-right: 4px;
+    border-radius: var( --radius );
+    border: 1px solid rgb(var(--r3), 0.35);
+    box-sizing: border-box;
+}
+div#content header a.avatar span {
+    font-size: 12px;
+    line-height: var( --height );
+}
+div#content header div.title {
+    width: 100%;
+    height: var( --titleHeight );
+    background: rgb( var( --r0 ), 0.65 );
+    padding-top: 0px;
+    padding-bottom: 0px;
+    line-height: var( --titleHeight );
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+div#content main {
+    padding-top: calc( var( --headerHeight ) + 0px );
+    padding-bottom: calc( var( --footerHeight ) + 16px );
+}
+div#content main a.service {
+    --height: 60px;
+    display: block;
+    margin-top: 16px;
+    background: rgb( var( --r0 ) );
+    color: rgb( var( --r1 ) );
+    border: 1px solid rgb( var( --r3 ), 0.35 );
+    border-radius: var( --radius );
+}
+div#content main a.service i.block {
+    --size: calc( var( --height ) - 16px );
+    float: left;
+    background: rgb( var( --r3 ) );
+    margin: 8px;
+    font-size: 20px;
+    color: rgb( var( --r3c ) );
+    border-radius: var( --radius );
+}
+div#content main a.service div.info {
+    display: inline-block;
+    width: calc( 100% - ( var( --height ) * 2 ) );
+    height: var( --height );
+    padding: 10px 0px;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+div#content main a.service i.block.right {
+    float: right;
+    background: none;
+    color: rgb( var( --r1 ) );
+}
+div#content footer {
+    width: 100%;
+    height: var( --footerHeight );
+    border-top: 1px solid rgb( var( --r1 ), 0.15 );
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+div.other ul {
+    padding: 0px;
+    list-style: none;
+}
+div.other ul li {
+    --size: 30px;
+    display: block;
+    margin: 4px 0px;
+    padding: 8px 16px;
+    background: rgb( var( --r3 ), 0.2 );
+    line-height: var( --size );
+    border-radius: var( --radius );
+    cursor: pointer;
+}
+div.other ul li i.block {
+    float: right;
+}

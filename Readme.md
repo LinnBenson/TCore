@@ -18,6 +18,7 @@
 ### 基础方法
 #### 核心驱动器 support/Bootstrap.php
 - 初始化状态 : bool `Bootstrap::$init`
+- 数据库连接 : object `Bootstrap::$db`
 - 应用缓存 : array `Bootstrap::$cache`
 - 构建应用 - 用于构建并初始化应用，此方法只需在启动应用时调用一次
   - `Bootstrap::build( $method|null[function]传入方法 )`
@@ -105,6 +106,15 @@
 - 访问视图 - 用于访问视图
   - `View( $view[string]视图名称, $parameter|[][array]传递参数, $cache|false[bool]是否缓存 )`
   - return string 视图内容
+- 链接跳转方式 - 用于实现网页链接跳转
+  - `ToUrl( $url[string]跳转地址 )`
+  - rreturn string 跳转代码
+- 访问文件 - 用于访问文件， 可传入文件链接或文件路径
+  - `ToFile( $file[string]文件路径 )`
+  - return File|null 文件对象
+- 访问存储器 - 用于访问存储器
+  - `ToStorage( $name[string]存储器名称 )`
+  - return Storage|null 存储器对象
 #### 工具集 support/Helper/Tool.helper.php
 - 方法请求 - 用于请求控制器中的方法
   - `Tool::runMethod( $type[string]控制器类型, $class[string|array]类名和方法, ...$parameter[mixed]传递参数 )`
@@ -112,6 +122,35 @@
 - 将字符串转换为数组 - 用于将 a:1|b:2 字符串转换为数组
   - `Tool::toArray( $str[string]字符串 )`
   - return array 数组
+- 加载配置 - 用于插件加载自身配置信息
+  - `Tool::plugLoadConfig( $obj[object]操作对象, $key[string]键, $file[string]访问文件 )`
+  - return array 配置数组
+- 随机数生成器 - 用于生成一段随机数
+  - `Tool::rand( $length[int]操作对象, $type[all|number|letter]随机生成类型 )`
+  - return string 随机内容
+- 配置文件覆盖 - 用于覆写一个 PHP/JSON 配置文件
+  - `Tool::coverConfig( $file[string]文件路径, $arr[array]配置数组 )`
+  - return boolean 覆写结果
+#### 网络请求工具 support/Helper/Web.helper.php
+- 发起 GET 请求 - 用于发起一个简单的 GET 请求
+  - `Web::get( $url[string]请求地址, $send|[][array]发送参数 )`
+  - return false|array 请求结果
+- 发起 POST 请求 - 用于发起一个简单的 POST 请求
+  - `Web::post( $url[string]请求地址, $send|[][array]发送参数 )`
+  - return false|array 请求结果
+- 复杂请求 - 用于发起一个复杂的请求
+  - `Web::custom( $data|[][array]发送参数 )`
+  - return false|array 请求结果
+#### 推送工具 support/Helper/Push.helper.php
+- 推送到 Email
+  - `Push::email( $data[array]请求参数, $async|false[boolean]异步方式请求 )`
+  - return boolean 推送结果
+- 推送到 Telegram
+  - `Push::telegram( $data[array]请求参数, $async|false[boolean]异步方式请求 )`
+  - return boolean 推送结果
+- 推送到 Bark
+  - `Push::bark( $data[array]请求参数, $async|false[boolean]异步方式请求 )`
+  - return boolean 推送结果
 #### Session support/Handler/Session.helper.php
 - 初始化 Session - 使用 Session 时会自动调用此方法
   - `Session::init()`
@@ -183,6 +222,7 @@ Router::add( '/test/{{必填}}{{选填}}' )
 ->task( $class[string|array]类方法 ) // 以任务控制器回调
 ->file( $file[string]文件路径 ) // 以 public 下的文件回调
 ->view( $view[string]视图路径, $share[][array]共享参数 ) // 访问视图文件
+->assets( $path[string]资源路径 ) // 动态调用资产
 ->group( $callable[function]函数形式书写 ) // 添加子路由
 ->save() // 保存路由
 ```
@@ -205,7 +245,30 @@ Router::add( '/test/{{必填}}{{选填}}' )
 - 进度条 - 用于输出进度条
   - `Shell::schedule( $current[int]当前进度, $total|100[int]总进度 )`
   - return string 返回格式化后的进度条
+#### 存储管理器 support/Handler/Storage.handler.php
+- 存储器类型 : string `$storage->type`
+- 存储器路径 : string `$storage->path`
+- 允许的文件类型 : array `$storage->allow`
+- 最大文件大小 : int `$storage->maxSize`
+- 删除时间 : int `$storage->delete`
+- 构造存储器
+  - `new Storage( $name[string]存储器名称 )`
+  - return void
+- 上传文件 - 用于处理 form 上传的文件
+  - `$storage->upload( $file[array|string]上传的文件 )`
+  - return File|boolean 上传结果
+- 获取存储器中的文件 - 用于获取存储器中的文件
+  - `$storage->file( $name[string]文件名称 )`
+  - return File|null 文件对象
+- 生成存储器中的文件路径 - 用于生成存储器中的文件路径
+  - `$storage->filePath( $name[string]文件名称 )`
+  - return string|null 文件路径
 #### 文件处理器 support/Handler/File.handler.php
+- 文件标识 : UUID `$file->id`
+- 文件路径 : string `$file->path`
+- 文件扩展名 : string `$file->ext`
+- 文件名称 : string `$file->name`
+- 文件大小 : int `$file->size`
 - 构造文件
   - `new File( $file[string]文件路径 )`
   - return void
@@ -214,19 +277,83 @@ Router::add( '/test/{{必填}}{{选填}}' )
   - return boolean 删除结果
 - 复制文件 - 用于复制当前文件
   - `$file->copy( $to[string]目标路径, $delete|false[bool]是否删除源文件 )`
+- 生成文件获取链接 - 用于生成文件获取链接
+  - `$file->link()`
+  - return string 文件链接
 - 输出文件 - 用于输出文件
-  - `File::echo( $file[string]文件路径, $expires|2592000[int]过期时间（秒） )`
+  - `$file->echo( $expires|2592000[int]过期时间（秒） )`
   - return null
-#### 存储管理器 support/Handler/Storage.handler.php
-- 构造存储器
-  - `new Storage( $name[string]存储器名称 )`
+#### Redis 操作工具 support/Handler/Redis.handler.php
+- Redis 实体 : object `Redis::$ref`
+- 获取 Redis 连接 - 用于获取原生 Redis 连接
+  - `Redis::link()`
+  - return object|null 连接
+- 注册 Redis - 用于初始化注册
+  - `Redis::register()`
+  - return boolean 注册结果
+- 切换 Redis 库 - 用于切换当前选择的库
+  - `Redis::select( $number|0[int]库编号 )`
+  - return boolean 切换结果
+- 手动关闭连接 - 用于关闭 Redis 连接
+  - `Redis::close()`
+  - return true 关闭结果
+- 添加前缀 - 用于给键名加上指定头
+  - `Redis::name( $text[string]字段名 )`
+  - return string 加工后的名称
+- 过滤输入内容 - 格式化检查输入的内容
+  - `Redis::filter( $text[any]输入内容 )`
+  - return string 过滤结果
+- 提取输出内容 - 格式化处理输出的内容
+  - `Redis::output( $result[string]输出结果 )`
+  - return any 提取结果
+- 给一个值添加过期时间 - 用于给一个缓存添加过期时间
+  - `Redis::expire( $key[string]键名, $expire|false[int]过期时间秒 )`
+  - return boolean 添加结果
+- 查询缓存 - 用于查询一个缓存
+  - `Redis::get( $key[string]键名 )`
+  - return any 查询结果
+- 设置缓存 - 用于设定一个缓存
+  - `Redis::expire( $key[string]键名, $value[any]值, $expire|false[int]过期时间秒 )`
+  - return boolean 设置结果
+- 删除缓存 - 用于删除一个缓存
+  - `Redis::del( $key[string]键名 )`
+  - return number 删除数量
+- 查询全部指定开头缓存 - 查询所有指定关键词开头的缓存
+  - `Redis::getAll( $startKey[string]键名 )`
+  - return any 查询结果
+- 删除全部指定开头缓存 - 删除所有指定关键词开头的缓存
+  - `Redis::delAll( $startKey[string]键名 )`
+  - return number 删除数量
+- 向数组中添加缓存 - 用于向数组缓存中添加数据
+  - `Redis::push( $key[string]键名, $value[any]值, $expire|false[int]过期时间秒 )`
+  - return boolean 设置结果
+- 查询数组缓存 - 用于查询数组类的缓存
+  - `Redis::array( $key[string]键名, $index|false[int]数组下标 )`
+  - return any 查询结果
+- 消费数组缓存 - 用于在数组中依次消费数据
+  - `Redis::lpop( $key[string]键名 )`
+  - return any 本次消费内容
+#### 账户构造器 support/Handler/Account.handler.php
+- 用户构造状态 : boolean `$user->state`
+- 用户 UID : int `$user->uid`
+- 用户级别 : int `$user->level`
+- 用户级别名称 : string `$user->status`
+- 用户信息 : object `$user->info`
+- 构造用户 - 用于构造一个用户
+  - `new Account( $request|null[mixed]登录方式 )`
   - return void
-- 上传文件 - 用于处理 form 上传的文件
-  - `$storage->upload( $file[array]上传的文件 )`
-  - return File|boolean 上传结果
-- 复制文件 - 用于复制当前文件
-  - `$storage->copy( $file[string]文件名, $to[string]目标路径, $delete|false[bool]是否删除源文件 )`
-  - return File|boolean 复制结果
+- 共享信息 - 用于输出用户可公开的信息
+  - `$user->share()`
+  - return array 公开信息
+- 生成密钥 - 用于生成用户的可登录 Token
+  - `$user->token( $request[Request], $remember|false[bool]是否记住登录状态 )`
+  - return string Token
+- 密码生成 - 用于规范密码的加密方式
+  - `$user->password( $text[string]原始密码, $garble[string]混淆字符 )`
+  - return string 新密码
+- 级别转身份 - 用于输入用户可视化级别
+  - `$user->levelToStatus( $level[int]用户级别 )`
+  - return string|null 用户级别名称
 
 ### 开发者说明
 #### 核心驱动器缓存名称申明
@@ -447,17 +574,27 @@ Router::add( '/test/{{必填}}{{选填}}' )
       close: false // 点击确认后是否自动关闭
   });
   ```
+- 查看大图
+  ```
+  tc.unit.bigImage( link:string(图片链接) )
+  return boolean:响应结果
+  ```
 - 注册输入框数据
   ```
   tc.form.register( rid:string(RID), data:json(数据) )
   return boolean:注册结果
+  ```
+- 刷新验证码
+  ```
+  tc.form.verifyImg( rid:string(验证码name) )
+  return boolean:刷新结果
   ```
 - 提交表单
   ```
   tc.form.submit( id:string(表单ID), method|null:string(执行方法), link|null:string(提交地址) )
   return array:表单数据
   ```
-- 提交表单
+- 验证表单
   ```
   tc.form.vaildata( data:object(表单数据), rules:object(表单规则) )
   return boolean:验证结果
@@ -521,6 +658,11 @@ Router::add( '/test/{{必填}}{{选填}}' )
   ```
   toDatetime( v:string(参数) )
   return string:转换结果
+  ```
+- Hash 256
+  ```
+  hash( v:string(参数) )
+  return string:加密结果
   ```
 - 使用语言包
   ```

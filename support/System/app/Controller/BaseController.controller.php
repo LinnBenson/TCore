@@ -2,16 +2,18 @@
 
 namespace App\Controller;
 
-use Support\Handler\File;
+use Support\Handler\Redis;
 use Support\Handler\Request;
-use Support\Handler\Storage;
+use Gregwar\Captcha\CaptchaBuilder;
 
     class BaseController {
         /**
          * 程序测试
          */
         public function test( Request $request ) {
+            // dd( Push::telegram([ 'content' => '测试内容' ]) );
             return View( 'test', [ 'request' => $request ] );
+            return $request->echo( 0, 'Test Pass.' );
         }
         /**
          * 请求系统信息
@@ -32,6 +34,21 @@ use Support\Handler\Storage;
             }
         }
         /**
+         * 获取验证码
+         */
+        public function verify( Request $request, $name = null ) {
+            if ( empty( $name ) || !ctype_alnum( $name ) ) { return null; }
+            $builder = new CaptchaBuilder();
+            $builder->setMaxBehindLines( 8 );
+            $builder->setMaxFrontLines( 8 );
+            $builder->setDistortion( true );
+            $builder->build( 120, 32 );
+            Redis::setCache( "VerifyImg_{$name}_{$request->id}", strtoupper( $builder->getPhrase() ), 600 );
+            header( 'Content-type: image/jpeg' );
+            $builder->output();
+            return '';
+        }
+        /**
          * 文件上传
          */
         public function upload( Request $request, $storageName = null ) {
@@ -43,12 +60,13 @@ use Support\Handler\Storage;
             // 生成存储器
             $allow = [ 'cache' ];
             if ( empty( $storageName ) || !in_array( $storageName, $allow ) ) { $storageName = 'cache'; }
-            $storage = new Storage( $storageName );
+            $storage = ToStorage( $storageName );
+            if ( empty( $storage ) ) { return $request->echo( 2, ['base.upload:base.false'] ); }
             // 处理上传
             $files = [];
             foreach( $request->file as $key => $value ) {
                 $file = $storage->upload( $value );
-                if ( $file && $file->id ) { $files[$key] = "/storage/cache/".str_replace( '.', '_', $file->name ); }
+                if ( $file && $file->id ) { $files[$key] = $file->link(); }
             }
             return $request->echo( !empty( $files ) ? 0 : 1, !empty( $files ) ? $files : ['base.upload:base.false'] );
         }
@@ -56,8 +74,10 @@ use Support\Handler\Storage;
          * 展示文件
          */
         public function file( Request $request, $storageName = null, $fileName = null ) {
-            $file = new File( "/storage/{$storageName}/{$fileName}" );
-            return $file->id ? File::echo( $file->path ) : null;
+            $storage = ToStorage( $storageName );
+            if ( empty( $storage ) ) { return null; }
+            $file = $storage->file( $fileName );
+            return $file ? $file->echo() : null;
         }
         /**
          * 系统信息
@@ -69,7 +89,7 @@ use Support\Handler\Storage;
                 'version' => config( 'app.version' ),
                 'timezone' => config( 'app.timezone' ),
                 'host' => config( 'app.host' ),
-                'user' => $request->user ? $request->user->share() : null,
+                'user' => $request->user->state ? $request->user->share() : null,
             ];
             return $result;
         }

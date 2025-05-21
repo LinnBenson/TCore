@@ -42,4 +42,21 @@ namespace App\Server;
             self::clearCache();
             return $state;
         }
+        /**
+         * 创建模版
+         */
+        public static function template( $type, $name ) {
+            $types = [
+                'model' => [
+                    'file' => __file( 'support/System/resource/template/model.php' ),
+                    'path' => 'app/Model/{{name}}.model.php'
+                ]
+            ];
+            if ( empty( $types[$type] ) ) { return false; }
+            $config = $types[$type];
+            $template = file_get_contents( $config['file'] );
+            $template = str_replace( '{{name}}', $name, $template );
+            $config['path'] = inFolder( str_replace( '{{name}}', $name, $config['path'] ) );
+            return !empty( file_put_contents( $config['path'], $template ) ) ? true : false;
+        }
     }

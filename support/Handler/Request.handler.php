@@ -78,6 +78,7 @@ use Support\Slots\RequestBuild;
             $this->target = rtrim( $this->target, '/' );
             if ( substr( $this->target, 0, 1 ) !== '/' ) { $this->target = "/{$this->target}"; }
             if ( empty( $this->source ) ) { $this->source = '/'; }
+            $this->user = new Account( $this );
             return true;
         }
         /**

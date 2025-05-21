@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Str;
+use Support\Handler\File;
+use Support\Handler\Storage;
 use Support\Helper\Tool;
 
     /**
@@ -188,6 +190,10 @@ use Support\Helper\Tool;
             if ( !file_exists( $plugMain ) ) { return null; }
             $plugClass = require $plugMain;
             if ( !is_object( $plugClass ) ) { return null; }
+            if ( $plugClass->path === true ) { $plugClass->path = $plugFolder; }
+            if ( method_exists( $plugClass, 'init' ) && !(new \ReflectionMethod( $plugClass, 'init'))->isPrivate() ) {
+                $plugClass->init();
+            }
             return [
                 'folder' => $plugFolder,
                 'class' => $plugClass
@@ -199,7 +205,7 @@ use Support\Helper\Tool;
                 return $config['class'];
                 break;
             case 'config':
-                return $config['class']->config;
+                return $config['class']->plug;
                 break;
             case 'folder':
                 return $config['folder'];
@@ -251,4 +257,41 @@ use Support\Helper\Tool;
             }
             return null;
         }
+    }
+    /**
+     * 链接跳转方式
+     * - 用于实现网页链接跳转
+     * - @param string $url 跳转地址
+     * - @return string 跳转代码
+     */
+    function ToUrl( $url ) {
+        return "<script type=\"text/javascript\">window.location.href='{$url}';</script>";
+    }
+    /**
+     * 访问文件
+     * - 用于访问文件， 可传入文件链接或文件路径
+     * - @param string $file 文件路径
+     * - @return File|null 文件对象
+     */
+    function ToFile( $file ) {
+        if ( !is_string( $file ) ) { return null; }
+        if ( !file_exists( $file ) && startsWith( $file, '/storage' ) ) {
+            $file = explode( '/', $file );
+            $file = "storage/media/{$file[2]}/".str_replace( '_', '.', $file[3] );
+        }
+        $file = new File( $file );
+        if ( !is_string( $file->id ) ) { return null; }
+        return $file;
+    }
+    /**
+     * 访问存储器
+     * - 用于访问存储器
+     * - @param string $name 存储器名称
+     * - @return Storage|null 存储器对象
+     */
+    function ToStorage( $name ) {
+        if ( !is_string( $name ) ) { return null; }
+        $storage = config( "storage.{$name}" );
+        if ( !is_array( $storage ) || empty( $storage['path'] ) ) { return null; }
+        return new Storage( $name );
     }

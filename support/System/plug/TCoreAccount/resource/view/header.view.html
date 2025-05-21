@@ -1,0 +1,18 @@
+{{View( 'ViewHeader', [ 'title' => $title ] )}}
+
+<link rel="stylesheet" href="{{$assets( 'frame.css' )}}">
+<div id="body" style="background-image: url( '{{$img}}' );">
+    <div id="bodyMask"></div>
+    <div id="bodyContent" class="scroll">
+        <div id="content" class="padding32">
+            <header class="padding32" style="background-image: url( '{{$img}}' );">
+                <a href="/"><img class="logo opa50" src="/library/logo_w.png" alt="logo" /></a>
+                @if ( $request->user->state ):
+                    <a class="avatar r3" href="/account/user">
+                        <img src="/api/account/avatar/{{$request->user->uid}}" alt="avatar" />
+                        <span>{{$request->user->info->nickname}}</span>
+                    </a>
+                @endif
+                <div class="title padding32"><i class="bi-patch-check-fill right8"></i>{{$title}}</div>
+            </header>
+            <main>
