@@ -7,4 +7,4 @@ use Support\Handler\Router;
     // 访问验证码
     Router::add( '/verify/{{name}}' )->controller( 'BaseController@verify' )->save();
     // 访问存储器
-    Router::add( '/file/{{storage}}/{{file}}' )->controller( 'BaseController@file' )->save();
+    Router::add( '/{{storage}}/{{file}}' )->controller( 'BaseController@file' )->save();

@@ -1,4 +1,4 @@
-{{View( 'account.header', [
+{{View( Plug( 'TCoreAccount' )->entrance.'.header', [
     'title' => $t( '&title.safety' ),
     'img' => $assets( 'safety.jpg' )
 ])}}
@@ -52,7 +52,7 @@
             'data' => [
                 [ 'type' => 'password', 'title' => $t( '&item.password' ), 'name' => 'password', 'must' => true ],
                 [ 'type' => 'email', 'title' => $t( '&item.newEmail' ), 'name' => 'email' ],
-                [ 'type' => config( 'account.verify.email' ) ? 'code' : 'null', 'title' => $t( '&item.checkEmail' ), 'name' => 'code', 'bind' => 'email', 'link' => '/api/account/verify/email', 'must' => true ],
+                [ 'type' => config( 'account.verify.email' ) ? 'code' : 'null', 'title' => $t( '&item.checkEmail' ), 'name' => 'code', 'bind' => 'email', 'link' => '/api/'.Plug( 'TCoreAccount' )->entrance.'/verify/email', 'must' => true ],
                 [ 'type' => 'verify', 'title' => $t( '&item.verify' ), 'name' => 'editemail', 'must' => 'true' ]
             ]
         ])}}
@@ -68,7 +68,7 @@
             'data' => [
                 [ 'type' => 'password', 'title' => $t( '&item.password' ), 'name' => 'password', 'must' => true ],
                 [ 'type' => 'phone', 'title' => $t( '&item.newPhone' ), 'name' => 'phone' ],
-                [ 'type' => config( 'account.verify.phone' ) ? 'code' : 'null', 'title' => $t( '&item.checkPhone' ), 'name' => 'code', 'bind' => 'phone', 'link' => '/api/account/verify/phone', 'must' => true ],
+                [ 'type' => config( 'account.verify.phone' ) ? 'code' : 'null', 'title' => $t( '&item.checkPhone' ), 'name' => 'code', 'bind' => 'phone', 'link' => '/api/'.Plug( 'TCoreAccount' )->entrance.'/verify/phone', 'must' => true ],
                 [ 'type' => 'verify', 'title' => $t( '&item.verify' ), 'name' => 'editphone', 'must' => 'true' ]
             ]
         ])}}
@@ -85,8 +85,8 @@
     !!}}
     <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
         <ul>
-            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
-            <a href="/account/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a onclick="tc.logout( `/{{Plug( 'TCoreAccount' )->entrance}}/login{{$link}}` )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
             <a onclick="view.editPassword()"><li><i class="bi-shield-lock right8"></i>{{$t( '&item.editPassword' )}}<i class="bi-chevron-right block"></i></li></a>
             <a onclick="view.downAllUser()"><li><i class="bi-universal-access-circle right8"></i>{{$t( '&item.downAllUser' )}}<i class="bi-chevron-right block"></i></li></a>
         </ul>
@@ -127,7 +127,7 @@
         editPasswordSubmit: function( res ) {
                 if ( res.newPassword1 !== res.newPassword2 ) { return tc.unit.toast( "{{$t( 'account.api.password' )}}", true ); }
             tc.send({
-                url: '/api/account/edit/password',
+                url: `/api/{{Plug( 'TCoreAccount' )->entrance}}/edit/password`,
                 type: 'POST',
                 data: res,
                 check: true,
@@ -141,7 +141,7 @@
             tc.unit.popup( "{{$t( '&item.downAllUser' )}}", "{{$t( '&item.downAllUserTip' )}}", {
                 run: () => {
                     tc.send({
-                        url: '/api/account/offlineall',
+                        url: `/api/{{Plug( 'TCoreAccount' )->entrance}}/offlineall`,
                         type: 'GET',
                         check: true,
                         run: function( res ) {
@@ -157,13 +157,13 @@
         editEmail: function( res ) {
             res.type = 'email';
             tc.send({
-                url: '/api/account/safety',
+                url: `/api/{{Plug( 'TCoreAccount' )->entrance}}/safety`,
                 type: 'POST',
                 data: res,
                 check: true,
                 run: function( res ) {
                     tc.unit.toast(['base.edit:base.true']);
-                    setTimeout(() => { location.href = '/account/user{{$link}}'; }, 360 );
+                    setTimeout(() => { location.href = `/{{Plug( 'TCoreAccount' )->entrance}}/user{{$link}}`; }, 360 );
                 },
                 error: function() { tc.form.verifyImg( 'editemail' ); }
             }, ( state ) => { tc.view( 'div#content' ).load( state ); });
@@ -171,13 +171,13 @@
         editPhone: function( res ) {
             res.type = 'phone';
             tc.send({
-                url: '/api/account/safety',
+                url: `/api/{{Plug( 'TCoreAccount' )->entrance}}/safety`,
                 type: 'POST',
                 data: res,
                 check: true,
                 run: function( res ) {
                     tc.unit.toast(['base.edit:base.true']);
-                    setTimeout(() => { location.href = '/account/user{{$link}}'; }, 360 );
+                    setTimeout(() => { location.href = `/{{Plug( 'TCoreAccount' )->entrance}}/user{{$link}}`; }, 360 );
                 },
                 error: function() { tc.form.verifyImg( 'editphone' ); }
             }, ( state ) => { tc.view( 'div#content' ).load( state ); });
@@ -186,4 +186,4 @@
     view.init();
 </script>
 
-{{View( 'account.footer', [] )}}
+{{View( Plug( 'TCoreAccount' )->entrance.'.footer', [] )}}

@@ -10,6 +10,7 @@ use Support\Slots\RouterBuild;
      */
     class Router {
         public static $name = null; // 路由名称
+        public static $targetRoot = null; // 路由目标
         public static $cache = []; // 路由缓存
         /**
          * 路由初始化
@@ -17,9 +18,9 @@ use Support\Slots\RouterBuild;
          * - @param Request $request 请求对象
          * - @return string 路由结果
          */
-        public static function init( Request $request ) {
+        public static function init( Request $request, $targetRoot = null ) {
             // 加载路由文件
-            self::load( $request->router );
+            self::load( $request->router, $targetRoot );
             // 输出路由结果
             return self::search( $request, $request->router, $request->target, $request->method );
         }
@@ -29,18 +30,20 @@ use Support\Slots\RouterBuild;
          * - @param string $router 路由名称
          * - @return bool 加载结果
          */
-        public static function load( $router ) {
+        public static function load( $router, $targetRoot = null ) {
             if ( empty( $router ) || !is_string( $router ) ) { return false; }
             if ( isset( self::$cache[$router] ) ) { return true; }
             $routerFile1 = "support/System/router/{$router}.router.php";
             $routerFile2 = "router/{$router}.router.php";
             try {
                 self::$name = $router; // 路由名称
+                self::$targetRoot = $targetRoot; // 路由目标
                 if ( file_exists( $routerFile1 ) ) { require $routerFile1; }
                 if ( file_exists( $routerFile2 ) ) { require $routerFile2; }
                 // 系统干预流程
                 Bootstrap::processRun( 'RouteRegistration', $router );
                 self::$name = null; // 路由名称
+                self::$targetRoot = null; // 路由目标
             }catch ( \Throwable $th ) {
                 Bootstrap::log( "Route Registration: {$router}", $th );
             }
@@ -64,7 +67,8 @@ use Support\Slots\RouterBuild;
             if ( !is_array( Router::$cache[$router] ) ) { return self::error( $request, 500, [ 'base.error.500' ] ); }
             // 搜索路由
             $result = null;
-            $routers = Router::$cache[$router];
+            $targetRoot = explode( '/', $target )[1];
+            $routers = array_merge( Router::$cache[$router]["Root|{$targetRoot}"] ?? [], Router::$cache[$router]["Root"] ?? [] );
             $targetName = "{$method}|{$target}"; $targetNameAny = "ANY|{$target}";
             // 精准搜索
             if ( isset( $routers[$targetName] ) ) { return self::runRouter( $request, $routers[$targetName] ); }

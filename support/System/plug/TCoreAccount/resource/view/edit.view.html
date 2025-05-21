@@ -1,4 +1,4 @@
-{{View( 'account.header', [
+{{View( Plug( 'TCoreAccount' )->entrance.'.header', [
     'title' => $t( '&title.edit' ),
     'img' => $assets( 'user.jpg' )
 ])}}
@@ -27,7 +27,7 @@
     <div class="userinfo center">
         <div>
             <label>
-                <img class="bottom8" src="/api/account/avatar/{{$request->user->uid}}" />
+                <img class="bottom8" src="/api/{{Plug( 'TCoreAccount' )->entrance}}/avatar/{{$request->user->uid}}" />
                 <input type="file" name="avatar" style="display: none;" />
             </label>
             <p class="font6 opa50 more">{{$t( '&item.avatarHint' )}}</p>
@@ -61,8 +61,8 @@
     !!}}
     <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
         <ul>
-            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
-            <a href="/account/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a onclick="tc.logout( `/{{Plug( 'TCoreAccount' )->entrance}}/login{{$link}}` )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
         </ul>
     </x-card>
 </div>
@@ -70,13 +70,13 @@
     var view = {
         submit: function( res ) {
             tc.send({
-                url: '/api/account/edit',
+                url: `/api/{{Plug( 'TCoreAccount' )->entrance}}/edit`,
                 type: 'POST',
                 data: res,
                 check: true,
                 run: function( res ) {
                     tc.unit.toast(['base.edit:base.true']);
-                    setTimeout(() => { location.href = '/account/user{{$link}}'; }, 360 );
+                    setTimeout(() => { location.href = `/{{Plug( 'TCoreAccount' )->entrance}}/user{{$link}}`; }, 360 );
                 },
                 error: function() { tc.form.verifyImg( 'edituserinfo' ); }
             }, ( state ) => { tc.view( 'div#content' ).load( state ); });
@@ -97,7 +97,7 @@
             let formData = new FormData();
             formData.append( 'upload', file );
             tc.send({
-                url: '/api/account/upload/avatar',
+                url: `/api/{{Plug( 'TCoreAccount' )->entrance}}/upload/avatar`,
                 data: formData,
                 check: true,
                 other: {
@@ -127,4 +127,4 @@
     });
 </script>
 
-{{View( 'account.footer', [] )}}
+{{View( Plug( 'TCoreAccount' )->entrance.'.footer', [] )}}

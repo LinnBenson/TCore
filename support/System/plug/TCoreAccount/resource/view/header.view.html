@@ -8,8 +8,8 @@
             <header class="padding32" style="background-image: url( '{{$img}}' );">
                 <a href="/"><img class="logo opa50" src="/library/logo_w.png" alt="logo" /></a>
                 @if ( $request->user->state ):
-                    <a class="avatar r3" href="/account/user">
-                        <img src="/api/account/avatar/{{$request->user->uid}}" alt="avatar" />
+                    <a class="avatar r3" href="/{{Plug( 'TCoreAccount' )->entrance}}/user">
+                        <img src="/api/{{Plug( 'TCoreAccount' )->entrance}}/avatar/{{$request->user->uid}}" alt="avatar" />
                         <span>{{$request->user->info->nickname}}</span>
                     </a>
                 @endif

@@ -2,4 +2,4 @@
 
 use Support\Handler\Router;
 
-    Router::add( '/' )->url( '/account' )->save();
+    Router::add( '/' )->url( '/'.Plug( 'TCoreAccount' )->entrance )->save();

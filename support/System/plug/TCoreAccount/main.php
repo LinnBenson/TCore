@@ -18,19 +18,21 @@ use Support\Handler\Router;
             ],
         ];
         public $path = true;
+        public $entrance = null;
         /**
          * 插件初始化
          */
         public function init() {
             require_once "{$this->path}support/AccountController.controller.php";
+            $this->entrance = config( 'api.account', 'account' );
             Plug( 'TCoreView' )->library([
-                'account.header' => "{$this->path}resource/view/header.view.html",
-                'account.footer' => "{$this->path}resource/view/footer.view.html",
-                'account.login' => "{$this->path}resource/view/login.view.html",
-                'account.user' => "{$this->path}resource/view/user.view.html",
-                'account.edit' => "{$this->path}resource/view/edit.view.html",
-                'account.safety' => "{$this->path}resource/view/safety.view.html",
-                'account.authError' => "{$this->path}resource/view/authError.view.html"
+                "{$this->entrance}.header" => "{$this->path}resource/view/header.view.html",
+                "{$this->entrance}.footer" => "{$this->path}resource/view/footer.view.html",
+                "{$this->entrance}.login" => "{$this->path}resource/view/login.view.html",
+                "{$this->entrance}.user" => "{$this->path}resource/view/user.view.html",
+                "{$this->entrance}.edit" => "{$this->path}resource/view/edit.view.html",
+                "{$this->entrance}.safety" => "{$this->path}resource/view/safety.view.html",
+                "{$this->entrance}.authError" => "{$this->path}resource/view/authError.view.html"
             ]);
         }
         /**
@@ -38,25 +40,25 @@ use Support\Handler\Router;
          */
         public function addRouter( $type ) {
             if ( $type === 'view' ) {
-                Router::add( '/account' )->group(function(){
+                Router::add( "/{$this->entrance}" )->group(function(){
                     // 访问资源
                     Router::add( '/assets' )->assets( "{$this->path}resource/view/assets/" )->save();
                     // 登录到您的账户
                     Router::add( '/login' )->auth(function( $request ){
-                        return $request->user->state ? ToUrl( '/account/user' ) : true;
-                    })->view( 'account.login' )->save();
+                        return $request->user->state ? ToUrl( "/{$this->entrance}/user" ) : true;
+                    })->view( "{$this->entrance}.login" )->save();
                     // 管理您的账户
                     Router::add( '/user' )->auth(function( $request ){
-                        return !$request->user->state ? ToUrl( '/account/login' ) : true;
-                    })->view( 'account.user' )->save();
+                        return !$request->user->state ? ToUrl( "/{$this->entrance}/login" ) : true;
+                    })->view( "{$this->entrance}.user" )->save();
                     // 修改用户资料
                     Router::add( '/edit' )->auth(function( $request ){
-                        return !$request->user->state ? ToUrl( '/account/login' ) : true;
-                    })->view( 'account.edit' )->save();
+                        return !$request->user->state ? ToUrl( "/{$this->entrance}/login" ) : true;
+                    })->view( "{$this->entrance}.edit" )->save();
                     // 安全项管理
                     Router::add( '/safety' )->auth(function( $request ){
-                        return !$request->user->state ? ToUrl( '/account/login' ) : true;
-                    })->view( 'account.safety' )->save();
+                        return !$request->user->state ? ToUrl( "/{$this->entrance}/login" ) : true;
+                    })->view( "{$this->entrance}.safety" )->save();
                     // 身份验证失败
                     Router::add( '/auth/error' )->auth(function( $request ){
                         if ( !$request->user->state ) {
@@ -64,13 +66,13 @@ use Support\Handler\Router;
                             if ( !empty( $request->get['back'] ) ) { $link = "?back=".$request->get['back']; }
                             if ( !empty( $request->get['pass'] ) ) { $link = !empty( $link ) ? "{$link}&pass=".$request->get['pass'] : "?pass=".$request->get['pass']; }
                             if ( !empty( $request->get['invite'] ) ) { $link = !empty( $link ) ? "{$link}&invite=".$request->get['invite'] : "?invite=".$request->get['invite']; }
-                            return ToUrl( "/account/login{$link}" );
+                            return ToUrl( "/{$this->entrance}/login{$link}" );
                         }
                         return true;
-                    })->view( 'account.authError' )->save();
-                })->url( 'account/login' )->save();
+                    })->view( "{$this->entrance}.authError" )->save();
+                })->url( "{$this->entrance}/login" )->save();
             }else if ( $type === 'api' ) {
-                Router::add( '/account' )->group(function() {
+                Router::add( "/{$this->entrance}" )->group(function() {
                     // 登录
                     Router::add( '/login' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'login' ] )->save();
                     // 修改资料
@@ -94,7 +96,7 @@ use Support\Handler\Router;
          * 语言包注册
          */
         public function addLang( $data ) {
-            if ( $data['target'] !== 'account' ) { return false; }
+            if ( $data['target'] !== $this->entrance ) { return false; }
             $file = "{$this->path}resource/lang/{$data['lang']}.lang.php";
             if ( !file_exists( $file ) ) { $file = "{$this->path}resource/lang/".config( 'app.lang' ).".lang.php"; }
             return file_exists( $file ) ? require_once $file : false;

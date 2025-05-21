@@ -1,4 +1,4 @@
-{{View( 'account.header', [
+{{View( Plug( 'TCoreAccount' )->entrance.'.header', [
     'title' => $t( '&title.login' ),
     'img' => $assets( 'login.jpg' )
 ])}}
@@ -55,8 +55,8 @@
     !!}}
     <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
         <ul>
-            <a href="/account/register{{$link}}"><li><i class="bi-person-plus right8"></i>{{$t( '&title.register' )}}<i class="bi-chevron-right block"></i></li></a>
-            <a href="/account/find{{$link}}"><li><i class="bi-search-heart right8"></i>{{$t( '&title.find' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/register{{$link}}"><li><i class="bi-person-plus right8"></i>{{$t( '&title.register' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/find{{$link}}"><li><i class="bi-search-heart right8"></i>{{$t( '&title.find' )}}<i class="bi-chevron-right block"></i></li></a>
         </ul>
     </x-card>
 </div>
@@ -78,12 +78,12 @@
         // 登录账户
         login: function( res ) {
             tc.send({
-                url: '/api/account/login',
+                url: `/api/{{Plug( 'TCoreAccount' )->entrance}}/login`,
                 type: 'POST',
                 data: res,
                 check: true,
                 run: function( res ) {
-                    tc.login( res, !empty( pass ) ? pass : '/account/user{{$link}}' );
+                    tc.login( res, !empty( pass ) ? pass : `/{{Plug( 'TCoreAccount' )->entrance}}/user{{$link}}` );
                 }
             }, ( state ) => { tc.view( 'div#content' ).load( state ); });
         }
@@ -91,4 +91,4 @@
     view.init();
 </script>
 
-{{View( 'account.footer', [] )}}
+{{View( Plug( 'TCoreAccount' )->entrance.'.footer', [] )}}

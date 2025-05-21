@@ -15,6 +15,6 @@ use Support\Handler\Router;
          */
         public static function start() {
             $request = Bootstrap::processRun( 'ConstructingRequest', new Request( 'http' ) );
-            return Router::init( $request );
+            return Router::init( $request, explode( '/', $request->target )[1] );
         }
     }

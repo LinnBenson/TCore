@@ -1,4 +1,4 @@
-{{View( 'account.header', [
+{{View( Plug( 'TCoreAccount' )->entrance.'.header', [
     'title' => $t( '&title.user' ),
     'img' => $assets( 'user.jpg' )
 ])}}
@@ -7,7 +7,7 @@
 <div id="user">
     <div class="userinfo center">
         <div>
-            <img class="bottom8" src="/api/account/avatar/{{$request->user->uid}}" onclick="tc.unit.bigImage( `/api/account/avatar/{{$request->user->uid}}` )" />
+            <img class="bottom8" src="/api/{{Plug( 'TCoreAccount' )->entrance}}/avatar/{{$request->user->uid}}" onclick="tc.unit.bigImage( `/api/{{Plug( 'TCoreAccount' )->entrance}}/avatar/{{$request->user->uid}}` )" />
             <p class="font4 bold" style="margin-bottom: 4px;">{{$request->user->info->nickname}}</p>
             <p class="font6 opa50 more">{{$request->user->info->slogan}}</p>
         </div>
@@ -50,11 +50,11 @@
     !!}}
     <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
         <ul>
-            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
-            <a href="/account/edit{{$link}}"><li><i class="bi-marker-tip right8"></i>{{$t( '&title.edit' )}}<i class="bi-chevron-right block"></i></li></a>
-            <a href="/account/safety{{$link}}"><li><i class="bi-shield-check right8"></i>{{$t( '&title.safety' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a onclick="tc.logout( `/{{Plug( 'TCoreAccount' )->entrance}}/login{{$link}}` )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/edit{{$link}}"><li><i class="bi-marker-tip right8"></i>{{$t( '&title.edit' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/safety{{$link}}"><li><i class="bi-shield-check right8"></i>{{$t( '&title.safety' )}}<i class="bi-chevron-right block"></i></li></a>
         </ul>
     </x-card>
 </div>
 
-{{View( 'account.footer', [] )}}
+{{View( Plug( 'TCoreAccount' )->entrance.'.footer', [] )}}

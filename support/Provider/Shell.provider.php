@@ -48,7 +48,7 @@ use Support\Handler\Router;
                 ]
             ]);
             $request = Bootstrap::processRun( 'ConstructingRequest', $request );
-            return Router::init( $request );
+            return Router::init( $request, explode( '/', $request->target )[1] );
         }
         /**
          * 格式化参数

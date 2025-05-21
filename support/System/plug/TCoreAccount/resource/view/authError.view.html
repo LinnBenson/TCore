@@ -1,4 +1,4 @@
-{{View( 'account.header', [
+{{View( Plug( 'TCoreAccount' )->entrance.".header", [
     'title' => $t( '&title.authError' ),
     'img' => $assets( 'authError.jpg' )
 ])}}
@@ -48,10 +48,10 @@
     {{/* 其它信息 */}}
     <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
         <ul>
-            <a onclick="tc.logout( '/account/login{{$link}}' )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
-            <a href="/account/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a onclick="tc.logout( `/{{Plug( 'TCoreAccount' )->entrance}}/login{{$link}}` )"><li><i class="bi-box-arrow-in-left right8"></i>{{$t( '&item.logout' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/user{{$link}}"><li><i class="bi-person-badge right8"></i>{{$t( '&title.user' )}}<i class="bi-chevron-right block"></i></li></a>
         </ul>
     </x-card>
 </div>
 
-{{View( 'account.footer', [] )}}
+{{View( Plug( 'TCoreAccount' )->entrance.".footer", [] )}}

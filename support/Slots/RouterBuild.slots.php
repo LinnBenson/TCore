@@ -11,6 +11,7 @@ use Support\Handler\Router;
         public $state = true; // 可构造状态
         public $child = false; // 是否子路由
         public $target = null; // 路由目标
+        public $targetRoot = null; // 路由目标
         public $method = null; // 路由方法
         public $auth = null; // 路由权限
         public $result = null; // 路由结果
@@ -36,6 +37,11 @@ use Support\Handler\Router;
                 $this->auth = []; // 路由权限
                 $this->result = null; // 路由结果
             }
+            $this->targetRoot = explode( '/', $this->target )[1];
+            // 状态检查
+            if ( is_string( Router::$targetRoot ) && strpos( $this->targetRoot, '{{' ) === false && Router::$targetRoot !== $this->targetRoot ) {
+                $this->state = false;
+            }
         }
         /**
          * 添加路由权限
@@ -44,19 +50,22 @@ use Support\Handler\Router;
          * - @return RouterBuild 路由构建器对象
          */
         public function auth( $callable ) {
-            if ( !is_callable( $callable ) ) { return $this; }
+            // 参数检查
+            if ( !$this->state || !is_callable( $callable ) ) { return $this; }
             $this->auth[] = $callable;
             return $this;
         }
         // 访问函数
         public function to( $callable ) {
-            if ( !is_callable( $callable ) ) { return $this; }
+            // 参数检查
+            if ( !$this->state || !is_callable( $callable ) ) { return $this; }
             $this->result = $callable;
             return $this;
         }
         // 访问 URL 地址
         public function url( $url ) {
-            if ( !is_string( $url ) ) { return $this; }
+            // 参数检查
+            if ( !$this->state || !is_string( $url ) ) { return $this; }
             $this->result = function() use( $url ) {
                 return ToUrl( $url );
             };
@@ -64,6 +73,8 @@ use Support\Handler\Router;
         }
         // 访问接口控制器
         public function controller( $class ) {
+            // 参数检查
+            if ( !$this->state ) { return $this; }
             $this->result = function( ...$parameter )use( $class ) {
                 return Controller( $class, ...$parameter );
             };
@@ -71,6 +82,8 @@ use Support\Handler\Router;
         }
         // 访问任务控制器
         public function task( $class ) {
+            // 参数检查
+            if ( !$this->state ) { return $this; }
             $this->result = function( ...$parameter )use( $class ) {
                 return Task( $class, ...$parameter );
             };
@@ -78,7 +91,8 @@ use Support\Handler\Router;
         }
         // 访问 public 文件
         public function file( $file ) {
-            if ( !is_string( $file ) ) { return $this; }
+            // 参数检查
+            if ( !$this->state || !is_string( $file ) ) { return $this; }
             $this->result = function()use( $file ) {
                 $file = ToFile( "public/{$file}" );
                 return $file ? $file->echo() : null;
@@ -87,7 +101,8 @@ use Support\Handler\Router;
         }
         // 访问视图文件
         public function view( $view, $share = [] ) {
-            if ( !is_string( $view ) ) { return $this; }
+            // 参数检查
+            if ( !$this->state || !is_string( $view ) ) { return $this; }
             $this->result = function( $request )use( $view, $share ) {
                 return View( $view, array_merge( $share, [ 'request' => $request ] ) );
             };
@@ -95,7 +110,8 @@ use Support\Handler\Router;
         }
         // 动态调用资产
         public function assets( $path ) {
-            if ( !is_string( $path ) ) { return $this; }
+            // 参数检查
+            if ( !$this->state || !is_string( $path ) ) { return $this; }
             $this->result = function( $request )use( $path ) {
                 $target = $request->get['file'] ?? null;
                 if ( empty( $target ) ) { return null; }
@@ -112,7 +128,8 @@ use Support\Handler\Router;
          * - @return RouterBuild 路由构建器对象
          */
         public function group( $routers ) {
-            if ( !is_callable( $routers ) ) { return $this; }
+            // 参数检查
+            if ( !$this->state || !is_callable( $routers ) ) { return $this; }
             Router::$buildCache = $this;
             $routers( $this );
             Router::$buildCache = null;
@@ -128,10 +145,17 @@ use Support\Handler\Router;
             if ( !$this->state || empty( $this->target ) || empty( $this->result ) ) { return false; }
             // 添加到路由
             if ( !is_array( Router::$cache[Router::$name] ) ) { Router::$cache[Router::$name] = []; }
-            Router::$cache[Router::$name]["{$this->method}|{$this->target}"] = [
-                'auth' => $this->auth,
-                'result' => $this->result
-            ];
+            if ( strpos( $this->targetRoot, '{{' ) === false ) {
+                Router::$cache[Router::$name]["Root|{$this->targetRoot}"]["{$this->method}|{$this->target}"] = [
+                    'auth' => $this->auth,
+                    'result' => $this->result
+                ];
+            }else {
+                Router::$cache[Router::$name]["Root"]["{$this->method}|{$this->target}"] = [
+                    'auth' => $this->auth,
+                    'result' => $this->result
+                ];
+            }
             // 返回状态
             return true;
         }
