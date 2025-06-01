@@ -15,6 +15,7 @@ use Support\Handler\Router;
         public $method = null; // 路由方法
         public $auth = null; // 路由权限
         public $result = null; // 路由结果
+        public $name = null;
         /**
          * 构造函数
          * - 用于构造路由
@@ -121,6 +122,13 @@ use Support\Handler\Router;
             };
             return $this;
         }
+        // 命名
+        public function name( $name ) {
+            // 参数检查
+            if ( !$this->state || !is_string( $name ) ) { return $this; }
+            $this->name = $name;
+            return $this;
+        }
         /**
          * 组路由
          * - 用于创建一级组子级路由
@@ -147,11 +155,13 @@ use Support\Handler\Router;
             if ( !is_array( Router::$cache[Router::$name] ) ) { Router::$cache[Router::$name] = []; }
             if ( strpos( $this->targetRoot, '{{' ) === false ) {
                 Router::$cache[Router::$name]["Root|{$this->targetRoot}"]["{$this->method}|{$this->target}"] = [
+                    'name' => $this->name,
                     'auth' => $this->auth,
                     'result' => $this->result
                 ];
             }else {
                 Router::$cache[Router::$name]["Root"]["{$this->method}|{$this->target}"] = [
+                    'name' => $this->name,
                     'auth' => $this->auth,
                     'result' => $this->result
                 ];

@@ -42,10 +42,10 @@
             'newPassword2' => '重复新密码',
             'editEmail' => '修改邮箱',
             'newEmail' => '新邮箱',
-            'checkEmail' => '验证邮箱',
+            'checkEmail' => '邮箱验证码',
             'editPhone' => '修改手机号',
             'newPhone' => '新手机号',
-            'checkPhone' => '验证手机号'
+            'checkPhone' => '手机号验证码'
         ],
         'error' => [
             'auth' => '由于身份验证失败，您无法访问此内容，请检查您的权限是否正常，或者退出登录后登录可以用于访问内容的账户。'

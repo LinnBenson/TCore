@@ -1,0 +1,25 @@
+{{View( Plug( 'TCoreAccount' )->entrance.'.header', [
+    'title' => $t( '&title.register' ),
+    'img' => $assets( 'login.jpg' )
+])}}
+
+<div id="register">
+    {{/* 其它信息 */}}
+    {{!!
+        $back = urldecode( $request->get['back'] ?? '' );
+        $pass = urldecode( $request->get['pass'] ?? '' );
+        $invite = urldecode( $request->get['invite'] ?? '' );
+        $link = '';
+        if ( !empty( $back ) ) { $link = "?back=".urlencode( $back ); }
+        if ( !empty( $pass ) ) { $link = !empty( $link ) ? "{$link}&pass=".urlencode( $pass ) : "?pass=".urlencode( $pass ); }
+        if ( !empty( $invite ) ) { $link = !empty( $link ) ? "{$link}&invite=".urlencode( $invite ) : "?invite=".urlencode( $invite ); }
+    !!}}
+    <x-card class="other r0" title="{{$t( '&item.other' )}}" icon="bi-box" close="false">
+        <ul>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/login{{$link}}"><li><i class="bi-person-circle right8"></i>{{$t( '&title.login' )}}<i class="bi-chevron-right block"></i></li></a>
+            <a href="/{{Plug( 'TCoreAccount' )->entrance}}/find{{$link}}"><li><i class="bi-search-heart right8"></i>{{$t( '&title.find' )}}<i class="bi-chevron-right block"></i></li></a>
+        </ul>
+    </x-card>
+</div>
+
+{{View( Plug( 'TCoreAccount' )->entrance.'.footer', [] )}}

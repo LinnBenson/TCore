@@ -37,7 +37,7 @@ use Gregwar\Captcha\CaptchaBuilder;
          * 获取验证码
          */
         public function verify( Request $request, $name = null ) {
-            if ( empty( $name ) || !ctype_alnum( $name ) ) { return null; }
+            if ( empty( $name ) || !ctype_alnum( $name ) || strlen( $name ) > 15 ) { return null; }
             $builder = new CaptchaBuilder();
             $builder->setMaxBehindLines( 8 );
             $builder->setMaxFrontLines( 8 );

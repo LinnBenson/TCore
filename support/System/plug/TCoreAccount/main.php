@@ -29,6 +29,7 @@ use Support\Handler\Router;
                 "{$this->entrance}.header" => "{$this->path}resource/view/header.view.html",
                 "{$this->entrance}.footer" => "{$this->path}resource/view/footer.view.html",
                 "{$this->entrance}.login" => "{$this->path}resource/view/login.view.html",
+                "{$this->entrance}.register" => "{$this->path}resource/view/register.view.html",
                 "{$this->entrance}.user" => "{$this->path}resource/view/user.view.html",
                 "{$this->entrance}.edit" => "{$this->path}resource/view/edit.view.html",
                 "{$this->entrance}.safety" => "{$this->path}resource/view/safety.view.html",
@@ -40,25 +41,10 @@ use Support\Handler\Router;
          */
         public function addRouter( $type ) {
             if ( $type === 'view' ) {
-                Router::add( "/{$this->entrance}" )->group(function(){
+                // 无需登录
+                Router::add( "/{$this->entrance}" )->name( 'ViewAny' )->group(function(){
                     // 访问资源
                     Router::add( '/assets' )->assets( "{$this->path}resource/view/assets/" )->save();
-                    // 登录到您的账户
-                    Router::add( '/login' )->auth(function( $request ){
-                        return $request->user->state ? ToUrl( "/{$this->entrance}/user" ) : true;
-                    })->view( "{$this->entrance}.login" )->save();
-                    // 管理您的账户
-                    Router::add( '/user' )->auth(function( $request ){
-                        return !$request->user->state ? ToUrl( "/{$this->entrance}/login" ) : true;
-                    })->view( "{$this->entrance}.user" )->save();
-                    // 修改用户资料
-                    Router::add( '/edit' )->auth(function( $request ){
-                        return !$request->user->state ? ToUrl( "/{$this->entrance}/login" ) : true;
-                    })->view( "{$this->entrance}.edit" )->save();
-                    // 安全项管理
-                    Router::add( '/safety' )->auth(function( $request ){
-                        return !$request->user->state ? ToUrl( "/{$this->entrance}/login" ) : true;
-                    })->view( "{$this->entrance}.safety" )->save();
                     // 身份验证失败
                     Router::add( '/auth/error' )->auth(function( $request ){
                         if ( !$request->user->state ) {
@@ -71,24 +57,44 @@ use Support\Handler\Router;
                         return true;
                     })->view( "{$this->entrance}.authError" )->save();
                 })->url( "{$this->entrance}/login" )->save();
+                // 需要未登录
+                Router::add( "/{$this->entrance}" )->name( 'ViewMustNoLogin' )->auth(function( $request ){ return $request->user->state ? ToUrl( "/{$this->entrance}/user" ) : true; })->group(function(){
+                    // 登录到您的账户
+                    Router::add( '/login' )->view( "{$this->entrance}.login" )->save();
+                    // 注册新账户
+                    Router::add( '/register' )->view( "{$this->entrance}.register" )->save();
+                })->save();
+                // 需要登录
+                Router::add( "/{$this->entrance}" )->name( 'ViewMustLogin' )->auth(function( $request ){ return !$request->user->state ? ToUrl( "/{$this->entrance}/login" ) : true; })->group(function(){
+                    // 管理您的账户
+                    Router::add( '/user' )->view( "{$this->entrance}.user" )->save();
+                    // 修改用户资料
+                    Router::add( '/edit' )->view( "{$this->entrance}.edit" )->save();
+                    // 安全项管理
+                    Router::add( '/safety' )->view( "{$this->entrance}.safety" )->save();
+                })->save();
             }else if ( $type === 'api' ) {
-                Router::add( "/{$this->entrance}" )->group(function() {
+                // 无需登录
+                Router::add( "/{$this->entrance}" )->name( 'ApiAny' )->group(function() {
                     // 登录
                     Router::add( '/login' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'login' ] )->save();
-                    // 修改资料
-                    Router::add( '/edit' )->auth(function( $request ){ return $request->user->state; })->controller( [ \Plug\TCoreAccount\AccountController::class, 'edit' ] )->save();
-                    // 上传头像
-                    Router::add( '/upload/avatar' )->auth(function( $request ){ return $request->user->state; })->controller( [ \Plug\TCoreAccount\AccountController::class, 'uploadAvatar' ] )->save();
-                    // 下线所有账户
-                    Router::add( '/offlineall' )->auth(function( $request ){ return $request->user->state; })->controller( [ \Plug\TCoreAccount\AccountController::class, 'offlineAll' ] )->save();
-                    // 修改密码
-                    Router::add( '/edit/password' )->auth(function( $request ){ return $request->user->state; })->controller( [ \Plug\TCoreAccount\AccountController::class, 'editPassword' ] )->save();
                     // 发送验证码
                     Router::add( '/verify/{{type}}' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'verify' ] )->save();
-                    // 修改安全项
-                    Router::add( '/safety' )->auth(function( $request ){ return $request->user->state; })->controller( [ \Plug\TCoreAccount\AccountController::class, 'safety' ] )->save();
                     // 访问头像
                     Router::add( '/avatar/{{uid}}' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'avatar' ] )->save();
+                });
+                // 需要登录
+                Router::add( "/{$this->entrance}" )->name( 'ApiMustLogin' )->auth(function( $request ){ return $request->user->state; })->group(function() {
+                    // 修改安全项
+                    Router::add( '/safety' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'safety' ] )->save();
+                    // 修改资料
+                    Router::add( '/edit' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'edit' ] )->save();
+                    // 上传头像
+                    Router::add( '/upload/avatar' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'uploadAvatar' ] )->save();
+                    // 下线所有账户
+                    Router::add( '/offlineall' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'offlineAll' ] )->save();
+                    // 修改密码
+                    Router::add( '/edit/password' )->controller( [ \Plug\TCoreAccount\AccountController::class, 'editPassword' ] )->save();
                 });
             }
         }

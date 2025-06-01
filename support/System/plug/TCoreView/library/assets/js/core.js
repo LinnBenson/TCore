@@ -2,7 +2,7 @@ window['tc'] = {
     complete: false, // 页面加载状态
     text: get( 'text' ) ?? {}, // 语言包
     server: get( 'server' ) ?? {}, // 服务器信息
-    user: get( 'user' ) ?? null, // 用户信息
+    user: null, // 用户信息
     size: { width: 0, height: 0 }, // 屏幕尺寸
     clipboard: false, // 复制对象
     /**
@@ -21,6 +21,7 @@ window['tc'] = {
         // 数据同步
         const cache = [ 'id','lang', 'themeName' ];
         for( const item of cache ) { tc.cache( item, system[item] ); }
+        tc.user = tc.server.user ?? null;
         tc.refresh( 'all' );
         // 页面加载完成
         window.onload = function() {
@@ -51,10 +52,8 @@ window['tc'] = {
                     tc[type] = res; set( type, res );
                 }
                 // 刷新用户
-                if ( is_array( res.server.user ) ) {
-                    tc.user = res.server.user; set( 'user', tc.user );
-                }else {
-                    tc.user = null; del( 'user' ); tc.cache( 'token', null );
+                if ( !is_array( res.server.user ) ) {
+                    tc.user = null; tc.cache( 'token', null );
                 }
             }
         });
@@ -173,7 +172,7 @@ window['tc'] = {
      * @returns boolean 通知结果
      */
     login: function( res, reload = false ) {
-        if ( !empty( res.user ) ) { tc.user = res.user; set( 'user', res.user ); }
+        if ( !empty( res.user ) ) { tc.user = res.user; }
         if ( !empty( res.token ) ) { tc.cache( 'token', res.token ); }
         if ( reload === true ) { setTimeout(() => { window.location.reload(); }, 500 ); }
         if ( typeof reload === 'string' ) { setTimeout(() => { location.href = reload; }, 500 ); }
@@ -185,7 +184,7 @@ window['tc'] = {
      * @returns boolean 通知结果
      */
     logout: function( reload = false ) {
-        del( 'user' ); tc.cache( 'token', null );
+        tc.cache( 'token', null );
         this.user = null;
         if ( reload === true ) { setTimeout(() => { window.location.reload(); }, 500 ); }
         if ( typeof reload === 'string' ) { setTimeout(() => { location.href = reload; }, 500 ); }
@@ -519,11 +518,9 @@ window['tc'] = {
         },
         sendCodeTime: {},
         sendCode: function( link, bind, rid ) {
-            const $box = $( `div[rid='${rid}']` );
             const input = $( `input[name="${bind}"]` ).first().val();
             if ( empty( input ) ) {
-                tc.unit.toast( [ 'vaildata.nullReceive' ], true );
-                return tc.form.inputError( rid );
+                return tc.unit.toast( [ 'vaildata.nullReceive' ], true );
             }
             tc.form.sendCodeTime[`${rid}_num`] = 60;
             clearInterval( tc.form.sendCodeTime[rid] );

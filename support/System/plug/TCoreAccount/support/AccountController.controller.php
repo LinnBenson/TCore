@@ -52,7 +52,6 @@ use Support\Helper\Tool;
             $res = $request->vaildata([
                 'receive' => 'must|type:string|max:50'
             ]);
-            $code = Tool::rand( 6, 'number' );
             // 频繁发送检查
             $frequently = PushRecord::where( 'type', $type )
                 ->where( 'receive', $res['receive'] )
@@ -60,20 +59,23 @@ use Support\Helper\Tool;
                 ->where( 'created_at', '>=', toDate( time() - 60 ) )
                 ->exists();
             if ( !empty( $frequently ) ) { return $request->echo( 2, [ 'account.api.verifyFrequently' ] ); }
-            // 发送到邮箱
-            if ( $type === 'email' && config( 'account.verify.email' ) && filter_var( $res['receive'], FILTER_VALIDATE_EMAIL ) ) {
-                $send = Push::email([
+            // 准备发送数据
+            $code = Tool::rand( 6, 'number' );
+            $send = [
                     'uid' => $request->user->state ? $request->user->uid : null,
-                    'receive' => $res['receive'],
                     'title' => $request->t( 'account.api.verifyTitle' ),
-                    'content' => $request->t( 'account.api.verifyContent', [ 'code' => $code ] ),
+                    'receive' => $res['receive'],
                     'source' => $this->source,
                     'remark' => $code
-                ], true );
+            ];
+            // 发送到邮箱
+            if ( $type === 'email' && config( 'account.verify.email' ) && filter_var( $res['receive'], FILTER_VALIDATE_EMAIL ) && config( 'account.verify.email' ) ) {
+                $send['content'] = $request->t( 'account.api.verifyContent', [ 'code' => $code ] );
+                $send = Push::email( $send, true );
                 return $request->echo( $send, ['base.send'] );
             }
             // 发送到手机号
-            if ( $type === 'phone' && config( 'account.verify.phone' ) && preg_match( '/^\+\d{1,3}(\s\d+)+$/', $res['receive'] ) ) {
+            if ( $type === 'phone' && config( 'account.verify.phone' ) && preg_match( '/^\+\d{1,3}(\s\d+)+$/', $res['receive'] ) && config( 'account.verify.phone' ) ) {
 
             }
             return $request->echo( 1, ['base.send:base.false'] );
