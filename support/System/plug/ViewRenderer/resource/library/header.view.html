@@ -1,0 +1,56 @@
+<html lang="{{$lang}}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="Cache-Control" content="no-siteapp">
+        <!-- Define a web icon -->
+        <link rel="icon" href="{{ isset( $icon ) ? $icon : $theme['fav'] }}?{{$v}}" type="image/png">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ isset( $icon ) ? $icon : $theme['fav'] }}?{{$v}}">
+        <link rel="apple-touch-icon-precomposed" href="{{ isset( $icon ) ? $icon : $theme['fav'] }}?{{$v}}" />
+        <meta name="msapplication-TileImage" content="{{ isset( $icon ) ? $icon : $theme['fav'] }}?{{$v}}" />
+        <link rel="shortcut icon" href="{{ isset( $icon ) ? $icon : $theme['fav'] }}?{{$v}}" />
+        <!-- Force use of application mode -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-touch-fullscreen" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="full-screen" content="yes">
+        <meta name="browsermode" content="application">
+        <meta name="x5-fullscreen" content="true">
+        <meta name="x5-page-mode" content="app">
+        <!-- Generate variable code -->
+        <{{"style"}}>
+            :root{ @foreach( $theme as $key => $value ):@if( startsWith( $key, '--' ) ):{{ $key }}:{{ $value }};@endif@endforeach }
+        <{{"/style"}}>
+        <script>
+            window['system'] = {
+                id: `{{$request->id}}`,
+                view: '{{$ViewName}}',
+                themeName: `{{$themeName}}`,
+                lang: `{{$lang}}`,
+            };
+        </script>
+        <script src="/viewrenderer/assets?file=js/jquery-3.7.1.min.js"></script>
+        <script src="/viewrenderer/assets?file=js/clipboard_1.6.1.js"></script>
+        <script src="/viewrenderer/assets?file=js/cookie_1.4.1.js"></script>
+        <script src="/viewrenderer/assets?file=js/crypto-js.min.js"></script>
+        <script src="/viewrenderer/assets?file=js/core.js"></script>
+        <script src="/viewrenderer/assets?file=js/marked.min.js"></script>
+        <link rel="stylesheet" href="/viewrenderer/assets?file=css/global.css">
+        <link rel="stylesheet" href="/viewrenderer/assets?file=icon/bootstrap/bootstrap-icons.min.css">
+        <!-- SEO search engine optimization -->
+        <meta property="og:image" content="{{ isset( $icon ) ? $icon : $theme['fav'] }}?{{$v}}" />
+        <meta property="og:title" content="{{ isset( $title ) ? "{$title} - " : '' }}{{ config( 'app.title' ) }}" />
+        {{ isset( $keywords ) ? "<meta name='keywords' content='{$keywords}' id='metakeywords'>" : '' }}
+
+        {{ isset( $description ) ? "<meta name='description' content='{description}' id='metadesc'>" : '' }}
+
+        <!-- Current page code starts -->
+        <title>{{ isset( $title ) ? "{$title} - " : '' }}{{ config( 'app.title' ) }}</title>
+    </head>
+    <body>
+{{View( 'ViewUnit', [] )}}
+        {{ isset( $css ) ? "<link rel='stylesheet' href='{$css}'>" : '' }}
+
+        {{ isset( $js ) ? "<script src='{$js}'></script>" : '' }}
+
+        <div id="{{$id}}" ViewFramework>

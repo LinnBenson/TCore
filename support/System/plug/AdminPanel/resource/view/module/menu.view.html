@@ -1,0 +1,13 @@
+@if( !empty( $item['url'] ) ):
+<a href="{{$item['url']}}">
+@endif
+    <li class="{{"menu_".h( $item['name'] )}}" {{$item['hasMenu'] === true ? "onClick='frame.openMenu( `menu_".h( $item['name'] )."` )'" : ""}}>
+        <i class="icon block {{$item['icon']}}"></i>
+        <span class="name">{{$t( "admin.menu.{$item['name']}" ) !== "admin.menu.{$item['name']}" ? $t( "admin.menu.{$item['name']}" ) : $item['name']}}</span>
+        <i class="right block bi-chevron-right"></i>
+    </li>
+</a>
+@if( !empty( $item['url'] ) ):
+</a>
+@endif
+{{$parent}}

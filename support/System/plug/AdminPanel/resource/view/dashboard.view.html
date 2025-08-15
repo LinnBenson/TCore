@@ -1,0 +1,21 @@
+<style>
+    div#dashboard div.title {
+        padding: 80px 0px;
+        text-align: center;
+    }
+    div#dashboard div.title h2 { margin-bottom: 16px; }
+</style>
+<div id="dashboard">
+    <div class="title">
+        <h2>{{config( 'app.title' )}}</h2>
+        <p>System {{config( 'app.version' )}} | Admin {{plug( 'AdminPanel' )->version}}</p>
+    </div>
+    <x-card title="系统信息">
+
+    </x-card>
+</div>
+<script>
+    var view = {
+
+    };
+</script>

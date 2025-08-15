@@ -1,0 +1,118 @@
+{{View( 'ViewHeader', [ 'id' => 'welcome', 'title' => 'Welcome to TCore', 'css' => $assets( 'main.css' ) ])}}
+
+<div id="box" {{'style="background-image: url( '.$theme['img'].' )"'}}>
+    <div class="mask"></div>
+    <main class="scroll">
+        <div id="content">
+            <div class="logo">
+                <img class="logo" src="{{$theme['logo']}}" alt="TCore Logo" />
+                <h1 class="title bottom8">TCore For PHP</h1>
+                <p class="slogan font7 opa50">Lightweight and portable PHP development framework.</p>
+                <div class="button">
+                    <a href="https://github.com/LinnBenson/TCore" target="_blank" button><i class="icon bi-github"></i>Github</a>
+                </div>
+            </div>
+            <x-card class="info" title="系统信息" icon="bi-book">
+                <table>
+                    <tr><td>名称</td><td>{{config( 'app.title' )}}</td></tr>
+                    <tr><td>PHP 版本</td><td>{{phpversion()}}</td></tr>
+                    <tr><td>系统版本</td><td>{{config( 'app.version' )}}</td></tr>
+                    <tr><td>调试模式</td><td>{{config( 'app.debug' ) ? '开启' : '关闭'}}</td></tr>
+                    <tr><td>识别码</td><td>{{$request->id}}</td></tr>
+                </table>
+            </x-card>
+            <x-card class="debug" title="代码调试" icon="bi-bug">
+                <x-form left="true" submit="/api/debug|view.submit">
+                    <x-input type="email" name="email" icss="r0" left="true" hint="请输入邮箱">邮箱输入</x-input>
+                </x-form>
+            </x-card>
+            <x-card class="method" title="功能调用" icon="bi-grid" close="true">
+                <button onclick="tc.unit.toast( '这是一条正常通知' )" class="r4" button>正常通知</button>
+                <button onclick="tc.unit.toast( '这是一条异常通知', true )" class="r5" button>异常通知</button>
+                <button data-clipboard-text="被复制的内容" class="copy" button>点击复制</button>
+                <button onclick="tc.unit.load( true, 6000 )" button>全屏加载</button>
+                <button onclick="tc.unit.load( [ 'div[card].method', true ], 6000 )" button>局部加载</button>
+            </x-card>
+            <x-card class="form" title="表单演示" icon="bi-feather" close="true">
+                <x-form left="true" submit="view.submit" button="bi-star|打印结果" reset="true">
+                    <x-input type="string" name="string" rule="type:number" icss="r0" left="true" hint="请输入内容" tips="测试输入框提示语1:/aaa|测试输入框提示语2|测试输入框提示语3">文本输入</x-input>
+                    <x-input type="email" name="email" icss="r0" left="true" hint="请输入邮箱">邮箱输入</x-input>
+                    <x-input type="alnum" name="alnum" icss="r0" value="test" left="true" hint="请输入用户名">用户名输入</x-input>
+                    <x-input type="number" name="number" icss="r0" left="true" hint="请输入数字">数字输入</x-input>
+                    <x-input type="password" name="password" icss="r0" left="true" hint="请输入密码">密码输入</x-input>
+                    <x-input type="uuid" name="uuid" icss="r0" left="true" hint="请输入 UUID">UUID 输入</x-input>
+                    <x-input type="phone" name="phone" icss="r0" value="+86 123456" left="true" hint="请输入手机号">手机号输入</x-input>
+                    <x-input type="select" name="select" icss="r0" left="true" hint="请输入手机号" value="002" options="001:2|002:B选项|003:C选项">选择内容输入</x-input>
+                    <x-input type="datetime" name="datetime" value="2020-02-02 10:01:20" icss="r0" left="true" hint="请输入完整时间">完整时间输入</x-input>
+                    <x-input type="date" name="date" icss="r0" left="true" hint="请输入日期">日期输入</x-input>
+                    <x-input type="time" name="time" icss="r0" left="true" hint="请输入时间">时间输入</x-input>
+                    <x-input type="switch" name="switch" value="1" icss="r0" left="true" hint="开关输入">开关输入</x-input>
+                    <x-input type="code" name="code" icss="r0" left="true" hint="请输入代码">代码输入</x-input>
+                    <x-input type="longtext" rule="min:2|max:5" name="longtext" icss="r0" left="true" hint="请输入长文本">长文本输入</x-input>
+                    <x-input type="upload" name="upload" rule="max:2" value="/storage/file/cache/793e6efe-5125-4106-a631-2c91587b8928_png" icss="r0" left="true" hint="上传测试">上传测试</x-input>
+                    <x-input type="markdown" name="markdown" icss="r0" left="true" hint="Markdown">Markdown</x-input>
+                </x-form>
+            </x-card>
+            <x-card class="icon" title="Bootstrap Icons" icon="bi-star">
+                <x-input icon="bi-search" type="string" name="searchIcon" icss="r0" hint="搜索图标 ..."></x-input>
+                <ul class="icons scroll"></ul>
+            </x-card>
+        </div>
+    </main>
+</div>
+<script>
+    const view = {
+        icons: [],
+        init: function() {
+            this.renderIcons( this.getAllIcons() );
+            // 搜索框变化事件
+            $( 'div[card].icon input[name="searchIcon"]' ).on( 'input', function() {
+                const value = $( this ).val().toLowerCase();
+                if ( empty( value ) ) {
+                    view.renderIcons( view.icons );
+                }else {
+                    const icons = view.icons.filter(item => item.includes( value ));
+                    view.renderIcons( icons );
+                }
+            });
+        },
+        submit: function( data, rid ) {
+            console.table( data );
+            console.log( '识别码：' + rid );
+        },
+        getAllIcons: function() {
+            const biClasses = new Set();
+            for ( const stylesheet of document.styleSheets ) {
+                try {
+                    for ( const rule of stylesheet.cssRules || [] ) {
+                        if ( rule.selectorText ) {
+                            const matches = rule.selectorText.match(/\.bi-[\w-]+/g);
+                            if ( matches ) {
+                                matches.forEach( cls => biClasses.add( cls.substring( 1 ) ) );
+                            }
+                        }
+                    }
+                }catch( error ) {
+                    tc.unit.toast( ['error.unknown'], true );
+                }
+            }
+            const icons = Array.from( biClasses );
+            if ( is_array( icons ) ) { this.icons = icons; }
+            return this.icons;
+        },
+        renderIcons: function( icons ) {
+            const $box = $( 'ul.icons' ); $box.html( '' );
+            for( const icon of icons ) {
+                $box.append( `
+                    <li class="copy" data-clipboard-text="${icon}">
+                        <i class="${icon} font4 block"></i>
+                        <p class="font7 more">${icon}</p>
+                    </li>
+                ` );
+            }
+        }
+    };
+    view.init();
+</script>
+
+{{View( 'ViewFooter', [] )}}

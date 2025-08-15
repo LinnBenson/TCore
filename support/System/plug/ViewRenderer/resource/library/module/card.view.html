@@ -1,0 +1,26 @@
+<?php
+    $id = 'card_'.md5( uuid() );
+?>
+<div id="<?=$id?>" class="<?=$id?> <?=!empty( $close ) ? '' : 'active'?> <?=$class?>" card>
+    <?php if ( !empty( $title ) ): ?>
+    <div onclick="operate_<?=$id?>()" cardTitle>
+        <i class="block <?=!empty( $icon ) ? $icon : 'bi-star'?>"></i><?=$title?>
+        <i class="operate block <?=!empty( $close ) ? 'bi-chevron-down' : 'bi-chevron-up'?>"></i>
+    </div>
+    <?php endif; ?>
+    <div class="padding24" cardContent>
+        <?=$children?>
+    </div>
+</div>
+<script>
+    function operate_<?=$id?>() {
+        $div = $('div[card].<?=$id?>');
+        if ( $div.hasClass('active') ) {
+            $div.removeClass('active');
+            $div.find('i.operate').removeClass('bi-chevron-up').addClass('bi-chevron-down');
+        } else {
+            $div.addClass('active');
+            $div.find('i.operate').removeClass('bi-chevron-down').addClass('bi-chevron-up');
+        }
+    }
+</script>

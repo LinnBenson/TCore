@@ -1,0 +1,200 @@
+div#Admin {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+div[frame] {
+    --padding: 8px;
+    --sidebar: 250px;
+    --header: 40px;
+    width: 100%;
+    height: 100%;
+    background: rgb( var( --r0 ), 0.75 );
+    backdrop-filter: blur( 24px );
+    -webkit-backdrop-filter: blur( 24px );
+}
+div[frame] div[frameLeft], div[frame] div[frameRight] {
+    display: block;
+    height: 100%;
+}
+div[frame] div[frameLeft] {
+    --frameLeftPadding: 16px;
+    float: left;
+    width: var( --sidebar );
+    margin-left: calc( var( --sidebar ) * -1 );
+    background: rgb( var( --r3 ) );
+    transition: 200ms;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+div[frame].active div[frameLeft] {
+    margin-left: 0px;
+    box-shadow: 0px 0px 5px rgb( var( --r1 ), 0.5 );
+}
+div[frame] div[frameLeft] div#logo {
+    padding: var( --frameLeftPadding );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-bottom: 5px solid rgba( var( --r1 ), 0.25 );
+}
+div[frame] div[frameLeft] div#logo img {
+    width: auto;
+    height: 28px;
+}
+div[frame] div[frameLeft] div#logo p {
+    margin-top: 48px;
+    font-weight: bold;
+}
+div[frame] div[frameLeft] div#menu {
+    width: 100%;
+    height: calc( 100% - 134px );
+    padding-bottom: var( --frameLeftPadding );
+    box-sizing: border-box;
+}
+div[frame] div[frameLeft] div#menu ul.menu {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+}
+div[frame] div[frameLeft] div#menu ul.menu ul.parentMenu {
+    max-height: 0px;
+    padding-left: 8px;
+    transition: 200ms;
+    overflow: hidden;
+}
+div[frame] div[frameLeft] div#menu ul.menu ul.parentMenu.active {
+    max-height: 800px;
+}
+div[frame] div[frameLeft] div#menu ul li {
+    --size: 40px;
+    display: block;
+    width: 100%;
+    height: var( --size );
+    background: rgb( var( --r0 ), 0.1 );
+    border-bottom: 1px solid rgba( var( --r3 ) );
+    box-sizing: border-box;
+    cursor: pointer;
+}
+div[frame] div[frameLeft] div#menu ul li:hover {
+    background: rgb( var( --r0 ), 0.15 );
+}
+div[frame] div[frameLeft] div#menu ul a.active li { background: rgb( var( --r0 ), 0.25 ) !important; }
+div[frame] div[frameLeft] div#menu ul li * {
+    line-height: var( --size );
+    color: rgb( var( --r3c ) );
+    vertical-align: middle;
+}
+div[frame] div[frameLeft] div#menu ul li i.right { float: right; }
+div[frame] div[frameRight] {
+    float: right;
+    width: 100%;
+    padding: var( --padding );
+    transition: 200ms;
+    box-sizing: border-box;
+}
+div[frame].active div[frameRight] { width: calc( 100% - var( --sidebar ) ); }
+div[frame] div[frameRight] header {
+    width: 100%;
+    height: var( --header );
+    margin-bottom: var( --padding );
+    background: rgb( var( --r3 ) );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+}
+div[frame] div[frameRight] header i.sidebar {
+    --size: calc( var( --header ) - 8px );
+    margin: 4px;
+    font-weight: bold;
+    color: rgb( var( --r3c ) );
+    border-radius: var( --radius );
+    cursor: pointer;
+}
+div[frame] div[frameRight] header i.sidebar:hover {
+    background: rgb( var( --r3c ), 0.15 );
+}
+div[frame] div[frameRight] header h1 {
+    display: inline;
+    font-size: 16px;
+    font-weight: normal;
+    color: rgb( var( --r3c ) );
+    line-height: calc( var( --header ) - 8px );
+    vertical-align: middle;
+}
+div[frame] div[frameRight] header div.avatar {
+    float: right;
+    width: calc( var( --header ) - 8px );
+    height: calc( var( --header ) - 8px );
+    margin: 4px;
+    cursor: pointer;
+    transition: 200ms;
+    overflow: hidden;
+}
+div[frame] div[frameRight] header div.avatar:hover {
+    width: 120px;
+}
+div[frame] div[frameRight] header div.avatar img {
+    width: calc( var( --header ) - 8px );
+    height: calc( var( --header ) - 8px );
+    margin-right: 4px;
+    vertical-align: middle;
+    border-radius: var( --radius );
+    object-fit: cover;
+}
+div[frame] div[frameRight] header div.avatar span {
+    color: rgb( var( --r3c ) );
+    font-size: 13px;
+    line-height: calc( var( --header ) - 8px );
+    vertical-align: middle;
+}
+div[frame] div[frameRight] main {
+    width: 100%;
+    height: calc( 100% - var( --header ) - var( --padding ) );
+    padding: 8px;
+    padding-bottom: 80px;
+    box-sizing: border-box;
+}
+div[frame] div[frameRight] i.pageUp {
+    --size: 48px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: var( --radius );
+    cursor: pointer;
+    box-shadow: 0px 0px 5px rgb( var( --r1 ), 0.5 );
+    transition: 200ms;
+    position: absolute;
+    bottom: calc( var( --size ) * -1 );
+    right: 32px;
+}
+div[frame] div[frameRight] i.pageUp.active { bottom: 32px; }
+@media ( max-width: 580px ) {
+    div[frame] {
+        --sidebar: calc( 100% - 100px ) !important;
+        white-space: nowrap;
+    }
+    div[frame] div[frameLeft] {
+        float: left;
+        width: var( --sidebar );
+        margin-left: calc( var( --sidebar ) * -1 );
+        background: rgb( var( --r3 ) );
+        transition: 200ms;
+        box-sizing: border-box;
+    }
+    div[frame].active div[frameLeft] { margin-left: 0px; }
+    div[frame] div[frameLeft], div[frame] div[frameRight] {
+        display: inline-block;
+        height: 100%;
+    }
+    div[frame] div[frameRight] {
+        float: none;
+        width: var( --vw ) !important;
+        padding: var( --padding );
+        transition: 200ms;
+        box-sizing: border-box;
+    }
+    div[frame].active div[frameLeft] { box-shadow: 0px 0px 5px rgb( var( --r1 ), 0.5 ); }
+}

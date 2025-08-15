@@ -1,0 +1,14 @@
+# File
+.env
+.DS_Store
+
+# Folder
+storage/cache
+storage/log
+
+# Composer
+vendor
+composer.lock
+
+# Log
+*.log

@@ -1,0 +1,68 @@
+div#welcome div#box {
+    display: block;
+    width: var( --vw );
+    height: var( --vh );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    position: relative;
+}
+div#welcome div#box div.mask, div#welcome div#box main {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+div#welcome div#box div.mask {
+    background: rgb( var( --r0 ), 0.5 );
+    backdrop-filter: blur( 24px );
+    -webkit-backdrop-filter: blur( 24px );
+}
+div#welcome div#content {
+    width: 780px;
+    max-width: calc( 100% - 50px );
+    margin: 120px auto;
+}
+div#welcome div#content div.logo {
+    text-align: center;
+}
+div#welcome div#content div.logo img.logo {
+    width: auto;
+    height: 32px;
+    margin-bottom: 48px;
+}
+div#welcome div#content div.button {
+    margin: 48px 0px;
+}
+div#welcome div#content div.info table {
+    width: 100%;
+    font-size: 14px;
+    gap: 0px;
+}
+div#welcome div#content div.info table tr td:first-child {
+    width: 90px;
+    text-align: right;
+    padding-right: 8px;
+}
+div#welcome div#content ul.icons {
+    display: flex;
+    height: 480px;
+    padding: 0px;
+    flex-wrap: wrap;
+    list-style: none;
+}
+div#welcome div#content ul.icons li {
+    display: inline-block;
+    width: 80px;
+    height: 68px;
+    flex: 1 0 auto;
+    padding: 0px 8px 0px 8px;
+    margin: 2px;
+    background: rgb( var( --r3 ), 0.25 );
+    text-align: center;
+    border-radius: var( --radius );
+    box-sizing: border-box;
+}
+div#welcome div#content ul.icons li:hover { background: rgb( var( --r3 ), 0.5 ); }

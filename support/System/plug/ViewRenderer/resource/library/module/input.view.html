@@ -1,0 +1,308 @@
+<?php
+    // 生成唯一ID
+    $id = md5( uuid() );
+    // 替换类型配置
+    $replaceConfig = function( $type ) {
+        $data = [
+            'string' => 'text',
+            'alnum' => 'text',
+            'number' => 'number',
+            'email' => 'email',
+            'password' => 'password',
+            'uuid' => 'text',
+            'phone' => 'number',
+            'select' => 'select',
+            'datetime' => 'datetime-local',
+            'date' => 'date',
+            'time' => 'time',
+            'code' => 'textarea',
+            'longtext' => 'textarea',
+            'switch' => 'checkbox'
+        ];
+        return isset( $data[$type] ) ? $data[$type] : $type;
+    };
+    // 强制双栏
+    $forceTwoColumn = [
+        'switch' => true
+    ];
+    // 输入框默认功能
+    $methodConfig = [
+        'password' => 'bi-eye|tc.form.showPassword',
+        'uuid' => 'bi-arrow-repeat|tc.form.setUuid'
+    ];
+    // 默认图标
+    $icons = [
+        'string' => 'bi-pen',
+        'alnum' => 'bi-type',
+        'number' => 'bi-123',
+        'email' => 'bi-envelope-open',
+        'password' => 'bi-key',
+        'uuid' => 'bi-bezier',
+        'phone' => 'bi-phone',
+        'select' => 'bi-body-text',
+        'datetime' => 'bi-calendar3',
+        'date' => 'bi-calendar2-date',
+        'time' => 'bi-clock'
+    ];
+    // 生成展示图标
+    $setIcon = null;
+    if( !empty( $icon ) ) {
+        $setIcon = $icon;
+    } elseif( isset( $icons[$type] ) ) {
+        $setIcon = $icons[$type];
+    }
+    // 双栏宽度
+    $left = !empty( $left ) ? ( is_numeric( $left ) ? $left : 140 ) : null;
+    // 步长设置
+    $steps = [
+        'phone' => '1',
+        'number' => '0.0000000001',
+        'datetime' => '1',
+        'time' => '1'
+    ];
+    $step = !empty( $step ) ? $step : ( isset( $steps[$type] ) ? $steps[$type] : null );
+    // 输入框功能
+    $method = !empty( $method ) ? $method : ( isset( $methodConfig[$type] ) ? $methodConfig[$type] : null );
+    // 默认值
+    $value = isset( $value ) ? toString( $value ) : '';
+    if ( is_string( $value ) ) { $value = addslashes( $value ); }
+    // 区号
+    $qv = [
+        'default' => 65,
+        'data' => [ 1, 7, 20, 27, 30, 31, 32, 33, 34, 36, 39, 40, 41, 43, 44, 45, 46, 47, 48, 49,
+            51, 52, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 66, 81, 82, 84, 86, 90,91, 92,
+            93, 94, 95, 98, 211, 212, 213, 216, 218, 220, 221, 222, 223, 224, 225, 226, 227, 228,
+            229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245,
+            246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 260, 261, 262, 263,
+            264, 265, 266, 267, 268, 269, 290, 291, 297, 298, 299, 350, 351, 352, 353, 354, 355,
+            356, 357, 358, 359, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382,
+            383, 385, 386, 387, 389, 420, 421, 423, 500, 501, 502, 503, 504, 505, 506, 507, 508,
+            509, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 670, 672, 673, 674, 675, 676,
+            677, 678, 679, 680, 681, 682, 683, 685, 686, 687, 688, 689, 690, 691, 692, 850, 852,
+            853, 855, 856, 870, 880, 886, 960, 961, 962, 963, 964, 965, 966, 967, 968, 970, 971,
+            972, 973, 974, 975, 976, 977, 992, 993, 994, 995, 996, 998
+        ]
+    ];
+?>
+<div
+    rid="<?=$id?>"
+    type="<?=$type?>"
+    name="<?=$name?>"
+    id="<?=$id?>"
+    class="column<?=!empty( $left ) ? 'Two' : 'One'?> <?=!empty( $setIcon ) ? 'hasIcon' : ''?> <?=!empty( $method ) ? 'hasMethod' : ''?> <?=!empty( $forceTwoColumn[$type] ) ? 'columnTwoForce' : ''?> <?=$class?>"
+    <?=!empty( $left ) ? 'style="--left: '.$left.'px"' : ''?>
+input>
+    <?php if( !empty( $children ) ): ?>
+        <div class="title">
+            <p class="more title"><?=$children?></p>
+        </div>
+    <?php endif; ?>
+    <div class="content">
+        <?php if( in_array( $type, [ 'string', 'alnum', 'number', 'email', 'password', 'uuid', 'datetime', 'date', 'time' ] ) ): ?>
+            <input
+                class="input <?=$icss?>"
+                name="<?=$name?>"
+                type="<?=$replaceConfig( $type )?>"
+                placeholder="<?=$hint?>"
+                value="<?=$value?>"
+                step="<?=$step?>"
+                autocomplete="off"
+            />
+        <?php elseif( $type === 'phone' ): ?>
+            <?php
+                $value = !empty( $value ) ? explode( ' ', $value ) : [ "+{$qv['default']}", '' ];
+            ?>
+            <div class="inputPhone">
+                <div class="inputPhoneQv">
+                    <select class="input <?=$icss?>" name="<?=$name?>_qv" autocomplete="off">
+                        <?php foreach( $qv['data'] as $code ): ?>
+                            <option value="<?=$code?>" <?=$code == str_replace( '+', '', $value[0] ) ? 'selected' : ''?>>+<?=$code?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="inputPhoneNumber">
+                    <input
+                        class="input <?=$icss?>"
+                        name="<?=$name?>_number"
+                        type="<?=$replaceConfig( $type )?>"
+                        step="1"
+                        value="<?=$value[1]?>"
+                        placeholder="<?=$hint?>"
+                        autocomplete="off"
+                    />
+                </div>
+            </div>
+        <?php elseif( $type === 'select' ): ?>
+            <select class="input <?=$icss?>" name="<?=$name?>" autocomplete="off">
+                <?php foreach( \Support\Helper\Tool::toArray( $options ) as $optionKey => $optionValue ): ?>
+                    <option value="<?=$optionKey?>" <?=$optionKey == $value ? 'selected' : ''?>><?=is_string( $optionValue ) || is_numeric( $optionValue ) ? $optionValue : $optionKey?></option>
+                <?php endforeach; ?>
+            </select>
+            <i class="inputMethod block bi-chevron-down" style="background: none; color: rgb( var( --r1 ) ); pointer-events: none;"></i>
+        <?php elseif( in_array( $type, [ 'code', 'longtext' ] ) ): ?>
+            <textarea class="input <?=$icss?> <?=$type==='code' ? 'code' : ''?>" name="<?=$name?>" placeholder="<?=$hint?>" autocomplete="off"><?=$value?></textarea>
+            <?php if( $type === 'code' ): ?>
+            <script>
+                $( 'div[input][rid="<?=$id?>"] textarea.input' ).on( 'keydown', function( event ) {
+                    const textarea = $(this)[0];
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    if ( event.key === 'Tab' ) {
+                        event.preventDefault();
+                        const spaces = '    ';
+                        textarea.value = textarea.value.substring( 0, start ) + spaces + textarea.value.substring( end );
+                        textarea.selectionStart = textarea.selectionEnd = start + spaces.length;
+                    }
+                    const pairs = { '{': '}', '[': ']', '(': ')', '"': '"', "'": "'" };
+                    if ( pairs[event.key] ) {
+                        event.preventDefault();
+                        const closingChar = pairs[event.key];
+                        textarea.value = textarea.value.substring( 0, start ) + event.key + closingChar + textarea.value.substring( end );
+                        textarea.selectionStart = textarea.selectionEnd = start + 1;
+                    }
+                });
+            </script>
+            <?php endif; ?>
+        <?php elseif( $type === 'switch' ): ?>
+            <div class="switch">
+                <div class="switch-button">
+                    <input type="checkbox" id="switch_<?=$id?>" class="input <?=$icss?>" name="<?=$name?>" <?=!empty( $value ) ? 'checked' : ''?> style="display: none;" />
+                    <label for="switch_<?=$id?>"></label>
+                </div>
+            </div>
+        <?php elseif( $type === 'upload' ): ?>
+            <div class="input inputUpload">
+                <div class="inputHint <?=$icss?> <?=empty( $hint ) ? 'hidden' : ''?>"><i class="bi-exclamation-circle-fill right8"></i><?=$hint?></div>
+                <?php
+                    $files = !empty( $value ) ? explode( '|', $value ) : [];
+                    $rules = !empty( $rule ) ? \Support\Helper\Tool::toArray( $rule ) : [];
+                ?>
+                <input type="text" name="<?=$name?>" style="display: none;" />
+                <ul class="uploadFiles">
+                    <span class="uploadFile">
+                        <?php foreach( $files as $file ): ?>
+                            <?php
+                                $fileRid = uuid();
+                                $link = preg_replace( '/_/', '.', $file, 1 );
+                                $link = explode( '.', $link ); $link = $link[count( $link ) - 1];
+                                $link = in_array( $link, [ 'jpg', 'png', 'gif', 'svg', 'jpeg' ] ) ? $file : '/viewrenderer/assets?file=icon/file.png';
+                            ?>
+                            <li rid="<?=$fileRid?>" class="uploadFileItem" bind="<?=urlencode( $file )?>">
+                                <img src="<?=$link?>" alt="File" />
+                                <div class="uploadDelete" onclick="tc.form.uploadDelete( '<?=$id?>', '<?=$fileRid?>' )">
+                                    <p class="r5"><?=$t( 'base.delete' )?></p>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </span>
+                    <li class="uploadButton <?=is_numeric( $rules['max'] ) && $rules['max'] <= count( $files ) ? 'hidden' : ''?>">
+                        <label class="<?=$icss?>">
+                            <input type="file" name="upload_<?=$name?>" to="<?=$name?>" style="display: none;" />
+                            <i class="icon block bi-plus-lg"></i>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+            <script>
+                $( `div[input][rid="<?=$id?>"] input[name="<?=$name?>"]` ).val( `<?=json_encode( $files )?>` );
+                $( 'div[input][rid="<?=$id?>"] input[type="file"]' ).on( 'input', function( event ) {
+                    const $input = $( this );
+                    const files = this.files;
+                    if ( files.length > 0 ) {
+                        tc.form.upload( '<?=$id?>', files[0], '<?=!empty( $submit ) ? $submit : "/storage/upload/cache"?>' );
+                    }
+                    $input.val( '' );
+                });
+            </script>
+        <?php elseif( $type === 'markdown' ): ?>
+            <div bind="<?=$id?>" class="markdownEditor <?=$icss?>">
+                <ul class="markdownToolbar">
+                    <li style="font-weight: bold;">Markdown</li>
+                    <li><i class="bi-cloud-upload block" title="Save" onclick="tc.markdown.save( '<?=$id?>' )"></i></li>
+                    <label for="markdown_<?=$id?>">
+                        <li style="position: relative;">
+                            <i class="bi-hash block" title="Title" onclick="tc.markdown.titleOpen( '<?=$id?>' )"></i>
+                            <div class="titles">
+                                <i class="bi-x-lg block" title="Close" onclick="tc.markdown.titleOpen( '<?=$id?>', false )"></i>
+                                <i class="bi-type-h1 block" title="H1" onclick="tc.markdown.title( '<?=$id?>', 1 )"></i>
+                                <i class="bi-type-h2 block" title="H2" onclick="tc.markdown.title( '<?=$id?>', 2 )"></i>
+                                <i class="bi-type-h3 block" title="H3" onclick="tc.markdown.title( '<?=$id?>', 3 )"></i>
+                                <i class="bi-type-h4 block" title="H4" onclick="tc.markdown.title( '<?=$id?>', 4 )"></i>
+                                <i class="bi-type-h5 block" title="H5" onclick="tc.markdown.title( '<?=$id?>', 5 )"></i>
+                                <i class="bi-type-h6 block" title="H6" onclick="tc.markdown.title( '<?=$id?>', 6 )"></i>
+                            </div>
+                        </li>
+                    </label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-type-bold block" title="Bold" onclick="tc.markdown.bold( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-type-italic block" title="Italic" onclick="tc.markdown.italic( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-type-strikethrough block" title="Strikethrough" onclick="tc.markdown.strikethrough( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-superscript block" title="Superscript" onclick="tc.markdown.superscript( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-subscript block" title="Subscript" onclick="tc.markdown.subscript( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-dash-lg block" title="Dividing line" onclick="tc.markdown.dividing( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-chat-square-quote block" title="Quote" onclick="tc.markdown.quote( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-list-stars block" title="Unordered list" onclick="tc.markdown.unorderedList( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-list-ol block" title="Ordered list" onclick="tc.markdown.orderedList( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-braces block" title="Code" onclick="tc.markdown.code( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-code-slash block" title="Code Block" onclick="tc.markdown.codeBlock( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>"><li><i class="bi-link-45deg block" title="Link" onclick="tc.markdown.link( '<?=$id?>' )"></i></li></label>
+                    <label for="markdown_<?=$id?>">
+                        <li>
+                            <label for="markdown_image_<?=$id?>">
+                                <i class="bi-image block" title="Image"></i>
+                                <input id="markdown_image_<?=$id?>" type="file" name="upload" accept="image/*" style="display: none;" />
+                            </label>
+                        </li>
+                    </label>
+                    <li><i class="bi-eye block" title="Preview" onclick="tc.markdown.preview( '<?=$id?>' )"></i></li>
+                    <li><i class="window bi-arrow-up-right-square block" title="Window" onclick="tc.markdown.window( '<?=$id?>' )"></i></li>
+                </ul>
+                <textarea id="markdown_<?=$id?>" name="<?=$name?>" placeholder="<?=$hint?>" autocomplete="off"></textarea>
+                <div class="markdownInfo">
+                    Word count: <span class="wordCount">0</span>
+                    <span class="record hidden"><?=$t( 'base.record' )?>: <a onclick="tc.markdown.revert( '<?=$id?>' )"><?=$t( 'base.revert' )?></a></span>
+                </div>
+                <div class="markdownPreview">
+                    <div class="closePreview" onclick="tc.markdown.preview( '<?=$id?>', false )"><i class="block bi-chevron-compact-down"></i></div>
+                    <div class="previewContent scroll"></div>
+                </div>
+            </div>
+            <script>
+                tc.markdown.change( "<?=$id?>" );
+                $( 'div[input][rid="<?=$id?>"] textarea[name="<?=$name?>"]' ).on( 'input', function() {
+                    tc.markdown.change( '<?=$id?>' );
+                });
+                $( 'div[input][rid="<?=$id?>"] textarea[name="<?=$name?>"]' ).on( 'keydown', function( event ) {
+                    tc.markdown.keydown( '<?=$id?>', event );
+                });
+                $( 'div[input][rid="<?=$id?>"] input#markdown_image_<?=$id?>' ).on( 'input', function( event ) {
+                    const $input = $( this );
+                    const files = this.files;
+                    if ( files.length > 0 ) {
+                        tc.markdown.image( '<?=$id?>', files[0] );
+                    }
+                    $input.val( '' );
+                });
+            </script>
+        <?php endif; ?>
+        <?php if( !empty( $setIcon ) ): ?>
+            <i class="inputIcon block <?=$setIcon?>"></i>
+        <?php endif; ?>
+        <?php if( !empty( $method ) ): ?>
+            <?php $method = explode( '|', $method ); ?>
+            <i class="inputMethod block <?=$method[0]?>" onclick="<?=$method[1]?>( '<?=$id?>' )"></i>
+        <?php endif; ?>
+        <?php if( !empty( $tips ) ): ?>
+            <ul class="tips">
+                <?php foreach( \Support\Helper\Tool::toArray( $tips ) as $tip => $link ): ?>
+                    <li><?=is_string( $link ) ? '<a href="'.$link.'">'.$tip.'</a>' : $tip?></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </div>
+</div>
+<?php if( !empty( $rule ) ): ?>
+    <?php $rule = json_encode( \Support\Helper\Tool::toArray( $rule ) ); ?>
+    <script>
+        tc.cache.form['<?=$id?>'] = JSON.parse( '<?=$rule?>' );
+    </script>
+<?php endif; ?>

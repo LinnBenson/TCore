@@ -1,0 +1,112 @@
+#!/usr/bin/env php
+
+
+<?php
+    // 输出文本工具
+    function text( $content ) {
+            if ( is_array( $content ) ) { $content = implode( "\n", $content ); }
+            $symbol = array(
+                'cr' => "\033[31m", // 红色文字
+                'cg' => "\033[32m", // 绿色文字
+                'cy' => "\033[33m", // 黄色文字
+                'cb' => "\033[34m", // 蓝色文字
+                'cp' => "\033[35m", // 紫色文字
+                'cc' => "\033[36m", // 青色文字
+                'cw' => "\033[37m", // 白色文字
+                'br' => "\033[41m", // 红色背景
+                'bg' => "\033[42m", // 绿色背景
+                'by' => "\033[43m", // 黄色背景
+                'bb' => "\033[44m", // 蓝色背景
+                'bp' => "\033[45m", // 紫色背景
+                'bc' => "\033[46m", // 青色背景
+                'bw' => "\033[47m", // 白色背景
+                'b' => "\033[1m", // 加粗
+                'i' => "\033[3m", // 斜体
+                'u' => "\033[4m", // 下划线
+                'end' => "\033[0m", // 重置样式
+                'time' => date( 'Y-m-d H:i:s' ), // 当前时间
+                '-' => "------------" // 分割线
+            );
+            foreach( $symbol as $k => $v ) {
+                $content = preg_replace( '/\{'.$k.'\}/', $v, $content );
+            };
+            return $content.PHP_EOL;
+    }
+    // 删除目录工具
+    function deleteDir( $dir ) {
+        if ( !is_dir( $dir ) ) { return false; }
+        foreach( scandir( $dir ) as $file ) {
+            if ( $file === '.' || $file === '..' ) { continue; }
+            $path = "{$dir}/{$file}";
+            is_dir( $path ) ? deleteDir( $path ) : unlink( $path );
+        }
+        return rmdir( $dir );
+    }
+    // 路径保护工具
+
+    function inFolder( $dir ) {
+        $check = preg_match( '/[^\/]+\.\w+$/', $dir ) ? dirname( $dir ) : $dir;
+        if ( is_dir( $check ) ) { return $dir; }
+        $check = str_replace( '\\', '/', $check );
+        $check = explode( '/', $check );
+        if ( count( $check ) <= 1 ) { return false; }
+        $current = '';
+        foreach( $check as $value ) {
+            if ( $value === '' ) { continue; }
+            $current .= $value.DIRECTORY_SEPARATOR;
+            if ( !is_dir( $current ) ) { mkdir( $current, 0777, true ); }
+        }
+        return $dir;
+    }
+    // 导入配置文件
+    $config = require_once 'support/System/config/upload.config.php';
+    // 开始下载内容
+    echo text( '开始从远程中获取最新版本 ...' );
+    $zipFile = file_get_contents( $config['git'] );
+    if ( $data === false ) { exit( '{cr}远程文件获取失败{end}' ); }
+    echo text( '{cg}远程文件获取成功{end}' );
+    // 临时保存远程下载的文件
+    $cache = $config['cache'];
+    if ( is_dir( $cache ) ) { deleteDir( $cache ); }
+    inFolder( $cache );
+    file_put_contents( "{$cache}latest.zip", $zipFile );
+    // 解压缩
+    echo text( '开始解压远程文件 ...' );
+    $zip = new ZipArchive;
+    if ( $zip->open( "{$cache}latest.zip" ) === true ) {
+        $zip->extractTo( $cache );
+        $zip->close();
+        echo text( '{cg}数据解压完成{end}' );
+    } else {
+        exit( '{cr}数据解压失败{end}' );
+    }
+    $root = glob( "{$cache}*" );
+    foreach( $root as $dir ) {
+        if ( is_dir( $dir ) ) { $root = "{$cache}{$dir}/"; break; }
+    }
+    // 刷新配置文件
+    $config = require_once "{$root}support/System/config/upload.config.php";
+    // 更新文件
+    foreach( $config['cover']['file'] as $file ) {
+        if ( copy( "{$root}{$file}", $file ) ) {
+            echo text( '{cg}文件已更新: '.$file.'{end}' );
+        } else {
+            echo text( '{cr}文件更新出错: '.$file.'{end}' );
+        }
+    }
+    // 更新目录
+    foreach( $config['cover']['dir'] as $dir ) {
+        if ( is_dir( $dir ) ) { deleteDir( $dir ); }
+        if ( rename( "{$root}{$dir}", $dir ) ) {
+            echo text( '{cg}目录已更新: '.$dir.'{end}' );
+        } else {
+            echo text( '{cr}目录更新出错: '.$dir.'{end}' );
+        }
+    }
+    // 更新完成
+    deleteDir( $cache );
+    echo text([
+        '{-}',
+        '{cg}系统更新完成{end}'
+    ]);
+

@@ -1,0 +1,58 @@
+<style>
+    div.box1, div.box2, div.box3, div.box4, div.box5 {
+        height: 20px;
+        margin-bottom: 8px;
+    }
+    div.box1 { background: rgb( var( --r1 ) ); }
+    div.box2 { background: rgb( var( --r2 ) ); }
+    div.box3 { background: rgb( var( --r3 ) ); }
+    div.box4 { background: rgb( var( --r4 ) ); }
+    div.box5 { background: rgb( var( --r5 ) ); }
+</style>
+<div id="module">
+    <x-card class="layout" title="页面布局" icon="bi-bounding-box" close="">
+        <div layoutTwoLeft>
+            <div class="box1" layout></div>
+            <div class="box2" layout></div>
+        </div>
+        <div layoutTwoRight>
+            <div class="box1" layout></div>
+            <div class="box2" layout></div>
+        </div>
+        <div layoutEqual>
+            <div class="box1" layout></div>
+            <div class="box2" layout></div>
+            <div class="box3" layout></div>
+        </div>
+    </x-card>
+    <x-card class="method" title="功能调用" icon="bi-grid" close="">
+        <button onclick="tc.unit.toast( '这是一条正常通知' )" class="r4" button>正常通知</button>
+        <button onclick="tc.unit.toast( '这是一条异常通知', true )" class="r5" button>异常通知</button>
+        <button data-clipboard-text="被复制的内容" class="copy" button>点击复制</button>
+        <button onclick="tc.unit.load( true, 6000 )" button>全屏加载</button>
+        <button onclick="tc.unit.load( [ 'div[card].method', true ], 6000 )" button>局部加载</button>
+    </x-card>
+    <x-card class="form" title="表单演示" icon="bi-feather" close="">
+        <x-form left="true" submit="view.submit" button="bi-star|打印结果" reset="true">
+            <x-input type="string" name="string" rule="type:number" icss="r0" left="true" hint="请输入内容" tips="测试输入框提示语1:/aaa|测试输入框提示语2|测试输入框提示语3">文本输入</x-input>
+            <x-input type="email" name="email" icss="r0" left="true" hint="请输入邮箱">邮箱输入</x-input>
+            <x-input type="alnum" name="alnum" icss="r0" value="test" left="true" hint="请输入用户名">用户名输入</x-input>
+            <x-input type="number" name="number" icss="r0" left="true" hint="请输入数字">数字输入</x-input>
+            <x-input type="password" name="password" icss="r0" left="true" hint="请输入密码">密码输入</x-input>
+            <x-input type="uuid" name="uuid" icss="r0" left="true" hint="请输入 UUID">UUID 输入</x-input>
+            <x-input type="phone" name="phone" icss="r0" value="+86 123456" left="true" hint="请输入手机号">手机号输入</x-input>
+            <x-input type="select" name="select" icss="r0" left="true" hint="请输入手机号" value="002" options="001:2|002:B选项|003:C选项">选择内容输入</x-input>
+            <x-input type="datetime" name="datetime" value="2020-02-02 10:01:20" icss="r0" left="true" hint="请输入完整时间">完整时间输入</x-input>
+            <x-input type="date" name="date" icss="r0" left="true" hint="请输入日期">日期输入</x-input>
+            <x-input type="time" name="time" icss="r0" left="true" hint="请输入时间">时间输入</x-input>
+            <x-input type="switch" name="switch" value="1" icss="r0" left="true" hint="开关输入">开关输入</x-input>
+            <x-input type="code" name="code" icss="r0" left="true" hint="请输入代码">代码输入</x-input>
+            <x-input type="longtext" rule="min:2|max:5" name="longtext" icss="r0" left="true" hint="请输入长文本">长文本输入</x-input>
+            <x-input type="upload" name="upload" rule="max:2" value="/storage/file/cache/793e6efe-5125-4106-a631-2c91587b8928_png" icss="r0" left="true" hint="上传测试">上传测试</x-input>
+            <x-input type="markdown" name="markdown" icss="r0" left="true" hint="Markdown">Markdown</x-input>
+        </x-form>
+    </x-card>
+</div>
+<script>
+
+</script>

@@ -1,0 +1,35 @@
+<?php
+    return [
+        'input' => '请输入需要操作的内容',
+        'confirm' => '您确定要继续操作吗？',
+        'error' => [
+            'select' => '选择错误，请重新输入！',
+            'input' => '输入错误，请重新输入！',
+        ],
+        'menu' => [
+            'title' => 'Shell 控制菜单',
+            'setup' => '系统调整',
+            'resetKey' => '重置密钥',
+            'resetKeyConfirm' => '注意，请勿在系统开始使用后重置您的密钥，将可能导致错误。',
+            'clearCache' => '清理系统缓存',
+            'editDebug' => '切换调试模式',
+            'development' => '开发功能',
+            'createTemplate' => '创建模板',
+            'createTemplateInput' => '请输入模板名称',
+            'template' => [
+                'controller' => '创建 Controller 模板',
+                'service' => '创建 Service 模板',
+                'model' => '创建 Model 模板',
+            ],
+            'model' => '数据库模型',
+            'upModel' => '重装模型',
+            'downModel' => '卸载模型',
+            'plug' => '插件管理',
+            'plugInfo' => '插件信息',
+            'plugPermissions' => '插件权限申请',
+            'plugConfig' => '配置信息',
+            'other' => '其它选项',
+            'debug' => '调试方法',
+            'backMenu' => '返回主菜单',
+        ],
+    ];

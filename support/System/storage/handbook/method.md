@@ -1,0 +1,310 @@
+### 核心驱动器 support\Bootstrap
+- Bootstrap::$type 构建类型[http|cli|webSocket]
+- Bootstrap::$init 是否已初始化[array]
+- Bootstrap::$cache 缓存对象[array]
+- Bootstrap::$db 数据库连接[Capsule|null]
+- 启动核心构建请求
+  - Bootstrap::build( 构建类型[http|cli|webSocket], 回调函数[function]|null )
+  - return void 最终执行结果
+- 构建查询缓存
+  - Bootstrap::cache( 缓存类型[thread|file], 缓存名称[string], 缓存数据[function]|null )
+  - return mixed 数据
+- 扩展权限介入
+  - Bootstrap::permissions( 权限名[string], 权限数据[function]|null )
+  - return void 权限返回结果
+- 自动加载类文件
+  - Bootstrap::autoload( 类信息[array] )
+  - return bool 是否成功加载
+- 抛出一个错误
+  - Bootstrap::error( 错误信息[string] )
+  - return void
+- 写入日志
+  - Bootstrap::log( 日志标题[string], 日志内容[string]|object )
+  - return bool 是否成功写入日志
+
+### 全局通用函数 support/Helper/Global.helper.php
+- 检查是否为 JSON 格式
+  - is_json( 传入的值[mixed] )
+  - return bool 返回是否为 JSON 格式
+- 检查是否为 UUID 格式
+  - is_uuid( 传入的值[mixed] )
+  - return bool 返回是否为 UUID 格式
+- 生成 UUID
+  - uuid()
+  - return string 返回生成的 UUID 字符串
+- 拼接长文本
+  - toString( 传入的文本[mixed] )
+  - return string 返回拼接后的文本
+- 调试参数
+  - dd( 传入的值[mixed], 是否退出程序[bool]|true )
+  - return void
+- 路径文件夹保护
+  - inFolder( 传入的路径[string] )
+  - return string|false 返回处理后的目录路径或 false
+- 删除目录
+  - deleteDir( 传入的目录路径[string] )
+  - return bool 返回是否成功删除目录
+- 获取原名称
+  - toName( 传入的字符串[string], 分隔符[string]|'_' )
+  - return string 返回处理后的名称
+
+### 系统通用函数 support/Helper/System.helper.php
+- 获取系统文件路径
+  - __file( 传入的目录路径[string] )
+  - return string 返回处理后的目录路径
+  - 找不到传入文件时查询系统文件，如果有，则使用系统文件
+- 批量引用文件
+  - import( 需要引用的文件[string|array] )
+  - return mixed 返回引用的结果
+- ENV 变量
+  - env( 变量名称[string], 默认值[mixed]|null )
+  - return mixed 返回环境变量的值
+- 配置信息
+  - config( 配置项名称[string], 默认值[mixed]|null )
+  - return mixed 返回配置项的值
+- 使用语言包
+  - __( 语言包键[string], 替换内容[array]|[], 语言包语言[string]|null )
+  - return string 返回语言包内容
+- 插件调用
+  - plug( 插件名称[string] )
+  - return class|null 返回插件实例或 null
+- 格式化时间
+  - toDate( 传入的时间戳或时间对象[mixed]|false )
+  - return string 返回格式化后的时间字符串
+- 访问视图文件
+  - view( 视图文件路径[string], 共享参数[array]|[] )
+  - return string 返回视图内容
+- 哈希一个参数
+  - h( 传入的内容[string] )
+  - return string|null 返回哈希后的字符串或 null
+- 判断字符串是否以指定内容开始
+  - startsWith( 传入的字符串[string], 指定的内容[string] )
+  - return bool 返回是否以指定内容开始
+- 判断字符串是否以指定内容结尾
+  - endsWith( 传入的字符串[string], 指定的内容[string] )
+  - return bool 返回是否以指定内容结尾
+- 截断字符 [ Chinese ]
+  - limitCn( 传入的字符串[string], 截断长度[int], 截断后追加的内容[string]|'' )
+  - return string 返回截断后的字符串
+- 截断字符 [ English ]
+  - limitEn( 传入的字符串[string], 截断长度[int], 截断后追加的内容[string]|'' )
+  - return string 返回截断后的字符串
+
+### 请求构造器 support/Handler/Request.handler.php
+- $request->type 请求构造类型[string]
+- $request->id 请求 ID[UUID]
+- $request->lang 请求语言[string]
+- $request->method 请求方法[string]
+- $request->target 请求目标[string]
+- $request->source 请求来源[string]
+- $request->header 请求头[array]
+- $request->get GET[array]
+- $request->post POST[array]
+- $request->cookie COOKIE[array]
+- $request->file FILE[array]
+- $request->session SESSION[array]
+- $request->ip 请求 IP[string]
+- $request->router 路由类型[string]
+- $request->share 共享参数[array]
+- $request->code 响应代码[number]
+- 构造请求
+  - new Support\Handler\Request( 请求数据[array] )
+  - return void
+- 获取用户信息
+  - $request->user( 强制尝试登录[boolean] )
+  - return Account|false
+- 检查数据
+  - $request->vaildata( 检查规则[array], 检查数据[array|null] )
+  - return array 返回检查结果
+- 访问语言包
+  - $request->cover( 语言包键[string], 替换内容[array] )
+  - return string 返回语言包内容
+- 输出响应数据
+  - $request->echo( 响应状态[bool|int|array], 响应数据[array]|[], 响应代码[int|null]|null, 响应头[array]|[ 'Content-Type' => 'application/json' ] )
+  - return string 返回响应数据[json]
+- 覆盖请求数据
+  - $request->cover( 请求数据[array] )
+  - return bool 是否成功覆盖
+
+### 账户构造器 support/Handler/Account.handler.php
+- $state 账户挂载状态[boolean]
+- $uid UID[number|null]
+- $level 用户级别[number|null]
+- $status 用户级别名称[string]
+- $info 用户信息[object|null]
+- 构造用户
+  - new Account( 登录信息[Request|number] )
+- 用户可共享信息
+  - $user->share()
+  - return array 公开信息
+- 生成密钥
+  - $user->token( $Request[Request], 记住状态[boolean] )
+  - return string Token
+- 密码混淆
+  - $user->password()
+  - return string 密码
+- 级别转身份
+  - $user->levelToStatus()
+  - return string 用户级别名称
+- 身份级别验证
+  - $user->auth( 最大允许级别[number] )
+  - return boolean 验证结果
+
+### Redis 操作器 /support/Handler/Redis.handler.php
+- Reids::$ref Redis 连接[object]
+- 获取 Redis 连接
+  - Redis::link()
+  - return object|null 连接
+- 注册 Redis
+  - Redis::lregisterink()
+  - return boolean Redis 连接结果
+- 切换 Redis 库
+  - Redis::select( 库编号[number]|0 )
+  - return boolean 切换结果
+- 手动关闭连接
+  - Redis::close()
+  - return true 关闭结果
+- 添加前缀
+  - Redis::name( 字段名称[string] )
+  - return string 加工后的名称
+- 过滤输入内容
+  - Redis::filter( 输入内容[mixed] )
+  - return string 过滤结果
+- 提取输出内容
+  - Redis::output( 输出内容[string] )
+  - return mixed 提取结果
+- 给一个值添加过期时间
+  - Redis::expire( 键名[string], 过期时间[number|false]|false )
+  - return boolean 添加结果
+- 查询缓存
+  - Redis::get( 键名[string] )
+  - return mixed 查询结果
+- 设置缓存
+  - Redis::set( 键名[string], 值[mixed], 过期时间[number|false]|false )
+  - return boolean 设置结果
+- 删除缓存
+  - Redis::del( 键名[string] )
+  - return number 删除数量
+- 查询全部指定开头缓存
+  - Redis::getAll( 键名[string] )
+  - return array 查询结果
+- 删除全部指定开头缓存
+  - Redis::delAll( 键名[string] )
+  - return number 删除数量
+- 向数组中添加缓存
+  - Redis::push( 键名[string], 值[mixed], 过期时间[number|false]|false )
+  - return boolean 设置结果
+- 查询数组缓存
+  - Redis::array( 键名[string], $index[array|false]|false )
+  - return mixed 查询结果
+- 消费数组缓存
+  - Redis::lpop( 键名[string] )
+  - return mixed 本次消费内容
+
+### Session 操作器 support/Handler/Session.handler.php
+- Session::$init 初始化状态[bool]
+- 初始化 Session
+  - Session::init()
+  - return bool 初始化结果
+- 获取 Session
+  - Session::get( 键名[string] )
+  - return mixed Session 值
+- 删除 Session
+  - Session::del( 键名[string] )
+  - return bool 删除结果
+- 设置 Session
+  - Session::set( 键名[string], 值[mixed] )
+  - return bool 设置结果
+- 重置 Session
+  - Session::reset()
+  - return bool 重置结果
+
+### 常用工具 support/Helper/Tool.helper.php
+- 将字符串转换为数组
+  - Tool::toArray( 字符串[string] )
+  - return array 数组
+- 随机数生成器
+  - Tool::rand( 生成长度[number], $type[all|number|letter]|all )
+  - return string 随机内容
+- 配置文件覆盖
+  - Tool::coverConfig( 文件路径[path], 配置数组[array] )
+  - return boolean 覆写结果
+
+### 路由处理器 support/Handler/Router.handler.php
+- Router::cache 缓存数据[array]
+- 加载路由
+  - Router::load( 路由名称[string], 路由过滤[string|null] )
+  - return bool 是否成功加载
+- 路由搜索
+  - Router::search( 请求对象[Request], 路由类型[string], 路由目标[string], 路由方法[string], 请求参数[array] )
+  - return mixed 路由结果
+- 运行路由
+  - Router::runRouter( 请求对象[Request], 路由配置[array], ...请求参数 )
+  - return mixed 运行结果
+- 添加路由
+  - Router::add( 路由目标[string], 路由方法[string|null] )
+  - return RouterBuilder 返回路由构建器对象
+- 报告错误
+  - Router::error( 请求对象[Request], 错误代码[int], 错误信息[string|array] )
+  - return string 返回错误响应数据
+- 访问接口控制器
+  - Router::ToController( 控制器类名[string], ...控制器参数 )
+  - return mixed 返回控制器执行结果
+- 路由跳转
+  - Router::ToUrl( 跳转地址[string] )
+  - return string 返回跳转脚本
+- 访问视图文件
+  - Router::ToView( 视图文件路径[string], 共享参数[array]|[] )
+  - return string 返回视图内容
+- 访问文件
+  - Router::ToFile( 文件路径[string], 过期时间[number]|2592000 )
+  - return string 返回文件内容
+
+### 路由注册器 support/Handler/RouterBuilder.handler.php
+- 路由起点
+  - Router::add( 目标[string], 请求方式[string]|ANY )
+- 路由验证
+  - ->auth( 验证方式[function] )
+- 访问函数
+  - ->to( 验证方式[function] )
+- 访问 URL
+  - ->url( 跳转链接[string] )
+- 访问接口
+  - ->controller( 指定接口[string|array] )
+- 访问视图
+  - ->view( 视力 ID[string], 共享参数[array] )
+- 访问文件
+  - ->file( 文件路径[string], 过期时间[number] )
+- 路由命名
+  - ->name( 名称[string] )
+- 组路由
+  - ->group( 组路由配置[function] )
+- 保存路由
+  - ->save()
+
+### 文件操作器 support/Handler/File.handler.php
+- $file->state boolean 文件状态
+- $file->storageName string 存储配置名
+- $file->storage array|null 存储配置
+- $file->path string 文件路径
+- $file->name string 文件名
+- $file->ext string 文件格式
+- $file->size number 文件大小
+- $file->create number 创建时间
+- 构造文件
+- 构造文件
+  - new File( 文件路径[string]|null )
+  - 路径: /storage/file/cache/test.txt
+  - 路径: storage.cache|test.txt
+- 移动文件
+  - $file->move( 目标路径[string] )
+  - return bool 是否成功移动
+- 复制文件
+  - $file->copy( 目标路径[string] )
+  - return File|false 返回新的文件操作器或false
+- 删除文件
+  - $file->delete()
+  - return bool 是否成功删除
+- 移动文件
+  - $file->echo( 缓存过期时间[int]|2592000 )
+  - return string|null 返回文件内容或null

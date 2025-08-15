@@ -1,0 +1,14 @@
+{
+    "require": {
+        "php": ">=7.3",
+        "vlucas/phpdotenv": "^5.6",
+        "blocktrail/cryptojs-aes-php": "^0.1.0",
+        "illuminate/database": "^8.83",
+        "workerman/workerman": "^4.1",
+        "workerman/channel": "^1.2",
+        "textalk/websocket": "^1.6",
+        "phpmailer/phpmailer": "^6.9",
+        "longman/telegram-bot": "^0.82.0",
+        "gregwar/captcha": "^1.2"
+    }
+}

@@ -1,0 +1,48 @@
+{{!!
+    $books = [
+        'index' => [ 'name' => 'Readme.md', 'file' => 'Readme.md' ],
+        'directory' => [ 'name' => '目录说明', 'file' => 'support/System/storage/handbook/directory.md' ],
+        'permissions' => [ 'name' => '插件及权限', 'file' => 'support/System/storage/handbook/permissions.md' ],
+        'view' => [ 'name' => '视图渲染器', 'file' => 'support/System/storage/handbook/view.md' ],
+        'method' => [ 'name' => '方法声明', 'file' => 'support/System/storage/handbook/method.md' ]
+    ];
+    // 获取视图
+    if ( $request->method === 'POST' ) {
+        $file = $request->post['file'] ?? null;
+        if ( !empty( $file ) ) {
+            $file = $books[$file] ?? null;
+            exit( !empty( $file ) && file_exists( $file['file'] ) ? file_get_contents( $file['file'] ) : 'Null' );
+        }
+    }
+!!}}
+<style>
+    div#handbook div.book {
+        border-radius: var( --radius );
+    }
+</style>
+<div id="handbook">
+    <x-card class="title" title="{{$t( '&handbook.name' )}}" icon="bi-book">
+        @foreach( $books as $id => $item ):
+        <button class="r3" onclick="view.open( '{{$id}}' )" button>{{$item['name']}}</button>
+        @endforeach
+    </x-card>
+    <div class="r6 book padding24"></div>
+</div>
+<script>
+    var view = {
+        open: function( id ) {
+            tc.send({
+                url: `/adminpanel/view?view=admin.develop.handbook`,
+                data: { file: id },
+                run: function( res ) {
+                    $( 'div#handbook div.book' ).html( '' );
+                    $( 'div#handbook div.book' ).html( tc.markdown.render( res ) );
+                },
+                error: function() {
+                    tc.unit.toast( ['base.get:base.false'], true );
+                }
+            }, ( state ) => { tc.unit.load( [ 'div#handbook div.title', state ] ) });
+        }
+    };
+    view.open( 'index' );
+</script>

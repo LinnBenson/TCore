@@ -1,0 +1,70 @@
+### 插件目录结构
+- PlugName
+  - config.php | 主要配置文件
+  - index.php | 主要导出文件
+
+#### Class 基本结构
+- PlugName->name
+  - 插件名称
+- PlugName->version
+  - 插件版本
+- PlugName->description
+  - 插件描述
+- PlugName->author
+  - 插件作者
+- PlugName->configCache
+  - 插件配置
+- PlugName->path
+  - 插件运行目录
+- PlugName->permissions
+  - 权限申请列表
+- PlugName->rely
+  - 插件依赖
+- PlugName->versionSuitable
+  - 适用版本
+- PlugName->intervene( 权限名[string], 权限方法[string]|function )
+  - 注册权限介入
+  - return bool 是否成功注册权限
+- PlugName->config( 配置项名称[string], 默认值[mixed]|null )
+  - 获取插件配置
+  - return mixed 返回配置项的值
+- PlugName->autoload( 类名[string], 类文件[string] )
+  - 自动加载
+  - return bool 加载结果
+- PlugName->import( 文件路径[string] )
+  - 引用文件
+  - return mixed 引用结果
+- PlugName->init() | 可选
+  - 插件初始化
+
+### 插件介入权限
+- SYSTEM_STARTUP()
+  - 系统启动事件
+  - 不处理任何返回结果
+- RETURN_RESULTS( 系统启动结果[mixed] )
+  - 修改或监听系统启动返回结果
+  - 返回值为系统启动结果
+- QUERY_CONFIGURATION_INFORMATION( 查询键[string] )
+  - 修改配置查询信息
+  - 返回值为该键对应的值（返回 null 或者返回 key 则不修改）
+- QUERY_LANGUAGE_PACKAGE([ 'lang' => 语言[string], 'target' => 包目标[string] ])
+  - 挂载语言包
+  - 返回值为数组时自动挂载语言包
+- MAIN_SYSTEM_LOG([ 'title' => 日志标题[string], 'content' => 日志内容[string]|object ])
+  - 监听主系统日志
+  - 不处理任何返回结果
+- REQUEST_INITIALIZATION_COMPLETED( Request $request )
+  - 监听初始化请求
+  - 不处理任何返回结果
+- RETURN_INTERFACE_DATA( 返回数据[array] )
+  - 修改或监听接口返回数据
+  - 返回值为最终返回数据
+- REGISTERING_ROUTES([ 'name' => 路由名称[string], 'filter' => 路由过滤[string]|null ])
+  - 注册路由
+  - 不处理任何返回结果
+- ROUTING_RESPONSE_ERROR([ 'request' => Request $request, 'code' => 错误代码[number], 'msg' => 错误信息[mixed] ])
+  - 修改或监听路由错误响应结果
+  - 返回值为字符串时则使用返回的结果
+- PLUGIN_COMMAND_MENU( Request $request )
+  - 注册插件命令行功能
+  - 返回值为数组时则自动导入到插件控制菜单

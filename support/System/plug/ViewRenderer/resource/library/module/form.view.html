@@ -1,0 +1,46 @@
+<?php
+    // 生成唯一ID
+    $id = md5( uuid() );
+    // 双栏宽度
+    $left = !empty( $left ) ? ( is_numeric( $left ) ? $left : 140 ) : null;
+    // 提交按钮
+    $autoSubmit = false;
+    if ( !empty( $submit ) ) {
+        $autoSubmit = strpos( $submit, '|' ) !== false ? explode( '|', $submit ) : false;
+        if ( $autoSubmit ) { $submit = 'submit_'.$id; }
+        $button = !empty( $button ) ? explode( '|', $button ) : [ 'bi-check-circle', $t( 'base.submit' ) ];
+    }
+?>
+<div
+    rid="<?=$id?>"
+    id="<?=$id?>"
+    class="column<?=!empty( $left ) ? 'Two' : 'One'?> <?=$class?>"
+    <?=!empty( $left ) ? 'style="--left: '.$left.'px"' : ''?>
+form>
+    <form <?=!empty( $submit ) ? 'onsubmit="tc.form.submit( `'.$id.'`, '.$submit.' )"' : ''?>>
+        <?=$children?>
+        <div class="formButton">
+            <?php if( $submit ): ?>
+                <button class="r3" type="submit" button><i class="icon <?=$button[0]?>"></i><?=$button[1]?></button>
+            <?php endif; ?>
+            <?php if( $reset ): ?>
+                <button class="r5" type="reset" button><i class="icon bi-arrow-counterclockwise"></i><?=$t( 'base.reset' )?></button>
+            <?php endif; ?>
+        </div>
+    </form>
+</div>
+<?php if( !empty( $autoSubmit ) ): ?>
+<script>
+    function submit_<?=$id?>( data, rid ) {
+        tc.send({
+            url: '<?=$autoSubmit[0]?>',
+            type: 'POST',
+            check: true,
+            data: data,
+            run: function( res ) {
+                <?=$autoSubmit[1]?>( res, rid );
+            }
+        }, ( state ) => { tc.unit.load([ 'div[form][rid="'+rid+'"]', state ]); });
+    }
+</script>
+<?php endif; ?>

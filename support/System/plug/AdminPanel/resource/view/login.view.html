@@ -1,0 +1,77 @@
+{{View( 'ViewHeader', [ 'id' => 'Admin', 'title' => "{$t( 'base.login' )} - {$t( '&title' )}" ])}}
+
+<style>
+div#Admin {
+    width: 100%;
+    height: 100%;
+    background-image: url( '/adminpanel/assets?file=img/login.jpg&{{$v}}' );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+}
+div#Admin div#content {
+    --padding: 32px;
+    width: 420px;
+    height: 100%;
+    padding: var( --padding );
+    background: rgb( var( --r0 ), 0.25 );
+    backdrop-filter: blur( 24px );
+    -webkit-backdrop-filter: blur( 24px );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+div#Admin div#content div#logo {
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    border-bottom: 5px solid rgba( var( --r1 ), 0.5 );
+}
+div#Admin div#content div#logo img {
+    width: auto;
+    height: 32px;
+}
+div#Admin div#content div#logo p {
+    margin-top: 64px;
+    font-size: 18px;
+}
+div#Admin div#content div#form {
+    width: 100%;
+    background: rgb( var( --r0 ), 0.5 );
+    box-sizing: border-box;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+}
+div#Admin div#content div#form form {
+    padding: var( --padding );
+    padding-top: 32px;
+}
+div#Admin div#content div#form button {
+    width: 100%;
+    padding: 10px 0px;
+}
+</style>
+<div id="content">
+    <div id="logo">
+        <img src="{{$theme['logo']}}" alt="Logo">
+        <p>{{config( 'app.title' )}} | {{$t( '&title' )}}</p>
+    </div>
+    <div id="form">
+        <x-form submit="/api/account/login|view.login" button="bi-check2-circle|{{$t( 'base.login' )}}">
+            <x-input type="alnum" name="username" rule="required|type:alnum|min:3|max:12" hint="{{$t( '&input' )}}{{$t( '&login.username' )}}">{{$t( '&login.username' )}}</x-input>
+            <x-input type="password" name="password" rule="required|type:password|min:6|max:20" hint="{{$t( '&input' )}}{{$t( '&login.password' )}}">{{$t( '&login.password' )}}</x-input>
+        </x-form>
+    </div>
+</div>
+<script>
+    const view = {
+        login: function( res ) {
+            tc.login( res );
+            location.reload();
+        }
+    };
+</script>
+
+{{View( 'ViewFooter', [] )}}

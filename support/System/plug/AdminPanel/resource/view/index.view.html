@@ -1,0 +1,107 @@
+{{View( 'ViewHeader', [ 'id' => 'Admin', 'title' => $t( '&title' ), 'css' => '/adminpanel/assets?file=css/frame.css&'.$v ])}}
+
+<style>
+    div#Admin, div#Admin div#logo {
+        background-image: url( '/adminpanel/assets?file=img/login.jpg&{{$v}}' );
+    }
+</style>
+<div frame>
+    <div frameLeft>
+        <div id="logo">
+            <img src="{{$theme['logo']}}" alt="Logo">
+            <p>{{config( 'app.title' )}} | {{$t( '&title' )}}</p>
+        </div>
+        <div id="menu">
+            <ul class="scroll menu">
+                {{Plug( 'AdminPanel' )->menu( $request )}}
+            </ul>
+        </div>
+    </div>
+    <div frameRight>
+        <header>
+            <i class="sidebar bi-chevron-left block" onclick="frame.sidebar()"></i>
+            <h1>{{$t( '&title' )}}</h1>
+            <div class="avatar" onclick="tc.logout( true )">
+                <img src="/storage/avatar/{{$request->user()->uid}}?{{$v}}" alt="avatar" />
+                <span>{{$t( 'base.logout' )}}<i class="left8 bi-box-arrow-right"></i></span>
+            </div>
+        </header>
+        <main class="scroll"></main>
+        <i class="bi-chevron-up block r3 pageUp" onclick="frame.pageUp()"></i></div>
+    </div>
+</div>
+<script>
+    var frame = {
+        // 框架初始化
+        init: function() {
+            if ( tc.size.width > 580 ) {
+                frame.sidebar( true );
+            }else {
+                frame.sidebar( false );
+            }
+            // 主视图下滑时展示向上按钮
+            $( 'div[frame] div[frameRight] main' ).on( 'scroll', function() {
+                if ( $( this ).scrollTop() > 100 ) {
+                    $( 'div[frame] div[frameRight] i.pageUp' ).addClass( 'active' );
+                }else {
+                    $( 'div[frame] div[frameRight] i.pageUp' ).removeClass( 'active' );
+                }
+            });
+        },
+        pageUp: function() {
+            $( 'div[frame] div[frameRight] main' ).animate({ scrollTop: 0 }, 300 );
+            return true;
+        },
+        // 切换侧边栏显示
+        sidebar: function( state = null ) {
+            const $frame = $( 'div[frame]' );
+            if ( state === false || ( state === null && $frame.hasClass( 'active' ) ) ) {
+                $frame.removeClass( 'active' );
+                $frame.find( 'i.sidebar' ).removeClass( 'bi-chevron-left' ).addClass( 'bi-chevron-right' );
+                return true;
+            }
+            if ( state === true || ( state === null && !$frame.hasClass( 'active' ) ) ) {
+                $frame.addClass( 'active' );
+                $frame.find( 'i.sidebar' ).removeClass( 'bi-chevron-right' ).addClass( 'bi-chevron-left' );
+                return true;
+            }
+        },
+        // 打开菜单
+        openMenu: function( menu ) {
+            const $menu = $( `div#menu ul.menu ul.parentMenu.${menu}` );
+            const $li = $( `div#menu ul.menu li.${menu}` );
+            if ( $menu.hasClass( 'active' ) ) {
+                $menu.removeClass( 'active' );
+                $li.find( 'i.right' ).removeClass( 'bi-chevron-down' ).addClass( 'bi-chevron-right' );
+                return true;
+            }
+            $menu.addClass( 'active' );
+            $li.find( 'i.right' ).removeClass( 'bi-chevron-right' ).addClass( 'bi-chevron-down' );
+        },
+        router: function( hash ) {
+            const view = !empty( hash.view ) ? hash.view : 'admin.dashboard';
+            tc.send({
+                url: `/adminpanel/view?view=${view}`,
+                run: function( res ) {
+                    $( `div[frame] div[frameLeft] div#menu ul.menu a` ).removeClass( 'active' );
+                    $( `div[frame] div[frameLeft] div#menu ul.menu a[href="#view=${view}"]` ).addClass( 'active' );
+                    $( `div[frame] div[frameRight] main` ).html( res );
+                    if ( tc.size.width <= 580 ) { frame.sidebar( false ); }
+                    frame.pageUp();
+                },
+                error: function() {
+                    $( `div[frame] div[frameRight] main` ).html(`
+                        <div class="center" style="width: 100%; height: 100%">
+                            <h2>Error 500</h2>
+                        </div>
+                    `);
+                }
+            }, function( state ){ tc.unit.load( state ); });
+            return true;
+        }
+    };
+    frame.init();
+    // 路由挂载
+    tc.router( function( hash ) { return frame.router( hash ); });
+</script>
+{{View( 'ViewFooter', [] )}}
