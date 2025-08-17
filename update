@@ -103,6 +103,14 @@
             echo text( '{cr}目录更新出错: '.$dir.'{end}' );
         }
     }
+    // 检查 composer
+    $composerLocal = json_decode( file_get_contents( 'composer.json' ), true );
+    $composerRemote = json_decode( file_get_contents( "{$root}composer.json" ), true );
+    foreach( $composerRemote['require'] as $key => $value ) {
+        if ( !isset( $composerLocal['require'][$key] ) || $composerLocal['require'][$key] !== $value ) {
+            echo text( '{cy}Composer 扩展需要刷新: '.$key.'{end}' );
+        }
+    }
     // 更新完成
     deleteDir( $cache );
     echo text([
