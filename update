@@ -82,7 +82,7 @@
     }
     $root = glob( "{$cache}*" );
     foreach( $root as $dir ) {
-        if ( is_dir( $dir ) ) { $root = "{$cache}{$dir}/"; break; }
+        if ( is_dir( $dir ) ) { $root = "{$cache}/"; break; }
     }
     // 刷新配置文件
     $config = require_once "{$root}support/System/config/upload.config.php";

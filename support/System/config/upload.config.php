@@ -17,7 +17,7 @@
                 'update'
             ],
             'dir' => [
-                'system/'
+                'support/system/'
             ]
         ]
     ];
