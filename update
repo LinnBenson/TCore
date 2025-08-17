@@ -59,7 +59,7 @@
         return $dir;
     }
     // 导入配置文件
-    $config = require_once 'support/System/config/upload.config.php';
+    $config = require_once 'support/System/config/update.config.php';
     // 开始下载内容
     echo text( '开始从远程中获取最新版本 ...' );
     $zipFile = file_get_contents( $config['git'] );
@@ -85,7 +85,7 @@
         if ( is_dir( $dir ) ) { $root = "{$dir}/"; break; }
     }
     // 刷新配置文件
-    $config = require_once "{$root}support/System/config/upload.config.php";
+    $config = require_once "{$root}support/System/config/update.config.php";
     // 更新文件
     foreach( $config['cover']['file'] as $file ) {
         if ( copy( "{$root}{$file}", $file ) ) {
