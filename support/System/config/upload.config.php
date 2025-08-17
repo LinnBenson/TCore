@@ -11,6 +11,7 @@
                 'plug/.gitignore',
                 'resource/lang/.gitignore',
                 'resource/view/.gitignore',
+                '.env.example',
                 'cmd',
                 'LICENSE',
                 'Readme.md',
