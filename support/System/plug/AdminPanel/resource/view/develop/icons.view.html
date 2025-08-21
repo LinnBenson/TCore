@@ -4,27 +4,21 @@
         margin-bottom: 8px;
         border-radius: var( --radius );
     }
-    div#icons ul {
-        display: flex;
-        padding: 0px;
-        list-style: none;
-        flex-wrap: wrap;
+    div#icons div.iconList {
+        --width: 80px;
+        --gap: 4px;
     }
-    div#icons ul li {
+    div#icons div.iconList div {
         --size: 48px;
-        display: inline-block;
-        width: 80px;
         height: 68px;
-        flex: 1 0 auto;
         padding: 0px 8px 0px 8px;
-        margin: 2px;
         background: rgb( var( --r3 ), 0.25 );
         text-align: center;
         border-radius: var( --radius );
         box-sizing: border-box;
     }
-    div#icons ul li:hover { background: rgb( var( --r3 ), 0.5 ); }
-    div#icons ul li i {
+    div#icons div.iconList div:hover { background: rgb( var( --r3 ), 0.5 ); }
+    div#icons div.iconList div i {
         font-size: 20px;
         font-weight: bold;
     }
@@ -34,7 +28,7 @@
         <h5>Bootstrap Icons [ <span class="count">0</span> Pie ]</h5>
     </div>
     <x-input type="string" name="searchIcon" icss="r0" hint="Search ..."></x-input>
-    <ul></ul>
+    <div layoutMinEqual class="iconList"></div>
 </div>
 <script>
     var view = {
@@ -73,13 +67,13 @@
             return this.icons;
         },
         renderIcons: function( icons ) {
-            const $box = $( 'div#icons ul' ); $box.html( '' );
+            const $box = $( 'div#icons div.iconList' ); $box.html( '' );
             for( const icon of icons ) {
                 $box.append( `
-                    <li class="copy" data-clipboard-text="${icon}">
+                    <div class="copy" data-clipboard-text="${icon}" layout>
                         <i class="${icon} font4 block"></i>
                         <p class="font7 opa25 more">${icon}</p>
-                    </li>
+                    </div>
                 ` );
             }
             $( 'div#icons div.title span.count' ).text( icons.length );

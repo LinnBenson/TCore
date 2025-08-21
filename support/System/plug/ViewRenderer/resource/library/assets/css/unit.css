@@ -25,6 +25,31 @@ div[layoutTwoRight] [layout]:first-child { min-width: 0; flex: 1; }
 div[layoutTwoRight] [layout]:last-child { width: 100px; flex: 0 0 var( --width ); }
 div[layoutEqual] { display: flex; }
 div[layoutEqual] [layout] { flex: 1; }
+div[layoutMinEqual] {
+    --width: 240px;
+    --gap: 8px;
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax( var( --width ), 1fr ) );
+    gap: var( --gap );
+}
+div[layoutX] {
+    --width: auto;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+div[layoutX]::-webkit-scrollbar { display: none; }
+div[layoutX] [layout] { flex: 0 0 var( --width ); width: 100px; }
+div[layoutFall] {
+    --width: 240px;
+    --gap: 8px;
+    column-width: var( --width );
+    column-gap: var( --gap );
+}
+div[layoutFall] [layout] { break-inside: avoid; }
 /* 系统动态组件库 */
 div[ViewUnit] div.unit {
     display: block;
@@ -161,6 +186,9 @@ div[card] {
 div[card].active { max-height: 220vh; }
 div[card] div[cardTitle], div[card] div[cardContent] {
     box-sizing: border-box;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 div[card] div[cardTitle] {
     padding: 0px 4px;
@@ -603,8 +631,9 @@ div.markdownEditor div.markdownPreview div.previewContent {
 div[markdown] {
     width: 100%;
     overflow: hidden;
+    word-break: break-word;
     overflow-wrap: break-word;
-    word-wrap: break-word;
+    white-space: normal;
 }
 div[markdown] p { margin-bottom: 8px; }
 div[markdown] h1, div[markdown] h2, div[markdown] h3, div[markdown] h4, div[markdown] h5, div[markdown] h6 {
@@ -625,10 +654,15 @@ div[markdown] hr { --gap: 24px; }
 div[markdown] a { color: rgb( var( --r2 ) ) !important; text-decoration: underline; }
 div[markdown] blockquote {
     display: block;
-    padding: 8px 8px 8px 16px;
+    padding: 12px 12px 12px 16px;
     margin: 8px 0px;
     background: rgb( var( --r3 ), 0.15 );
     border-left: 4px solid rgb( var( --r3 ) );
+}
+div[markdown] blockquote p:last-of-type,
+div[markdown] blockquote ul:last-of-type,
+div[markdown] blockquote ol:last-of-type {
+    margin-bottom: 0px;
 }
 div[markdown] div.showImg {
     width: 100%;

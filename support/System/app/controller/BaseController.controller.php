@@ -34,6 +34,7 @@
          */
         private function indexInfo( Request $request ) {
             $result = [
+                'id' => $request->id,
                 'title' => config( 'app.title' ),
                 'debug' => config( 'app.debug' ),
                 'version' => config( 'app.version' ),

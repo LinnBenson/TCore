@@ -8,8 +8,10 @@
 <div frame>
     <div frameLeft>
         <div id="logo">
-            <img src="{{$theme['logo']}}" alt="Logo">
-            <p>{{config( 'app.title' )}} | {{$t( '&title' )}}</p>
+            <div>
+                <img src="{{$theme['logo']}}" alt="Logo">
+                <p>{{config( 'app.title' )}} | {{$t( '&title' )}}</p>
+            </div>
         </div>
         <div id="menu">
             <ul class="scroll menu">
@@ -67,24 +69,27 @@
             }
         },
         // 打开菜单
-        openMenu: function( menu ) {
+        openMenu: function( menu, open = false ) {
             const $menu = $( `div#menu ul.menu ul.parentMenu.${menu}` );
             const $li = $( `div#menu ul.menu li.${menu}` );
-            if ( $menu.hasClass( 'active' ) ) {
-                $menu.removeClass( 'active' );
-                $li.find( 'i.right' ).removeClass( 'bi-chevron-down' ).addClass( 'bi-chevron-right' );
+            if ( !$menu.hasClass( 'active' ) || open ) {
+                $menu.addClass( 'active' );
+                $li.find( 'i.right' ).removeClass( 'bi-chevron-right' ).addClass( 'bi-chevron-down' );
                 return true;
             }
-            $menu.addClass( 'active' );
-            $li.find( 'i.right' ).removeClass( 'bi-chevron-right' ).addClass( 'bi-chevron-down' );
+            $menu.removeClass( 'active' );
+            $li.find( 'i.right' ).removeClass( 'bi-chevron-down' ).addClass( 'bi-chevron-right' );
         },
         router: function( hash ) {
             const view = !empty( hash.view ) ? hash.view : 'admin.dashboard';
             tc.send({
-                url: `/adminpanel/view?view=${view}`,
+                url: `/adminpanel/view?${new URLSearchParams( hash ).toString()}`,
                 run: function( res ) {
                     $( `div[frame] div[frameLeft] div#menu ul.menu a` ).removeClass( 'active' );
                     $( `div[frame] div[frameLeft] div#menu ul.menu a[href="#view=${view}"]` ).addClass( 'active' );
+                    let parentName = $( `div[frame] div[frameLeft] div#menu ul.menu a[href="#view=${view}"]` ).attr( 'parent' );
+                    if ( !empty( parentName ) ) { frame.openMenu( `menu_${parentName}`, true ); }
+                    $( 'div[frame] div[frameRight] header h1' ).text(  $( `div[frame] div[frameLeft] div#menu ul.menu a[href="#view=${view}"] span.name` ).text() );
                     $( `div[frame] div[frameRight] main` ).html( res );
                     if ( tc.size.width <= 580 ) { frame.sidebar( false ); }
                     frame.pageUp();

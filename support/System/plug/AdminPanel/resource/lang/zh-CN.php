@@ -10,10 +10,9 @@
         'menu' => [
             'Dashboard' => '仪表盘',
             'Develop' => '开发者工具',
-            'Handbook' => '开发者手册',
-            'Module' => '组件演示'
-        ],
-        'handbook' => [
-            'name' => '手册内容'
+            'Api' => '接口调试',
+            'Handbook' => '系统文档',
+            'Module' => '组件演示',
+            'Log' => '日志记录'
         ]
     ];

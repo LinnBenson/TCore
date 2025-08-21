@@ -11,18 +11,55 @@
 </style>
 <div id="module">
     <x-card class="layout" title="页面布局" icon="bi-bounding-box" close="">
+        左固定/右自动 - layoutTwoLeft
         <div layoutTwoLeft>
             <div class="box1" layout></div>
             <div class="box2" layout></div>
         </div>
+        左自动/右固定 - layoutTwoRight
         <div layoutTwoRight>
             <div class="box1" layout></div>
             <div class="box2" layout></div>
         </div>
+        均匀分布 - layoutEqual
         <div layoutEqual>
             <div class="box1" layout></div>
             <div class="box2" layout></div>
             <div class="box3" layout></div>
+        </div>
+        按最小宽度均匀分布 - layoutMinEqual
+        <div layoutMinEqual style="--gap: 0px">
+            <div class="box1" layout></div>
+            <div class="box2" layout></div>
+            <div class="box3" layout></div>
+            <div class="box4" layout></div>
+            <div class="box5" layout></div>
+        </div>
+        横向自动滚动 - layoutX
+        <div layoutX>
+            <div class="box1" layout></div>
+            <div class="box2" layout></div>
+            <div class="box3" layout></div>
+            <div class="box4" layout></div>
+            <div class="box5" layout></div>
+            <div class="box1" layout></div>
+            <div class="box2" layout></div>
+            <div class="box3" layout></div>
+            <div class="box4" layout></div>
+            <div class="box5" layout></div>
+            <div class="box1" layout></div>
+            <div class="box2" layout></div>
+            <div class="box3" layout></div>
+            <div class="box4" layout></div>
+            <div class="box5" layout></div>
+        </div>
+        瀑布流 - layoutFall
+        <div layoutFall>
+            <div class="box1" layout style="height: 100px;"></div>
+            <div class="box2" layout style="height: 200px;"></div>
+            <div class="box3" layout style="height: 300px;"></div>
+            <div class="box4" layout style="height: 200px;"></div>
+            <div class="box1" layout style="height: 130px;"></div>
         </div>
     </x-card>
     <x-card class="method" title="功能调用" icon="bi-grid" close="">
@@ -48,11 +85,15 @@
             <x-input type="switch" name="switch" value="1" icss="r0" left="true" hint="开关输入">开关输入</x-input>
             <x-input type="code" name="code" icss="r0" left="true" hint="请输入代码">代码输入</x-input>
             <x-input type="longtext" rule="min:2|max:5" name="longtext" icss="r0" left="true" hint="请输入长文本">长文本输入</x-input>
-            <x-input type="upload" name="upload" rule="max:2" value="/storage/file/cache/793e6efe-5125-4106-a631-2c91587b8928_png" icss="r0" left="true" hint="上传测试">上传测试</x-input>
+            <x-input type="upload" name="upload" rule="max:2" icss="r0" left="true" hint="上传测试">上传测试</x-input>
             <x-input type="markdown" name="markdown" icss="r0" left="true" hint="Markdown">Markdown</x-input>
         </x-form>
     </x-card>
 </div>
 <script>
-
+    var view = {
+        submit: function( res ) {
+            console.log( res );
+        }
+    };
 </script>

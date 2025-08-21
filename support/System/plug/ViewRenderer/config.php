@@ -23,7 +23,8 @@
             ),
             'Dark' => array (
                 'logo' => '/library/logo_w.png',
-                'fav' => '/library/welcome.jpg',
+                'fav' => '/library/favicon.png',
+                'img' => '/library/welcome.jpg',
                 '--r0' => '70, 70, 70',
                 '--r1' => '237, 236, 231',
                 '--r2' => '65, 115, 179',

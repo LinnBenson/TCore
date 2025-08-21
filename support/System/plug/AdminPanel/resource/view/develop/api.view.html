@@ -1,0 +1,103 @@
+<style>
+    div#api div.box {
+        --width: 480px;
+        gap: 8px;
+    }
+    div#api div.box div.form div[input]:last-of-type { margin-bottom: 0px; }
+    div#api div.box div.result {
+        padding: 20px;
+        border-radius: var( --radius );
+        box-sizing: border-box;
+    }
+    div#api div.box div.result textarea {
+        width: 100%;
+        height: calc( 100% - 32px - 8px );
+        white-space: pre;
+        border: none;
+        box-sizing: border-box;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        resize: none;
+    }
+    div#api div.box div.result textarea::-webkit-scrollbar {
+        display: none;
+    }
+    @media ( max-width: 1100px ) {
+        div#api div.box[layoutTwoLeft] { display: block; }
+        div#api div.box[layoutTwoLeft] div[layout] { display: block; width: 100%; margin-bottom: 8px; }
+    }
+</style>
+<div id="api">
+    <x-card class="http" title="HTTP 请求测试" icon="bi-bounding-box">
+        <div class="box http" layoutTwoLeft>
+            <div class="form" layout>
+                <x-input type="string" name="link" rule="required" icon="bi-link-45deg" icss="r0" value="/api">请求地址</x-input>
+                <x-input type="select" name="method" icss="r0" value="GET" options="GET:GET|POST_JSON:POST ( JSON )|POST_FORM:POST ( FORM )">请求方式</x-input>
+                <x-input type="code" name="header" rule="required|type:json" icss="r0" value="{}">Header 数据</x-input>
+                <x-input type="code" name="post" rule="required|type:json" icss="r0" value="{}">传递数据</x-input>
+            </div>
+            <div class="result code" layout>
+                <button class="r3" onclick="view.submitHttp()" style="display: block; width: 100%; margin-bottom: 8px;" button><i class="icon bi-arrow-repeat"></i>刷新请求</button>
+                <textarea class="code"></textarea>
+            </div>
+        </div>
+    </x-card>
+</div>
+<script>
+    var view = {
+        submitHttp: function() {
+            // 获取请求数据
+            const res = tc.form.value( `div#api div.box.http div.form` );
+            if ( res === false ) { return false; }
+            let method, post;
+            // 请求参数处理
+            switch ( res.method ) {
+                case 'GET':
+                    method = 'GET';
+                    post = JSON.parse( res.post );
+                    res.link = !empty( post ) ? `${res.link}?${ new URLSearchParams( post ).toString() }` : res.link;
+                    post = undefined;
+                    break;
+                case 'POST_JSON':
+                    method = 'POST';
+                    post = res.post;
+                    break;
+                case 'POST_FORM':
+                    method = 'POST';
+                    post = JSON.parse( res.post );
+                    break;
+
+                default: return false;
+            }
+            // 发起请求
+            const $result = $( 'div#api div.box.http div.result textarea' );
+            tc.send({
+                url: res.link,
+                type: method,
+                headers: JSON.parse( res.header ),
+                data: post,
+                run: function( res ) {
+                    if ( is_array( res ) ) {
+                        return $result.val( JSON.stringify( res, null, 4 ) );
+                    }
+                    if ( is_json( res ) ) {
+                        return $result.val( JSON.stringify( JSON.parse( res ), null, 4 ) );
+                    }
+                    $result.val( res );
+                },
+                error: function( res ) {
+                    if ( is_array( res.responseTextres ) ) {
+                        return $result.val( JSON.stringify( res.responseText, null, 4 ) );
+                    }
+                    if ( is_json( res.responseText ) ) {
+                        return $result.val( JSON.stringify( JSON.parse( res.responseText ), null, 4 ) );
+                    }
+                    $result.val( res.responseText );
+                }
+            }, ( state ) => { tc.unit.load([ 'div#api div.http[card]', state ]); });
+        }
+    };
+</script>

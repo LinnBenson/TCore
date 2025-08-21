@@ -4,16 +4,12 @@
         'directory' => [ 'name' => '目录说明', 'file' => 'support/System/storage/handbook/directory.md' ],
         'permissions' => [ 'name' => '插件及权限', 'file' => 'support/System/storage/handbook/permissions.md' ],
         'view' => [ 'name' => '视图渲染器', 'file' => 'support/System/storage/handbook/view.md' ],
-        'method' => [ 'name' => '方法声明', 'file' => 'support/System/storage/handbook/method.md' ]
+        'method' => [ 'name' => '方法声明', 'file' => 'support/System/storage/handbook/method.md' ],
+        'preset' => [ 'name' => '预设说明', 'file' => 'support/System/storage/handbook/preset.md' ]
     ];
-    // 获取视图
-    if ( $request->method === 'POST' ) {
-        $file = $request->post['file'] ?? null;
-        if ( !empty( $file ) ) {
-            $file = $books[$file] ?? null;
-            exit( !empty( $file ) && file_exists( $file['file'] ) ? file_get_contents( $file['file'] ) : 'Null' );
-        }
-    }
+    $handbook = $request->get['handbook'] ?? null;
+    if ( empty( $handbook ) ) { $handbook = 'index'; }
+    $handbook = file_exists( $books[$handbook]['file'] ) ? file_get_contents( $books[$handbook]['file'] ) : 'Null';
 !!}}
 <style>
     div#handbook div.book {
@@ -21,28 +17,13 @@
     }
 </style>
 <div id="handbook">
-    <x-card class="title" title="{{$t( '&handbook.name' )}}" icon="bi-book">
+    <x-card class="title" title="更多内容" icon="bi-book">
         @foreach( $books as $id => $item ):
-        <button class="r3" onclick="view.open( '{{$id}}' )" button>{{$item['name']}}</button>
+        <a href="#view=admin.develop.handbook&handbook={{$id}}" class="r3" button>{{$item['name']}}</a>
         @endforeach
     </x-card>
-    <div class="r6 book padding24"></div>
+    <div class="r6 book padding24">{{htmlspecialchars( $handbook )}}</div>
 </div>
 <script>
-    var view = {
-        open: function( id ) {
-            tc.send({
-                url: `/adminpanel/view?view=admin.develop.handbook`,
-                data: { file: id },
-                run: function( res ) {
-                    $( 'div#handbook div.book' ).html( '' );
-                    $( 'div#handbook div.book' ).html( tc.markdown.render( res ) );
-                },
-                error: function() {
-                    tc.unit.toast( ['base.get:base.false'], true );
-                }
-            }, ( state ) => { tc.unit.load( [ 'div#handbook div.title', state ] ) });
-        }
-    };
-    view.open( 'index' );
+    $( 'div#handbook div.book' ).html( tc.markdown.render( tc.markdown.protect( $( 'div#handbook div.book' ).html(), true ) ) );
 </script>

@@ -45,16 +45,24 @@ window['tc'] = {
             url: `/api/base/info${type === 'all' ? '' : `/${type}`}`,
             check: true,
             run: ( res ) => {
-                if ( type === 'all' ) {
-                    tc.text = res.text; set( 'text', res.text );
-                    tc.server = res.server; set( 'server', res.server );
-                }else {
-                    tc[type] = res; set( type, res );
+                switch ( type ) {
+                    case 'all':
+                        tc.text = res.text; set( 'text', res.text );
+                        tc.server = res.server; set( 'server', res.server );
+                        break;
+                    case 'server':
+                        tc.server = server; set( 'server', server );
+                        break;
+                    case 'text':
+                        tc.text = text; set( 'text', text );
+                        break;
+                    default: break;
                 }
-                // 刷新用户
-                if ( !is_array( res.server.user ) ) {
+                if ( is_array( tc.server.user ) ) {
+                    set( 'user', tc.server.user );
+                }else {
                     tc.user = null; tc.setCache( 'token', null ); del( 'user' );
-                }else { set( 'user', res.server.user ); }
+                }
             }
         });
     },
@@ -85,9 +93,6 @@ window['tc'] = {
     },
     /**
      * 发起一个网络请求
-     * @par
-    /**
-     * 发起一个网络请求
      * @param {array} data 请求数据
      * @param {function} load 加载方法
      * @returns 请求实体
@@ -100,12 +105,13 @@ window['tc'] = {
             parameter = is_json( data.data ) ? 'application/json; charset=utf-8' : 'application/x-www-form-urlencoded; charset=utf-8';
         }
         data.other = !empty( data.other ) ? data.other : {};
+        data.headers = is_array( data.headers ) ? data.headers : {};
         return $.ajax({
             url: data.url,
             type: !empty( data.type ) ? data.type : 'GET',
             contentType: data.contentType ? data.contentType : parameter,
             data: data.data ? data.data : false,
-            headers: tc.header(),
+            headers: { ...tc.header(), ...data.headers },
             async: data.async === false ? false : true,
             success: function( res ) {
                 if ( typeof load === 'function' ) { load( false ); }
@@ -180,7 +186,7 @@ window['tc'] = {
     },
     /**
      * 登录用户
-     * @param {any} res 登录结果
+     * @param {any} res 登录数据
      * @returns {boolean} 是否登录成功
      */
     login: function( res ) {
@@ -247,7 +253,7 @@ window['tc'] = {
             return true;
         },
         /**
-         * 全屏加载控件
+         * 加载控件
          * @param {boolean} state 加载状态
          * @param {number} timeout 超时时间
          * @returns {boolean} 返回 true
@@ -929,7 +935,7 @@ window['tc'] = {
     }
 };
 /**
- * 判断变量是否存在
+ * 判断变量是否有值
  * @param {variable} v 传入一个变量
  * @returns boolean
  */

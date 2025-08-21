@@ -1,0 +1,65 @@
+{{!!
+    $path = "storage/log/";
+    $logs = glob( "{$path}*.log" );
+    usort( $logs, function ( $a, $b ) {
+        return filemtime( $b ) - filemtime( $a );
+    });
+    $name = $request->get['log'] ?? null;
+    if ( empty( $name ) ) { $name = str_replace( $path, "", $logs[0] ); }
+    $content = file_exists( "{$path}{$name}" ) ? file_get_contents( "{$path}{$name}" ) : 'Null';
+!!}}
+<style>
+    div#log {
+        width: 100%;
+        height: 100%;
+        gap: 8px;
+    }
+    div#log div.left a {
+        display: block;
+        padding: 4px 12px;
+        margin-bottom: 8px;
+        background: rgb( var( --r3 ), 0.15 );
+        color: rgb( var( --r1 ) );
+        font-size: 14px;
+        border-radius: var( --radius );
+        box-sizing: border-box;
+    }
+    div#log div.left a.active {
+        background: rgb( var( --r3 ) );
+        color: rgb( var( --r3c ) );
+    }
+    div#log div.right {
+        padding: 8px;
+        border-radius: var( --radius );
+        box-sizing: border-box;
+    }
+    div#log div.right textarea {
+        width: 100%;
+        height: 100%;
+        white-space: pre;
+        border: none;
+        box-sizing: border-box;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        resize: none;
+    }
+    div#log div.right textarea::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+<div id="log" layoutTwoLeft>
+    <div class="left scroll" layout>
+        @foreach( $logs as $log ):
+        <a class="{{$name === str_replace( $path, "", $log ) ? 'active' : ''}}" href="#view=admin.develop.log&log={{str_replace( $path, "", $log )}}">{{str_replace( $path, "", $log )}}</a>
+        @endforeach
+    </div>
+    <div class="right code" layout>
+        <textarea class="code">{{$content}}</textarea>
+    </div>
+</div>
+<script>
+    $( 'div#log div.right textarea' ).scrollTop( $( 'div#log div.right textarea' )[0].scrollHeight );
+</script>

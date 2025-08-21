@@ -125,11 +125,11 @@
                     $item['hasMenu'] = true;
                     $parent = '<ul class="parentMenu menu_'.h( $item['name'] ).'">';
                     foreach( $parentData->toArray() as $pItem ) {
-                        $parent .= view( 'admin.menu.item', [ 'request' => $request, 'item' => $pItem, 'parent' => '' ] );
+                        $parent .= view( 'admin.menu.item', [ 'request' => $request, 'item' => $pItem, 'parent' => '', 'parentName' => h( $item['name'] ) ] );
                     }
                     $parent .= '</ul>';
                 }
-                $html .= view( 'admin.menu.item', [ 'request' => $request, 'item' => $item, 'parent' => $parent ] );
+                $html .= view( 'admin.menu.item', [ 'request' => $request, 'item' => $item, 'parent' => $parent, 'parentName' => '' ] );
                 $parentData = null;
             }
             return $html;

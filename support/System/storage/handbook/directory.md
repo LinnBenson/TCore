@@ -1,34 +1,76 @@
 ### 目录结构说明
 - Root
+  - app
+    - controller
+      - ... | 接口文件
+    - model
+      - ... | 模型文件
+    - service
+      - ... | 服务项文件
   - config
+    - plug
+      - ... | 插件配置覆盖
+    - account.config.php | 账户配置
     - app.config.php | 系统基础信息
     - autoload.config.php | 自动导入类
     - database.config.php | 数据库配置
+    - lang.config.php | 语言包名称翻译
     - permissions.config.php | 插件权限控制
+    - storage.config.php | 存储器配置
+    - update.config.php | 系统更新配置
   - plug
     - ... | 用户插件
   - public
+    - assets
+      - ... | 视图插件静态文件
+    - library
+      - avatar.png | 默认头像
+      - favicon.png | 网站标志
+      - logo_b.png | 深色 LOGO
+      - logo_w.png | 浅色 LOGO
+      - welcome.jpg | 默认主题图
+    - favicon.ico | 网站标志
     - index.php | HTTP 服务端入口
+    - robots.txt | 搜索引擎抓取声明
   - resource
+    - lang
+      - ... | 语言包文件
+    - view
+      - module
+        - ... | 模块文件
+      - ... | 视图文件
   - router
-    - ... | 路由加载文件
+    - api.router.php | 接口路由
+    - shell.router.php | 命令行路由
+    - storage.router.php | 存储器路由
+    - view.router.php | 视图路由
   - storage
     - cache
       - ... | 缓存文件
+    - log
+      - ... | 日志文件
+    - media
+      - ... | 媒体文件
   - support
     - Handler
+      - Account.handler.php | 账户构造器
+      - File.handler.php | 文件操作器
       - Redis.handler.php | Redis 操作器
       - Request.handler.php ｜ 请求构造器
       - Router.handler.php ｜ 路由处理器
       - RouterBuilder.handler.php | 路由注册器
       - Session.handler.php | Session 操作器
+      - Vaildata.handler.php | 数据验证器
     - Helper
       - Global.helper.php | 全局通用函数
       - System.helper.php | 系统通用函数
       - Tool.helper.php | 常用工具
     - Provider
       - Http.provider.php | HTTP 服务提供者
+      - Shell.provider.php | Shell 服务提供者
     - Slots
+      - Mysql.slots.php | Mysql 模型支持
+      - MysqlGlobal.slots.php | Mysql 模型全局作用域
       - Plug.slots.php | 插件辅助类
     - System
       - ... | 系统缺省文件
@@ -36,7 +78,10 @@
   - vendor
     - ... | Composer 组件
   - .env | 全局 ENV 配置
+  - .env.example | 全局 ENV 配置示例
   - .gitignore | Git 忽略目录
+  - cmd | Shell 命令入口
   - composer.json | Composer 配置
   - LICENSE | MIT 版权声明
   - Readme.md | 软件说明
+  - update | 更新命令入口

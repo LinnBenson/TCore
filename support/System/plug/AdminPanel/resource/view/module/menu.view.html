@@ -1,5 +1,5 @@
 @if( !empty( $item['url'] ) ):
-<a href="{{$item['url']}}">
+<a href="{{$item['url']}}" parent="{{!empty($parentName) ? $parentName : ''}}">
 @endif
     <li class="{{"menu_".h( $item['name'] )}}" {{$item['hasMenu'] === true ? "onClick='frame.openMenu( `menu_".h( $item['name'] )."` )'" : ""}}>
         <i class="icon block {{$item['icon']}}"></i>

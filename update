@@ -112,9 +112,11 @@
         }
     }
     // 更新完成
+    $appRemote = require_once "{$root}support/System/config/app.config.php";
     deleteDir( $cache );
     echo text([
         '{-}',
+        config( 'app.version' )." => {$appRemote['version']}",
         '{cg}系统更新完成{end}'
     ]);
 

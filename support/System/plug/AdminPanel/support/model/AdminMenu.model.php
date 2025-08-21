@@ -21,6 +21,7 @@
             'icon|图标' => 'type:string|length:20|null',
             'url|访问链接' => 'type:string|null',
             'parent|父级菜单' => 'type:string|null',
+            'level|访问级别' => 'type:number',
             'serial|排序' => 'type:number',
             'enable|可用性' => 'type:boolean'
         ];
@@ -48,11 +49,13 @@
          */
         public static function initialization() {
             $insert = [
-                [ 'name' => 'Dashboard', 'icon' => 'bi-house-door', 'url' => '#view=admin.dashboard', 'parent' => '', 'serial' => 1, 'enable' => 1 ],
-                [ 'name' => 'Develop', 'icon' => 'bi-bug', 'url' => '', 'parent' => '', 'serial' => 1, 'enable' => 1 ],
-                [ 'name' => 'Bootstrap Icons', 'icon' => 'bi-star', 'url' => '#view=admin.develop.icons', 'parent' => 'Develop', 'serial' => 1, 'enable' => 1 ],
-                [ 'name' => 'Module', 'icon' => 'bi-columns-gap', 'url' => '#view=admin.develop.module', 'parent' => 'Develop', 'serial' => 1, 'enable' => 1 ],
-                [ 'name' => 'Handbook', 'icon' => 'bi-book', 'url' => '#view=admin.develop.handbook', 'parent' => 'Develop', 'serial' => 1, 'enable' => 1 ]
+                [ 'name' => 'Dashboard', 'icon' => 'bi-house-door', 'url' => '#view=admin.dashboard', 'level' => 10000, 'parent' => '', 'serial' => 1, 'enable' => 1 ],
+                [ 'name' => 'Develop', 'icon' => 'bi-bug', 'url' => '', 'parent' => '', 'level' => 10, 'serial' => 1, 'enable' => 1 ],
+                [ 'name' => 'Api', 'icon' => 'bi-bounding-box', 'url' => '#view=admin.develop.api', 'parent' => 'Develop', 'level' => 10, 'serial' => 1, 'enable' => 1 ],
+                [ 'name' => 'Bootstrap Icons', 'icon' => 'bi-star', 'url' => '#view=admin.develop.icons', 'parent' => 'Develop', 'level' => 10, 'serial' => 1, 'enable' => 1 ],
+                [ 'name' => 'Module', 'icon' => 'bi-columns-gap', 'url' => '#view=admin.develop.module', 'parent' => 'Develop', 'level' => 10, 'serial' => 1, 'enable' => 1 ],
+                [ 'name' => 'Handbook', 'icon' => 'bi-book', 'url' => '#view=admin.develop.handbook', 'parent' => 'Develop', 'level' => 10, 'serial' => 1, 'enable' => 1 ],
+                [ 'name' => 'Log', 'icon' => 'bi-receipt', 'url' => '#view=admin.develop.log', 'parent' => 'Develop', 'level' => 10, 'serial' => 1, 'enable' => 1 ]
             ];
             foreach( $insert as $item ) { self::forceCreate( $item ); };
             return true;
